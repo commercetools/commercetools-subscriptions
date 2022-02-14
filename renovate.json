@@ -1,0 +1,13 @@
+{
+  "extends": ["config:base", ":disableDependencyDashboard"],
+  "baseBranches": ["master"],
+  "automerge": true,
+  "schedule": ["every weekend"],
+  "groupName": "all",
+  "docker": {
+    "enabled":  false
+  },
+  "prConcurrentLimit": 10,
+  "packageRules": [
+  ]
+}
