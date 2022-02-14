@@ -1,0 +1,6 @@
+/.idea/
+*.iml
+*.log
+node_modules
+/.nyc_output/
+secrets.yaml
