@@ -3,6 +3,10 @@
     "prettier",
     "airbnb-base"
   ],
+  "globals": {
+    "describe": "readonly",
+    "it": "readonly"
+  },
   "env": {
     "node": true
   },

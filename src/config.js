@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'url'
 import path from 'path'
 import { promises as fs } from 'node:fs'
 
@@ -6,8 +7,9 @@ function getLogLevel () {
 }
 
 async function getPackageJson () {
-  const rootFolder = process.cwd()
-  const pathToPackageJson = path.resolve(rootFolder, '../package.json')
+  const currentFilePath = fileURLToPath(import.meta.url)
+  const currentDirPath = path.dirname(currentFilePath)
+  const pathToPackageJson = path.resolve(currentDirPath, '../package.json')
   const fileContent = await fs.readFile(pathToPackageJson)
   return JSON.parse(fileContent)
 }
