@@ -1,6 +1,6 @@
 {
   "extends": ["config:base", ":disableDependencyDashboard"],
-  "baseBranches": ["master"],
+  "baseBranches": ["main"],
   "automerge": true,
   "schedule": ["every weekend"],
   "groupName": "all",
