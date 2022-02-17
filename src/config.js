@@ -1,18 +1,12 @@
-import { fileURLToPath } from 'url'
-import path from 'path'
-import { promises as fs } from 'node:fs'
 import rc from 'rc'
+import { readAndParseJsonFile } from './utils/utils.js'
 
 function getLogLevel () {
   return process.env.LOG_LEVEL || 'info'
 }
 
 async function getPackageJson () {
-  const currentFilePath = fileURLToPath(import.meta.url)
-  const currentDirPath = path.dirname(currentFilePath)
-  const pathToPackageJson = path.resolve(currentDirPath, '../package.json')
-  const fileContent = await fs.readFile(pathToPackageJson)
-  return JSON.parse(fileContent)
+  return readAndParseJsonFile('./package.json')
 }
 
 function getConcurrency () {

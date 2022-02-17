@@ -1,0 +1,37 @@
+{
+  "key": "subscription-order",
+  "name": {
+    "en": "Subscription order"
+  },
+  "description": {
+    "en": "Subscription order definition"
+  },
+  "resourceTypeIds": [
+    "order"
+  ],
+  "fieldDefinitions": [
+    {
+      "name": "subscriptionTemplateOrderRef",
+      "type": {
+        "name": "Reference",
+        "referenceTypeId": "order"
+      },
+      "required": true,
+      "label": {
+        "en": "subscriptionTemplateOrderRef"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "deliveryDate",
+      "type": {
+        "name": "DateTime"
+      },
+      "required": false,
+      "label": {
+        "en": "deliveryDate"
+      },
+      "inputHint": "SingleLine"
+    }
+  ]
+}

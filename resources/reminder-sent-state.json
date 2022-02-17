@@ -1,0 +1,27 @@
+{
+  "key": "ReminderSent",
+  "type": "OrderState",
+  "roles": [],
+  "name": {
+    "en": "ReminderSent"
+  },
+  "transitions": [
+    {
+      "typeId": "state",
+      "key": "Active"
+    },
+    {
+      "typeId": "state",
+      "key": "Cancelled"
+    },
+    {
+      "typeId": "state",
+      "key": "Paused"
+    },
+    {
+      "typeId": "state",
+      "key": "Error"
+    }
+  ],
+  "initial": false
+}

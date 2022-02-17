@@ -1,0 +1,36 @@
+{
+  "key": "checkout-order",
+  "name": {
+    "en": "Checkout order"
+  },
+  "description": {
+    "en": "Checkout order definition"
+  },
+  "resourceTypeIds": [
+    "order"
+  ],
+  "fieldDefinitions": [
+    {
+      "name": "hasSubscription",
+      "type": {
+        "name": "Boolean"
+      },
+      "required": true,
+      "label": {
+        "en": "hasSubscription"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "isSubscriptionProcessed",
+      "type": {
+        "name": "Boolean"
+      },
+      "required": true,
+      "label": {
+        "en": "isSubscriptionProcessed"
+      },
+      "inputHint": "SingleLine"
+    }
+  ]
+}
