@@ -45,28 +45,6 @@
       "inputHint": "SingleLine"
     },
     {
-      "name": "ordersCount",
-      "type": {
-        "name": "Number"
-      },
-      "required": true,
-      "label": {
-        "en": "ordersCount"
-      },
-      "inputHint": "SingleLine"
-    },
-    {
-      "name": "inventoryMode",
-      "type": {
-        "name": "String"
-      },
-      "required": true,
-      "label": {
-        "en": "inventoryMode"
-      },
-      "inputHint": "SingleLine"
-    },
-    {
       "name": "nextReminderDate",
       "type": {
         "name": "DateTime"
