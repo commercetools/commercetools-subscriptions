@@ -12,6 +12,7 @@ const subscriptionOrderType
   = await readAndParseJsonFile('./resources/subscription-order-type.json')
 
 async function ensureCustomTypes (ctpClient, logger) {
+  await mergeExistingTypesWithSubscriptionTypeDrafts(ctpClient)
   await syncCustomType(
     ctpClient,
     logger,
@@ -78,6 +79,21 @@ async function fetchTypeByKey (ctpClient, key) {
   } catch (err) {
     if (err.statusCode === 404) return null
     throw err
+  }
+}
+
+async function mergeExistingTypesWithSubscriptionTypeDrafts (ctpClient) {
+  const existingOrderTypeKey = process.env.EXISTING_ORDER_TYPE_KEY
+  if (existingOrderTypeKey) {
+    const existingOrderType = await fetchTypeByKey(ctpClient, existingOrderTypeKey)
+    if (existingOrderType)
+      checkoutOrderType.fieldDefinitions.push(...existingOrderType.fieldDefinitions)
+  }
+  const existingOrderLineItemTypeKey = process.env.EXISTING_ORDER_LINE_ITEM_TYPE_KEY
+  if (existingOrderLineItemTypeKey) {
+    const existingLineItemType = await fetchTypeByKey(ctpClient, existingOrderLineItemTypeKey)
+    if (existingLineItemType)
+      checkoutOrderLineItemType.fieldDefinitions.push(...existingLineItemType.fieldDefinitions)
   }
 }
 
