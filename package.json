@@ -8,8 +8,10 @@
     "test": "test"
   },
   "scripts": {
-    "test": "test",
+    "test": "npm run check && npm run cover:unit",
     "check": "npm run lint && prettier --check .",
+    "unit": "nyc mocha \"test/unit/**/*.spec.js\"",
+    "cover:unit": "nyc --silent npm run unit",
     "lint": "eslint --fix ./src ./test",
     "format": "prettier --write .",
     "setup-resources": "node ./src/setup/setup.js"
