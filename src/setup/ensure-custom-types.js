@@ -86,7 +86,7 @@ async function mergeExistingTypesWithSubscriptionTypeDrafts(ctpClient) {
     )
 
   const existingSubscriptionOrderTypeKey =
-    config.existingSubscriptionOrderTypeKey || config.existingOrderTypeKey
+    config.existingSubscriptionOrderTypeKey
   if (existingSubscriptionOrderTypeKey)
     await fetchAndExtendSubscriptionType(
       ctpClient,
