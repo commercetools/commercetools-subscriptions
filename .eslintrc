@@ -91,10 +91,7 @@
       2,
       "always"
     ],
-    "space-before-function-paren": [
-      2,
-      "always"
-    ],
+    "space-before-function-paren": "off",
     "no-warning-comments": [
       1,
       {

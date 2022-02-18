@@ -68,28 +68,43 @@ async function fetchTypeByKey(ctpClient, key) {
 
 async function mergeExistingTypesWithSubscriptionTypeDrafts(ctpClient) {
   const existingOrderTypeKey = process.env.EXISTING_ORDER_TYPE_KEY
-  if (existingOrderTypeKey) {
-    const existingOrderType = await fetchTypeByKey(
+  if (existingOrderTypeKey)
+    await fetchAndExtendSubscriptionType(
       ctpClient,
-      existingOrderTypeKey
+      existingOrderTypeKey,
+      checkoutOrderType
     )
-    if (existingOrderType)
-      checkoutOrderType.fieldDefinitions.push(
-        ...existingOrderType.fieldDefinitions
-      )
-  }
+
   const existingOrderLineItemTypeKey =
     process.env.EXISTING_ORDER_LINE_ITEM_TYPE_KEY
-  if (existingOrderLineItemTypeKey) {
-    const existingLineItemType = await fetchTypeByKey(
+  if (existingOrderLineItemTypeKey)
+    await fetchAndExtendSubscriptionType(
       ctpClient,
-      existingOrderLineItemTypeKey
+      existingOrderLineItemTypeKey,
+      checkoutOrderLineItemType
     )
-    if (existingLineItemType)
-      checkoutOrderLineItemType.fieldDefinitions.push(
-        ...existingLineItemType.fieldDefinitions
-      )
-  }
+
+  const existingSubscriptionOrderTypeKey =
+    process.env.EXISTING_SUBSCRIPTION_ORDER_TYPE_KEY ||
+    process.env.EXISTING_ORDER_TYPE_KEY
+  if (existingSubscriptionOrderTypeKey)
+    await fetchAndExtendSubscriptionType(
+      ctpClient,
+      existingSubscriptionOrderTypeKey,
+      subscriptionOrderType
+    )
+}
+
+async function fetchAndExtendSubscriptionType(
+  ctpClient,
+  existingTypeKey,
+  subscriptionTypeToExtend
+) {
+  const existingType = await fetchTypeByKey(ctpClient, existingTypeKey)
+  if (existingType)
+    subscriptionTypeToExtend.fieldDefinitions.push(
+      ...existingType.fieldDefinitions
+    )
 }
 
 export { ensureCustomTypes }

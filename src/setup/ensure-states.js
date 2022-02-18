@@ -33,11 +33,14 @@ async function ensureStates(ctpClient, logger) {
 
 async function syncState(ctpClient, logger, stateDraft) {
   try {
-    const existingState = await fetchStateByKey(ctpClient, stateDraft.key)
+    let existingState = await fetchStateByKey(ctpClient, stateDraft.key)
     if (existingState === null) {
       const stateInit = _.cloneDeep(stateDraft)
       delete stateInit.transitions
-      await ctpClient.states().post({ body: stateInit }).execute()
+      existingState = await ctpClient
+        .states()
+        .post({ body: stateInit })
+        .execute()
       await checkAndDoUpdates(ctpClient, logger, stateDraft, existingState)
       logger.info(`Successfully created the state (key=${stateDraft.key})`)
     } else {
