@@ -6,9 +6,7 @@
   "description": {
     "en": "Subscription template order definition"
   },
-  "resourceTypeIds": [
-    "order"
-  ],
+  "resourceTypeIds": ["order"],
   "fieldDefinitions": [
     {
       "name": "nextDeliveryDate",

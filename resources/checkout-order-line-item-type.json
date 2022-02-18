@@ -6,10 +6,7 @@
   "description": {
     "en": "Checkout order line item definition"
   },
-  "resourceTypeIds": [
-    "line-item",
-    "custom-line-item"
-  ],
+  "resourceTypeIds": ["line-item", "custom-line-item"],
   "fieldDefinitions": [
     {
       "name": "schedule",

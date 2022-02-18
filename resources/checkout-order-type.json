@@ -6,9 +6,7 @@
   "description": {
     "en": "Checkout order definition"
   },
-  "resourceTypeIds": [
-    "order"
-  ],
+  "resourceTypeIds": ["order"],
   "fieldDefinitions": [
     {
       "name": "hasSubscription",
