@@ -6,19 +6,19 @@ Resources below are required for the commercetools-subscriptions to operate corr
 
 ### Types
 
-1. [Checkout order type](../resources/checkout-order-type.json)
-1. [Checkout order line item type](../resources/checkout-order-line-item-type.json)
-1. [Subscription order type](../resources/subscription-order-type.json)
-1. [Subscription template order type](../resources/subscription-template-order-type.json)
+1. [Checkout order](../resources/checkout-order-type.json)
+1. [Checkout order line item](../resources/checkout-order-line-item-type.json)
+1. [Subscription order](../resources/subscription-order-type.json)
+1. [Subscription template order](../resources/subscription-template-order-type.json)
 
 ### States
 
-1. [Active state](../resources/active-state.json)
-1. [Cancelled state](../resources/cancelled-state.json)
-1. [Error state](../resources/error-state.json)
-1. [Paused state](../resources/paused-state.json)
-1. [Reminder sent state](../resources/reminder-sent-state.json)
-1. [Send reminder state](../resources/send-reminder-state.json)
+1. [Active](../resources/active-state.json)
+1. [Cancelled](../resources/cancelled-state.json)
+1. [Error](../resources/error-state.json)
+1. [Paused](../resources/paused-state.json)
+1. [Reminder sent](../resources/reminder-sent-state.json)
+1. [Send reminder](../resources/send-reminder-state.json)
 
 You can create these resources by running the command npm run setup-resources as below.
 
