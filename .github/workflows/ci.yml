@@ -1,0 +1,25 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests with node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    concurrency: build
+    runs-on: ubuntu-latest
+    env:
+      CTP_PROJECT_KEY: ctp-subscriptions-ci-it
+      CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
+      CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+      - run: npm ci
+      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "https:" "git+https:" --allowed-hosts npm github.com
+      - run: npm run check
+      - run: npm run test

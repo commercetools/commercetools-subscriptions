@@ -9,8 +9,11 @@ const logger = getLogger()
 logger.info(`${packageJson.name} started`)
 const startDate = new Date()
 try {
-  const { body: { key } } = await apiRoot.get()
-    .execute()
+  const {
+    body: { key },
+  } = await apiRoot.get().execute()
+
+  logger.info(key)
 
   const endDate = new Date()
   const executionTimeInSeconds = Math.floor(
