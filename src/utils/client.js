@@ -9,7 +9,7 @@ import { getClientConfig, getConcurrency, getPackageJson } from '../config.js'
 
 const packageJson = await getPackageJson()
 
-function createCtpClient ({
+function createCtpClient({
   clientId,
   clientSecret,
   projectKey,
@@ -55,7 +55,7 @@ function createCtpClient ({
 }
 
 let apiRoot
-export default function getApiRoot () {
+export default function getApiRoot() {
   if (apiRoot) return apiRoot
 
   const clientConfig = getClientConfig()

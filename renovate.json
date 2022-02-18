@@ -5,9 +5,8 @@
   "schedule": ["every weekend"],
   "groupName": "all",
   "docker": {
-    "enabled":  false
+    "enabled": false
   },
   "prConcurrentLimit": 10,
-  "packageRules": [
-  ]
+  "packageRules": []
 }
