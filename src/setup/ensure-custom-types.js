@@ -101,10 +101,16 @@ async function fetchAndExtendSubscriptionType(
   subscriptionTypeToExtend
 ) {
   const existingType = await fetchTypeByKey(ctpClient, existingTypeKey)
-  if (existingType)
-    subscriptionTypeToExtend.fieldDefinitions.push(
-      ...existingType.fieldDefinitions
+  if (existingType) {
+    const typeNames = subscriptionTypeToExtend.fieldDefinitions.map(
+      (fd) => fd.name
     )
+    subscriptionTypeToExtend.fieldDefinitions.push(
+      ...existingType.fieldDefinitions.filter(
+        (fd) => !typeNames.includes(fd.name)
+      )
+    )
+  }
 }
 
 export { ensureCustomTypes }
