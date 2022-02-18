@@ -27,7 +27,7 @@
       "type": {
         "name": "DateTime"
       },
-      "required": false,
+      "required": true,
       "label": {
         "en": "deliveryDate"
       },
