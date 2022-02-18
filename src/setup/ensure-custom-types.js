@@ -1,7 +1,7 @@
 import { createSyncTypes } from '@commercetools/sync-actions'
 import { serializeError } from 'serialize-error'
 import { readAndParseJsonFile } from '../utils/utils.js'
-import { getSubscriptionSetupConfig } from '../config'
+import { getSubscriptionSetupConfig } from '../config.js'
 
 const subscriptionTemplateOrderType = await readAndParseJsonFile(
   './resources/subscription-template-order-type.json'

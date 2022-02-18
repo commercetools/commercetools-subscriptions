@@ -37,10 +37,11 @@ async function syncState(ctpClient, logger, stateDraft) {
     if (existingState === null) {
       const stateInit = _.cloneDeep(stateDraft)
       delete stateInit.transitions
-      existingState = await ctpClient
+      const response = await ctpClient
         .states()
         .post({ body: stateInit })
         .execute()
+      existingState = response.body
       await checkAndDoUpdates(ctpClient, logger, stateDraft, existingState)
       logger.info(`Successfully created the state (key=${stateDraft.key})`)
     } else {
