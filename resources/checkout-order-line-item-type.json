@@ -6,10 +6,7 @@
   "description": {
     "en": "Checkout order line item definition"
   },
-  "resourceTypeIds": [
-    "line-item",
-    "custom-line-item"
-  ],
+  "resourceTypeIds": ["line-item", "custom-line-item"],
   "fieldDefinitions": [
     {
       "name": "schedule",
@@ -18,7 +15,7 @@
       },
       "required": true,
       "label": {
-        "en": "schedule"
+        "en": "schedule (cron tab)"
       },
       "inputHint": "SingleLine"
     },
@@ -40,7 +37,7 @@
       },
       "required": true,
       "label": {
-        "en": "subscriptionKey"
+        "en": "unique subscriptionKey"
       },
       "inputHint": "SingleLine"
     },

@@ -6,9 +6,7 @@
   "description": {
     "en": "Subscription order definition"
   },
-  "resourceTypeIds": [
-    "order"
-  ],
+  "resourceTypeIds": ["order"],
   "fieldDefinitions": [
     {
       "name": "subscriptionTemplateOrderRef",
@@ -27,7 +25,7 @@
       "type": {
         "name": "DateTime"
       },
-      "required": false,
+      "required": true,
       "label": {
         "en": "deliveryDate"
       },
