@@ -13,8 +13,6 @@ jobs:
       CTP_PROJECT_KEY: ctp-subscriptions-ci-it
       CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
       CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
-      EXISTING_ORDER_TYPE_KEY: checkout-order
-      EXISTING_ORDER_LINE_ITEM_TYPE_KEY: checkout-order-line-item
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 14.x
