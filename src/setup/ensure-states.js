@@ -35,8 +35,10 @@ async function syncState (ctpClient, logger, stateDraft) {
         .execute()
       await checkAndDoUpdates(ctpClient, logger, stateDraft, existingState)
       logger.info(`Successfully created the state (key=${stateDraft.key})`)
-    } else
+    } else {
+      removeTransitions(existingState, stateDraft)
       await checkAndDoUpdates(ctpClient, logger, stateDraft, existingState)
+    }
   } catch (err) {
     throw Error(
       `Failed to sync state (key=${stateDraft.key}). ` +
@@ -46,8 +48,6 @@ async function syncState (ctpClient, logger, stateDraft) {
 }
 
 async function checkAndDoUpdates (ctpClient, logger, stateDraft, existingState) {
-  if (existingState)
-    removeTransitions(existingState, stateDraft)
   const syncStates = createSyncStates()
   const updateActions = syncStates
     .buildActions(stateDraft, existingState)
