@@ -20,7 +20,7 @@ Resources below are required for the commercetools-subscriptions to operate corr
 1. [Reminder sent](../resources/reminder-sent-state.json)
 1. [Send reminder](../resources/send-reminder-state.json)
 
-You can create these resources by running the command npm run setup-resources as below.
+You can create these resources by running the command `npm run setup-resources` as below.
 
 ```
 export CTP_PROJECT_KEY=xxx
