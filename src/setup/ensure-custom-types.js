@@ -1,6 +1,7 @@
 import { createSyncTypes } from '@commercetools/sync-actions'
 import { serializeError } from 'serialize-error'
 import { readAndParseJsonFile } from '../utils/utils.js'
+import { getSubscriptionSetupConfig } from '../config'
 
 const subscriptionTemplateOrderType = await readAndParseJsonFile(
   './resources/subscription-template-order-type.json'
@@ -67,7 +68,8 @@ async function fetchTypeByKey(ctpClient, key) {
 }
 
 async function mergeExistingTypesWithSubscriptionTypeDrafts(ctpClient) {
-  const existingOrderTypeKey = process.env.EXISTING_ORDER_TYPE_KEY
+  const config = getSubscriptionSetupConfig()
+  const existingOrderTypeKey = config.existingOrderTypeKey
   if (existingOrderTypeKey)
     await fetchAndExtendSubscriptionType(
       ctpClient,
@@ -75,8 +77,7 @@ async function mergeExistingTypesWithSubscriptionTypeDrafts(ctpClient) {
       checkoutOrderType
     )
 
-  const existingOrderLineItemTypeKey =
-    process.env.EXISTING_ORDER_LINE_ITEM_TYPE_KEY
+  const existingOrderLineItemTypeKey = config.existingOrderLineItemKey
   if (existingOrderLineItemTypeKey)
     await fetchAndExtendSubscriptionType(
       ctpClient,
@@ -85,8 +86,7 @@ async function mergeExistingTypesWithSubscriptionTypeDrafts(ctpClient) {
     )
 
   const existingSubscriptionOrderTypeKey =
-    process.env.EXISTING_SUBSCRIPTION_ORDER_TYPE_KEY ||
-    process.env.EXISTING_ORDER_TYPE_KEY
+    config.existingSubscriptionOrderTypeKey || config.existingOrderTypeKey
   if (existingSubscriptionOrderTypeKey)
     await fetchAndExtendSubscriptionType(
       ctpClient,
