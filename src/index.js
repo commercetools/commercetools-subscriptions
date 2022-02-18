@@ -12,6 +12,8 @@ try {
   const { body: { key } } = await apiRoot.get()
     .execute()
 
+  logger.info(key)
+
   const endDate = new Date()
   const executionTimeInSeconds = Math.floor(
     Math.abs(endDate - startDate) / 1000
