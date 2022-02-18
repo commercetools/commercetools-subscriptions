@@ -37,7 +37,7 @@
       },
       "required": true,
       "label": {
-        "en": "subscriptionKey"
+        "en": "unique subscriptionKey"
       },
       "inputHint": "SingleLine"
     },
