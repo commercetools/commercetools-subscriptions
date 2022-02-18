@@ -1,0 +1,68 @@
+{
+  "key": "subscription-template-order",
+  "name": {
+    "en": "Subscription template order"
+  },
+  "description": {
+    "en": "Subscription template order definition"
+  },
+  "resourceTypeIds": ["order"],
+  "fieldDefinitions": [
+    {
+      "name": "nextDeliveryDate",
+      "type": {
+        "name": "DateTime"
+      },
+      "required": true,
+      "label": {
+        "en": "nextDeliveryDate"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "schedule",
+      "type": {
+        "name": "String"
+      },
+      "required": true,
+      "label": {
+        "en": "schedule"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "checkoutOrderRef",
+      "type": {
+        "name": "Reference",
+        "referenceTypeId": "order"
+      },
+      "required": true,
+      "label": {
+        "en": "checkoutOrderRef"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "nextReminderDate",
+      "type": {
+        "name": "DateTime"
+      },
+      "required": false,
+      "label": {
+        "en": "nextReminderDate"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "reminderDays",
+      "type": {
+        "name": "Number"
+      },
+      "required": false,
+      "label": {
+        "en": "reminderDays"
+      },
+      "inputHint": "SingleLine"
+    }
+  ]
+}

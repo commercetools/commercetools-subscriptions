@@ -1,0 +1,15 @@
+{
+  "key": "Error",
+  "type": "OrderState",
+  "roles": [],
+  "name": {
+    "en": "Error"
+  },
+  "transitions": [
+    {
+      "typeId": "state",
+      "key": "Active"
+    }
+  ],
+  "initial": false
+}

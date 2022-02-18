@@ -1,0 +1,23 @@
+{
+  "key": "Paused",
+  "type": "OrderState",
+  "roles": [],
+  "name": {
+    "en": "Paused"
+  },
+  "transitions": [
+    {
+      "typeId": "state",
+      "key": "Active"
+    },
+    {
+      "typeId": "state",
+      "key": "Cancelled"
+    },
+    {
+      "typeId": "state",
+      "key": "Error"
+    }
+  ],
+  "initial": false
+}

@@ -1,0 +1,15 @@
+{
+  "key": "Cancelled",
+  "type": "OrderState",
+  "roles": [],
+  "name": {
+    "en": "Cancelled"
+  },
+  "transitions": [
+    {
+      "typeId": "state",
+      "key": "Active"
+    }
+  ],
+  "initial": false
+}

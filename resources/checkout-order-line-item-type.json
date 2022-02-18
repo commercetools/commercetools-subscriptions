@@ -1,0 +1,67 @@
+{
+  "key": "checkout-order-line-item",
+  "name": {
+    "en": "Checkout order line item"
+  },
+  "description": {
+    "en": "Checkout order line item definition"
+  },
+  "resourceTypeIds": ["line-item", "custom-line-item"],
+  "fieldDefinitions": [
+    {
+      "name": "schedule",
+      "type": {
+        "name": "String"
+      },
+      "required": true,
+      "label": {
+        "en": "schedule (cron tab)"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "isSubscription",
+      "type": {
+        "name": "Boolean"
+      },
+      "required": true,
+      "label": {
+        "en": "isSubscription"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "subscriptionKey",
+      "type": {
+        "name": "String"
+      },
+      "required": true,
+      "label": {
+        "en": "unique subscriptionKey"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "reminderDays",
+      "type": {
+        "name": "Number"
+      },
+      "required": false,
+      "label": {
+        "en": "reminderDays"
+      },
+      "inputHint": "SingleLine"
+    },
+    {
+      "name": "cutoffDays",
+      "type": {
+        "name": "Number"
+      },
+      "required": false,
+      "label": {
+        "en": "cutoffDays"
+      },
+      "inputHint": "SingleLine"
+    }
+  ]
+}
