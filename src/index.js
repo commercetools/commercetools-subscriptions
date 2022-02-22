@@ -1,19 +1,14 @@
 import getLogger from './utils/logger.js'
 import { getPackageJson } from './config.js'
-import getApiRoot from './utils/client.js'
+import { run } from './runner.js'
 
 const packageJson = await getPackageJson()
-const apiRoot = getApiRoot()
 
 const logger = getLogger()
 logger.info(`${packageJson.name} started`)
 const startDate = new Date()
 try {
-  const {
-    body: { key },
-  } = await apiRoot.get().execute()
-
-  logger.info(key)
+  await run()
 
   const endDate = new Date()
   const executionTimeInSeconds = Math.floor(

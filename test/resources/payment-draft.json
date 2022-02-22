@@ -1,0 +1,15 @@
+{
+  "amountPlanned": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 795,
+    "fractionDigits": 2
+  },
+  "paymentMethodInfo": {
+    "paymentInterface": "ctp-adyen-integration",
+    "method": "creditCard",
+    "name": {
+      "de": "Adyen credit card"
+    }
+  }
+}

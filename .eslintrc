@@ -5,7 +5,11 @@
   ],
   "globals": {
     "describe": "readonly",
-    "it": "readonly"
+    "it": "readonly",
+    "before": "readonly",
+    "beforeEach": "readonly",
+    "after": "readonly",
+    "afterEach": "readonly"
   },
   "env": {
     "node": true

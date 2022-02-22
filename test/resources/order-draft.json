@@ -1,0 +1,52 @@
+{
+  "orderNumber": "10000",
+  "paymentState": "Paid",
+  "orderState": "Complete",
+  "customerEmail": "test@test.com",
+  "totalPrice": {
+    "currencyCode": "EUR",
+    "centAmount": 18000
+  },
+  "lineItems": [
+    {
+      "name": {
+        "en": "Wine subscription"
+      },
+      "variant": {
+        "sku": "wine01"
+      },
+      "price": {
+        "value": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 18000,
+          "fractionDigits": 2
+        },
+        "country": "DE"
+      },
+      "quantity": 1,
+      "custom": {
+        "type": {
+          "typeId": "type",
+          "key": "checkout-order-line-item"
+        },
+        "fields": {
+          "cutoffDays": 5,
+          "reminderDays": 5,
+          "subscriptionKey": "",
+          "isSubscription": true,
+          "schedule": "*/5 * * * *"
+        }
+      }
+    }
+  ],
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "key": "checkout-order"
+    },
+    "fields": {
+      "hasSubscription": true
+    }
+  }
+}

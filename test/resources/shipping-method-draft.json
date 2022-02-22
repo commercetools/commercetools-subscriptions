@@ -1,0 +1,34 @@
+{
+  "key": "test-shipping-method-key",
+  "name": "de",
+  "description": "DHL",
+  "taxCategory": {
+    "typeId": "tax-category",
+    "id": "56a769df-e4d8-4bcc-88b9-9e74f56b490b"
+  },
+  "zoneRates": [
+    {
+      "zone": {
+        "typeId": "zone",
+        "id": "94109ff1-0ef5-4f48-8020-31d67a5d1677"
+      },
+      "shippingRates": [
+        {
+          "price": {
+            "type": "centPrecision",
+            "currencyCode": "EUR",
+            "centAmount": 790,
+            "fractionDigits": 2
+          },
+          "freeAbove": {
+            "type": "centPrecision",
+            "currencyCode": "EUR",
+            "centAmount": 9900,
+            "fractionDigits": 2
+          },
+          "tiers": []
+        }
+      ]
+    }
+  ]
+}

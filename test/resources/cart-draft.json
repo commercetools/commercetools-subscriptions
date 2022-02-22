@@ -1,0 +1,40 @@
+{
+  "customerEmail": "test@test.com",
+  "country": "DE",
+  "lineItems": [
+    {
+      "productId": "productId",
+      "quantity": 2
+    }
+  ],
+  "currency": "EUR",
+  "shippingAddress": {
+    "salutation": "mr",
+    "firstName": "Shipping",
+    "lastName": "Address",
+    "streetName": "ShippingStreet",
+    "streetNumber": "1",
+    "postalCode": "54321",
+    "city": "Köln",
+    "country": "DE",
+    "additionalAddressInfo": ""
+  },
+  "billingAddress": {
+    "salutation": "mr",
+    "firstName": "Billing",
+    "lastName": "Address",
+    "streetName": "Vogelsanger Straße",
+    "streetNumber": "123",
+    "postalCode": "50827",
+    "city": "Köln",
+    "country": "DE",
+    "phone": "0123456789",
+    "email": "billing.address@test.com",
+    "additionalAddressInfo": "Vogelsanger Straße"
+  },
+  "shippingMethod": {
+    "typeId": "shipping-method",
+    "id": "to-be-replaced"
+  },
+  "custom": {}
+}

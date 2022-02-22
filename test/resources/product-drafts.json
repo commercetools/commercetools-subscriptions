@@ -1,0 +1,35 @@
+[
+  {
+    "key": "product-1",
+    "productType": {
+      "typeId": "product-type",
+      "key": "mainProductType"
+    },
+    "name": {
+      "en": "Wine subscription"
+    },
+    "categoryOrderHints": {},
+    "slug": {
+      "en": "wine-subscription"
+    },
+    "masterVariant": {
+      "id": 1,
+      "sku": "wine01",
+      "prices": [
+        {
+          "value": {
+            "type": "centPrecision",
+            "currencyCode": "EUR",
+            "centAmount": 18000,
+            "fractionDigits": 2
+          },
+          "country": "DE"
+        }
+      ]
+    },
+    "taxCategory": {
+      "typeId": "tax-category",
+      "key": "test-tax-category"
+    }
+  }
+]
