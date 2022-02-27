@@ -1,6 +1,6 @@
 import { ensureCustomTypes } from './ensure-custom-types.js'
 import { ensureStates } from './ensure-states.js'
-import getApiRoot from '../utils/client.js'
+import { getApiRoot } from '../utils/client.js'
 import getLogger from '../utils/logger.js'
 
 export default async function setupSubscriptionResources() {
