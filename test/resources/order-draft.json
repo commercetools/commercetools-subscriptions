@@ -35,7 +35,7 @@
           "reminderDays": 5,
           "subscriptionKey": "",
           "isSubscription": true,
-          "schedule": "*/5 * * * *"
+          "schedule": "0 0 1 Feb,May,Aug,Nov *"
         }
       }
     }

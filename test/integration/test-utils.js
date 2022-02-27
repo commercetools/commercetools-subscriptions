@@ -13,7 +13,6 @@ const productTypeDraft = await readAndParseJsonFile(
 const productDrafts = await readAndParseJsonFile(
   'test/resources/product-drafts.json'
 )
-const cartDraft = await readAndParseJsonFile('test/resources/cart-draft.json')
 const shippingMethodDraft = await readAndParseJsonFile(
   'test/resources/shipping-method-draft.json'
 )
@@ -176,24 +175,6 @@ async function createAndPublishProduct(apiRoot, productDraft) {
   ).body
 }
 
-async function createCart(
-  apiRoot,
-  shippingMethodId,
-  productIds,
-  customerEmail = 'test@test.com'
-) {
-  for (let i = 0; i < cartDraft.lineItems.length; i++)
-    cartDraft.lineItems[i].productId = productIds[i]
-
-  cartDraft.customerEmail = customerEmail
-  cartDraft.shippingMethod.id = shippingMethodId
-  const { body: cart } = await apiRoot
-    .carts()
-    .post({ body: cartDraft })
-    .execute()
-  return cart
-}
-
 async function createPayment(apiRoot) {
   const payment = (
     await apiRoot
@@ -209,7 +190,8 @@ async function createPayment(apiRoot) {
 async function createOrder(apiRoot, logger, paymentId, orderNumber) {
   orderDraft.orderNumber = orderNumber
   orderDraft.lineItems.forEach(
-    (lineItem) => (lineItem.custom.fields.subscriptionKey = orderNumber)
+    (lineItem) =>
+      (lineItem.custom.fields.subscriptionKey = `${orderNumber}_subscriptionKey`)
   )
   let order
   try {
@@ -259,4 +241,9 @@ async function fetchOrderByOrderNumber(apiRoot, orderNumber) {
   return order
 }
 
-export { ensureResources, createOrderByOrderNumber }
+function isValidDate(d) {
+  // eslint-disable-next-line no-restricted-globals
+  return d instanceof Date && !isNaN(d)
+}
+
+export { ensureResources, createOrderByOrderNumber, isValidDate }
