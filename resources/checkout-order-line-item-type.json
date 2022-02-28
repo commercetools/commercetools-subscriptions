@@ -13,7 +13,7 @@
       "type": {
         "name": "String"
       },
-      "required": true,
+      "required": false,
       "label": {
         "en": "schedule (cron tab)"
       },
@@ -24,7 +24,7 @@
       "type": {
         "name": "Boolean"
       },
-      "required": true,
+      "required": false,
       "label": {
         "en": "isSubscription"
       },
@@ -35,7 +35,7 @@
       "type": {
         "name": "String"
       },
-      "required": true,
+      "required": false,
       "label": {
         "en": "unique subscriptionKey"
       },

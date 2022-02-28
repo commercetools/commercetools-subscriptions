@@ -2,10 +2,16 @@ import pMap from 'p-map'
 import parser from 'cron-parser'
 import _ from 'lodash'
 import VError from 'verror'
+import { serializeError } from 'serialize-error'
 import { getApiRoot, getCtpClient } from './utils/client.js'
+import getLogger from './utils/logger.js'
 
 const apiRoot = getApiRoot()
 const ctpClient = getCtpClient()
+const logger = getLogger()
+
+const LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER = 'commercetools-subscriptions'
+const LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY = 'subscriptions-lastStartTimestamp'
 
 async function _fetchLastStartTimestamp() {
   try {
@@ -13,8 +19,8 @@ async function _fetchLastStartTimestamp() {
       await apiRoot
         .customObjects()
         .withContainerAndKey({
-          container: 'commercetools-subscriptions',
-          key: 'subscriptions-lastStartTimestamp',
+          container: LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER,
+          key: LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY,
         })
         .get()
         .execute()
@@ -127,17 +133,23 @@ async function _setCheckoutOrderProcessed(checkoutOrder) {
 }
 
 async function _processCheckoutOrder(checkoutOrder) {
-  const templateOrderDrafts = _generateTemplateOrderDrafts(checkoutOrder)
+  try {
+    const templateOrderDrafts = _generateTemplateOrderDrafts(checkoutOrder)
 
-  await pMap(
-    templateOrderDrafts,
-    async (templateOrderDraft) => {
-      await _createTemplateOrderAndPayments(checkoutOrder, templateOrderDraft)
-    },
-    { concurrency: 3 }
-  )
+    await pMap(
+      templateOrderDrafts,
+      async (templateOrderDraft) => {
+        await _createTemplateOrderAndPayments(checkoutOrder, templateOrderDraft)
+      },
+      { concurrency: 3 }
+    )
 
-  await _setCheckoutOrderProcessed(checkoutOrder)
+    await _setCheckoutOrderProcessed(checkoutOrder)
+  } catch (err) {
+    logger.error(`Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. `
+      + 'Skipping this checkout order'
+      + ` Error: ${JSON.stringify(serializeError(err))}`)
+  }
 }
 
 function isDuplicateOrderError(e) {
@@ -234,7 +246,7 @@ function _createPaymentDraft(payment) {
   return paymentDraft
 }
 
-async function _buildFetchUri() {
+async function _buildFetchCheckoutOrdersUri() {
   let where =
     'custom(fields(hasSubscription=true)) AND custom(fields(isSubscriptionProcessed is not defined))'
   const lastStartTimestamp = await _fetchLastStartTimestamp()
@@ -252,8 +264,8 @@ async function _updateLastStartTimestamp(startDate) {
     .customObjects()
     .post({
       body: {
-        container: 'commercetools-subscriptions',
-        key: 'subscriptions-lastStartTimestamp',
+        container: LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER,
+        key: LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY,
         value: startDate.toISOString(),
       },
     })
@@ -261,7 +273,7 @@ async function _updateLastStartTimestamp(startDate) {
 }
 
 async function createTemplateOrders(startDate) {
-  const uri = await _buildFetchUri()
+  const uri = await _buildFetchCheckoutOrdersUri()
 
   const processCheckoutOrderPromises = []
   await ctpClient.fetchBatches(uri, (results) => {
