@@ -168,7 +168,10 @@ function isDuplicateOrderError(e) {
 
 function _generateTemplateOrderDrafts(checkoutOrder) {
   const orderDrafts = []
-  for (const lineItem of checkoutOrder.lineItems)
+  const subscriptionLineItems = checkoutOrder.lineItems.filter(
+    (lineItem) => lineItem.custom?.fields?.isSubscription
+  )
+  for (const lineItem of subscriptionLineItems)
     if (lineItem.quantity > 1)
       for (let i = 0; i < lineItem.quantity; i++) {
         const templateOrderDraft = _generateTemplateOrderImportDraft(
