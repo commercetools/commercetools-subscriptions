@@ -39,6 +39,7 @@ describe('runner', () => {
       .get({
         queryArgs: {
           where: `custom(fields(checkoutOrderRef(id="${checkoutOrder.id}")))`,
+          expand: 'paymentInfo.payments[*]',
         },
       })
       .execute()
@@ -47,15 +48,35 @@ describe('runner', () => {
     assertCustomFieldsEqual(checkoutOrder, templateOrder)
     assertLineItemsEqual(checkoutOrder, templateOrder)
     assertTemplateOrderCustomFields(checkoutOrder, templateOrder)
-
     const { body: checkoutOrderUpdated } = await apiRoot
       .orders()
       .withId({ ID: checkoutOrder.id })
-      .get()
+      .get({
+        queryArgs: {
+          expand: 'paymentInfo.payments[*]',
+        },
+      })
       .execute()
+    assertPayments(checkoutOrderUpdated, templateOrder)
     expect(checkoutOrderUpdated.custom.fields.isSubscriptionProcessed).to.be
       .true
   })
+
+  function assertPayments(checkoutOrder, templateOrder) {
+    const checkoutOrderPayment = _.cloneDeep(
+      checkoutOrder.paymentInfo.payments[0].obj
+    )
+    const templateOrderPayment = _.cloneDeep(
+      templateOrder.paymentInfo.payments[0].obj
+    )
+    delete checkoutOrderPayment.id
+    delete checkoutOrderPayment.createdAt
+    delete checkoutOrderPayment.lastModifiedAt
+    delete templateOrderPayment.id
+    delete templateOrderPayment.createdAt
+    delete templateOrderPayment.lastModifiedAt
+    expect(checkoutOrderPayment).to.deep.equal(templateOrderPayment)
+  }
 
   function assertCustomFieldsEqual(checkoutOrder, templateOrder) {
     const checkoutOrderCustomFields = _.cloneDeep(checkoutOrder.custom.fields)
@@ -64,8 +85,8 @@ describe('runner', () => {
     expect(templateOrder.custom.fields).to.include(checkoutOrderCustomFields)
   }
 
-  function assertLineItemsEqual(checkoutOrderUpdated, templateOrder) {
-    const checkoutOrderLineItem = _.cloneDeep(checkoutOrderUpdated.lineItems[0])
+  function assertLineItemsEqual(checkoutOrder, templateOrder) {
+    const checkoutOrderLineItem = _.cloneDeep(checkoutOrder.lineItems[0])
     delete checkoutOrderLineItem.addedAt
     delete checkoutOrderLineItem.id
     delete checkoutOrderLineItem.lastModifiedAt
