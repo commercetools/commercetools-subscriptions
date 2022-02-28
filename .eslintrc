@@ -116,6 +116,7 @@
           "**/*.spec.js"
         ]
       }
-    ]
+    ],
+    "no-return-assign": [2, "except-parens"]
   }
 }
