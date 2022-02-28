@@ -10,8 +10,10 @@ const apiRoot = getApiRoot()
 const ctpClient = getCtpClient()
 const logger = getLogger()
 
-const LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER = 'commercetools-subscriptions'
-const LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY = 'subscriptions-lastStartTimestamp'
+const LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER =
+  'commercetools-subscriptions'
+const LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY =
+  'subscriptions-lastStartTimestamp'
 
 async function _fetchLastStartTimestamp() {
   try {
@@ -146,9 +148,11 @@ async function _processCheckoutOrder(checkoutOrder) {
 
     await _setCheckoutOrderProcessed(checkoutOrder)
   } catch (err) {
-    logger.error(`Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. `
-      + 'Skipping this checkout order'
-      + ` Error: ${JSON.stringify(serializeError(err))}`)
+    logger.error(
+      `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
+        'Skipping this checkout order' +
+        ` Error: ${JSON.stringify(serializeError(err))}`
+    )
   }
 }
 
