@@ -9,7 +9,9 @@ async function run() {
   logger.info(`${packageJson.name} started`)
 
   const stats = await createTemplateOrders(startDate)
-  logger.info(`Creating template orders process finished: ${JSON.stringify(stats)}`)
+  logger.info(
+    `Creating template orders process finished: ${JSON.stringify(stats)}`
+  )
 
   const endDate = new Date()
   const executionTimeInSeconds = Math.floor(

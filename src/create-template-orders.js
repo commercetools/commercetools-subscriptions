@@ -22,7 +22,7 @@ const stats = {
   processedCheckoutOrders: 0,
   createdTemplateOrders: 0,
   errorCheckoutOrders: 0,
-  duplicatedTemplateOrderCreation: 0
+  duplicatedTemplateOrderCreation: 0,
 }
 
 async function createTemplateOrders(startDate) {
@@ -72,8 +72,8 @@ async function _processCheckoutOrder(checkoutOrder) {
     stats.errorCheckoutOrders++
     logger.error(
       `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
-      'Skipping this checkout order' +
-      ` Error: ${JSON.stringify(serializeError(err))}`
+        'Skipping this checkout order' +
+        ` Error: ${JSON.stringify(serializeError(err))}`
     )
   }
 }
@@ -148,8 +148,7 @@ async function _addPaymentWithRetry(
           )
         }
         version = currentVersion
-      } else
-        throw err
+      } else throw err
     }
 }
 
