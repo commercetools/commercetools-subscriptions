@@ -15,6 +15,9 @@ const LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER =
 const LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY =
   'subscriptions-lastStartTimestamp'
 
+// to address all the write inconsistencies when writing to database
+const INCONSISTENCY_MS = 3 * 60 * 1000
+
 async function createTemplateOrders(startDate) {
   const uri = await _buildFetchCheckoutOrdersUri()
 
@@ -64,13 +67,14 @@ async function _processCheckoutOrder(checkoutOrder) {
 }
 
 async function _updateLastStartTimestamp(startDate) {
+  const lastStartTimestamp = new Date(startDate.getTime() - INCONSISTENCY_MS)
   await apiRoot
     .customObjects()
     .post({
       body: {
         container: LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER,
         key: LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY,
-        value: startDate.toISOString(),
+        value: lastStartTimestamp.toISOString(),
       },
     })
     .execute()
