@@ -18,17 +18,27 @@ const LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY =
 // to address all the write inconsistencies when writing to database
 const INCONSISTENCY_MS = 3 * 60 * 1000
 
+const stats = {
+  processedCheckoutOrders: 0,
+  createdTemplateOrders: 0,
+  errorCheckoutOrders: 0,
+  duplicatedTemplateOrderCreation: 0
+}
+
 async function createTemplateOrders(startDate) {
   const uri = await _buildFetchCheckoutOrdersUri()
 
   const processCheckoutOrderPromises = []
   await ctpClient.fetchBatches(uri, (results) => {
+    stats.processedCheckoutOrders += results.length
     for (const order of results)
       processCheckoutOrderPromises.push(_processCheckoutOrder(order))
   })
   await pMap(processCheckoutOrderPromises, (f) => f, { concurrency: 3 })
 
   await _updateLastStartTimestamp(startDate)
+
+  return stats
 }
 
 async function _buildFetchCheckoutOrdersUri() {
@@ -52,12 +62,14 @@ async function _processCheckoutOrder(checkoutOrder) {
       templateOrderDrafts,
       async (templateOrderDraft) => {
         await _createTemplateOrderAndPayments(checkoutOrder, templateOrderDraft)
+        stats.createdTemplateOrders++
       },
       { concurrency: 3 }
     )
 
     await _setCheckoutOrderProcessed(checkoutOrder)
   } catch (err) {
+    stats.errorCheckoutOrders++
     logger.error(
       `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
       'Skipping this checkout order' +
@@ -179,6 +191,7 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
         ` Line item: ${JSON.stringify(orderDraft.lineItems)}`
       throw new VError(err, errMsg)
     }
+    stats.duplicatedTemplateOrderCreation++
   }
 }
 
