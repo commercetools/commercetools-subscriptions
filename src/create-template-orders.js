@@ -15,6 +15,67 @@ const LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER =
 const LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY =
   'subscriptions-lastStartTimestamp'
 
+async function createTemplateOrders(startDate) {
+  const uri = await _buildFetchCheckoutOrdersUri()
+
+  const processCheckoutOrderPromises = []
+  await ctpClient.fetchBatches(uri, (results) => {
+    for (const order of results)
+      processCheckoutOrderPromises.push(_processCheckoutOrder(order))
+  })
+  await pMap(processCheckoutOrderPromises, (f) => f, { concurrency: 3 })
+
+  await _updateLastStartTimestamp(startDate)
+}
+
+async function _buildFetchCheckoutOrdersUri() {
+  let where =
+    'custom(fields(hasSubscription=true)) AND custom(fields(isSubscriptionProcessed is not defined))'
+  const lastStartTimestamp = await _fetchLastStartTimestamp()
+  if (lastStartTimestamp)
+    where = `createdAt > "${lastStartTimestamp.value}" AND ${where}`
+
+  const uri = ctpClient.builder.orders
+    .where(where)
+    .expand('paymentInfo.payments[*]')
+  return uri
+}
+
+async function _processCheckoutOrder(checkoutOrder) {
+  try {
+    const templateOrderDrafts = _generateTemplateOrderDrafts(checkoutOrder)
+
+    await pMap(
+      templateOrderDrafts,
+      async (templateOrderDraft) => {
+        await _createTemplateOrderAndPayments(checkoutOrder, templateOrderDraft)
+      },
+      { concurrency: 3 }
+    )
+
+    await _setCheckoutOrderProcessed(checkoutOrder)
+  } catch (err) {
+    logger.error(
+      `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
+      'Skipping this checkout order' +
+      ` Error: ${JSON.stringify(serializeError(err))}`
+    )
+  }
+}
+
+async function _updateLastStartTimestamp(startDate) {
+  await apiRoot
+    .customObjects()
+    .post({
+      body: {
+        container: LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER,
+        key: LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY,
+        value: startDate.toISOString(),
+      },
+    })
+    .execute()
+}
+
 async function _fetchLastStartTimestamp() {
   try {
     return (
@@ -105,7 +166,7 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
     if (addPaymentActions)
       await _addPaymentWithRetry(templateOrder, addPaymentActions)
   } catch (err) {
-    if (!isDuplicateOrderError(err)) {
+    if (!_isDuplicateOrderError(err)) {
       const errMsg =
         `Unexpected error on creating template order from checkout order with number: ${checkoutOrder.orderNumber}.` +
         ` Line item: ${JSON.stringify(orderDraft.lineItems)}`
@@ -134,29 +195,7 @@ async function _setCheckoutOrderProcessed(checkoutOrder) {
     .execute()
 }
 
-async function _processCheckoutOrder(checkoutOrder) {
-  try {
-    const templateOrderDrafts = _generateTemplateOrderDrafts(checkoutOrder)
-
-    await pMap(
-      templateOrderDrafts,
-      async (templateOrderDraft) => {
-        await _createTemplateOrderAndPayments(checkoutOrder, templateOrderDraft)
-      },
-      { concurrency: 3 }
-    )
-
-    await _setCheckoutOrderProcessed(checkoutOrder)
-  } catch (err) {
-    logger.error(
-      `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
-        'Skipping this checkout order' +
-        ` Error: ${JSON.stringify(serializeError(err))}`
-    )
-  }
-}
-
-function isDuplicateOrderError(e) {
+function _isDuplicateOrderError(e) {
   return (
     e.code === 400 &&
     e.body?.errors?.length === 1 &&
@@ -251,45 +290,6 @@ function _createPaymentDraft(payment) {
   const paymentDraft = _.cloneDeep(payment)
   delete paymentDraft.key
   return paymentDraft
-}
-
-async function _buildFetchCheckoutOrdersUri() {
-  let where =
-    'custom(fields(hasSubscription=true)) AND custom(fields(isSubscriptionProcessed is not defined))'
-  const lastStartTimestamp = await _fetchLastStartTimestamp()
-  if (lastStartTimestamp)
-    where = `createdAt > "${lastStartTimestamp.value}" AND ${where}`
-
-  const uri = ctpClient.builder.orders
-    .where(where)
-    .expand('paymentInfo.payments[*]')
-  return uri
-}
-
-async function _updateLastStartTimestamp(startDate) {
-  await apiRoot
-    .customObjects()
-    .post({
-      body: {
-        container: LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER,
-        key: LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY,
-        value: startDate.toISOString(),
-      },
-    })
-    .execute()
-}
-
-async function createTemplateOrders(startDate) {
-  const uri = await _buildFetchCheckoutOrdersUri()
-
-  const processCheckoutOrderPromises = []
-  await ctpClient.fetchBatches(uri, (results) => {
-    for (const order of results)
-      processCheckoutOrderPromises.push(_processCheckoutOrder(order))
-  })
-  await pMap(processCheckoutOrderPromises, (f) => f, { concurrency: 3 })
-
-  await _updateLastStartTimestamp(startDate)
 }
 
 export { createTemplateOrders }
