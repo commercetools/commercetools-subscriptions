@@ -115,22 +115,25 @@ async function _addPaymentWithRetry(
         .execute()
       break
     } catch (err) {
-      retryCount += 1
-      const currentVersion = err.body.errors[0].currentVersion
-      if (retryCount > maxRetry) {
-        const retryMessage =
-          'Got a concurrent modification error' +
-          ` when creating template order with number "${templateOrder.orderNumber}".` +
-          ` Version tried "${version}",` +
-          ` currentVersion: "${currentVersion}".`
-        throw new VError(
-          err,
-          `${retryMessage} Won't retry again` +
-            ` because of a reached limit ${maxRetry}` +
-            ' max retries.'
-        )
-      }
-      version = currentVersion
+      if (err.statusCode === 409) {
+        retryCount += 1
+        const currentVersion = err.body.errors[0].currentVersion
+        if (retryCount > maxRetry) {
+          const retryMessage =
+            'Got a concurrent modification error' +
+            ` when creating template order with number "${templateOrder.orderNumber}".` +
+            ` Version tried "${version}",` +
+            ` currentVersion: "${currentVersion}".`
+          throw new VError(
+            err,
+            `${retryMessage} Won't retry again` +
+              ` because of a reached limit ${maxRetry}` +
+              ' max retries.'
+          )
+        }
+        version = currentVersion
+      } else
+        throw err
     }
 }
 
