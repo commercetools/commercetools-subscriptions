@@ -28,13 +28,10 @@ const stats = {
 async function createTemplateOrders(startDate) {
   const uri = await _buildFetchCheckoutOrdersUri()
 
-  const processCheckoutOrderPromises = []
-  await ctpClient.fetchBatches(uri, (results) => {
-    stats.processedCheckoutOrders += results.length
-    for (const order of results)
-      processCheckoutOrderPromises.push(_processCheckoutOrder(order))
+  await ctpClient.fetchBatches(uri, async (orders) => {
+    stats.processedCheckoutOrders += orders.length
+    await pMap(orders, _processCheckoutOrder, { concurrency: 3 })
   })
-  await pMap(processCheckoutOrderPromises, (f) => f, { concurrency: 3 })
 
   await _updateLastStartTimestamp(startDate)
 
