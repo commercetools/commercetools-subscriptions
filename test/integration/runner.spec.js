@@ -85,14 +85,16 @@ describe('runner', () => {
   }
 
   function assertLineItemsEqual(checkoutOrder, templateOrders) {
-    const checkoutOrderLineItem = _.cloneDeep(checkoutOrder.lineItems[0])
-    delete checkoutOrderLineItem.addedAt
-    delete checkoutOrderLineItem.id
-    delete checkoutOrderLineItem.lastModifiedAt
-    delete checkoutOrderLineItem.price.id
-    delete checkoutOrderLineItem.variant.prices[0].id
-
     templateOrders.forEach((templateOrder) => {
+      const checkoutOrderLineItem = _.cloneDeep(
+        findMatchingCheckoutLineItem(checkoutOrder, templateOrder)
+      )
+      delete checkoutOrderLineItem.addedAt
+      delete checkoutOrderLineItem.id
+      delete checkoutOrderLineItem.lastModifiedAt
+      delete checkoutOrderLineItem.price.id
+      delete checkoutOrderLineItem.variant.prices[0].id
+
       const templateOrderLineItem = _.cloneDeep(templateOrder.lineItems[0])
       delete templateOrderLineItem.addedAt
       delete templateOrderLineItem.id
@@ -106,18 +108,17 @@ describe('runner', () => {
 
   function assertTemplateOrderCustomFields(checkoutOrder, templateOrders) {
     templateOrders.forEach((templateOrder) => {
-      const templateOrderLineItem = checkoutOrder.lineItems.find((lineItem) =>
-        templateOrder.orderNumber.includes(
-          lineItem.custom.fields.subscriptionKey
-        )
+      const checkoutOrderLineItem = findMatchingCheckoutLineItem(
+        checkoutOrder,
+        templateOrder
       )
-      if (templateOrderLineItem.quantity > 1)
+      if (checkoutOrderLineItem.quantity > 1)
         expect(templateOrder.orderNumber).to.match(
           /(([a-f0-9\\-]*){1}\s*)_subscriptionKey-([0-9]+)/g
         )
       else
         expect(templateOrder.orderNumber).to.equal(
-          templateOrderLineItem.custom.fields.subscriptionKey
+          checkoutOrderLineItem.custom.fields.subscriptionKey
         )
 
       const nextDeliveryDate = new Date(
@@ -136,5 +137,10 @@ describe('runner', () => {
         checkoutOrder.id
       )
     })
+  }
+
+  function findMatchingCheckoutLineItem(checkoutOrder, templateOrder) {
+    return checkoutOrder.lineItems.find((lineItem) =>
+      templateOrder.orderNumber.includes(lineItem.custom.fields.subscriptionKey))
   }
 })

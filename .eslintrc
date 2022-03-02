@@ -116,6 +116,7 @@
           "**/*.spec.js"
         ]
       }
-    ]
+    ],
+    "implicit-arrow-linebreak": 0
   }
 }
