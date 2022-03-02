@@ -275,9 +275,19 @@ function _generateTemplateOrderImportDraft(
     orderNumber:
       lineItem.custom.fields.subscriptionKey +
       (quantityIncrement ? `-${quantityIncrement}` : ''),
+    customerId: checkoutOrder.customerId,
+    store: checkoutOrder.store,
     customerEmail: checkoutOrder.customerEmail,
     totalPrice: lineItem.totalPrice,
     lineItems: [lineItem],
+    shippingAddress: checkoutOrder.shippingAddress,
+    billingAddress: checkoutOrder.billingAddress,
+    customerGroup: checkoutOrder.customerGroup,
+    country: checkoutOrder.country,
+    taxRoundingMode: checkoutOrder.taxRoundingMode,
+    taxCalculationMode: checkoutOrder.taxCalculationMode,
+    origin: checkoutOrder.origin,
+    itemShippingAddresses: checkoutOrder.itemShippingAddresses,
     custom: {
       type: {
         typeId: 'type',
