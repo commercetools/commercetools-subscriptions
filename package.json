@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run cover:unit && npm run cover:integration && npm run check-coverage",
+    "test": "npm run cover:unit && npm run cover:integration",
     "check": "npm run lint && prettier --check .",
     "unit": "nyc mocha \"test/unit/**/*.spec.js\"",
     "integration": "nyc mocha \"test/integration/**/*.spec.js\"",
