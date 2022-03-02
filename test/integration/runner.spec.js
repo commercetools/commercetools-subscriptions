@@ -31,9 +31,7 @@ describe('runner', () => {
     await run()
 
     const {
-      body: {
-        results: [templateOrder],
-      },
+      body: { results: templateOrders },
     } = await apiRoot
       .orders()
       .get({
@@ -44,48 +42,49 @@ describe('runner', () => {
       })
       .execute()
 
-    expect(templateOrder).to.exist
-    assertCustomFieldsEqual(checkoutOrder, templateOrder)
-    assertLineItemsEqual(checkoutOrder, templateOrder)
-    assertTemplateOrderCustomFields(checkoutOrder, templateOrder)
+    expect(templateOrders).to.have.lengthOf(4)
+    assertCustomFieldsEqual(checkoutOrder, templateOrders)
+    assertLineItemsEqual(checkoutOrder, templateOrders)
+    assertTemplateOrderCustomFields(checkoutOrder, templateOrders)
+    assertPayments(checkoutOrder, templateOrders)
     const { body: checkoutOrderUpdated } = await apiRoot
       .orders()
       .withId({ ID: checkoutOrder.id })
-      .get({
-        queryArgs: {
-          expand: 'paymentInfo.payments[*]',
-        },
-      })
+      .get()
       .execute()
-    assertPayments(checkoutOrderUpdated, templateOrder)
     expect(checkoutOrderUpdated.custom.fields.isSubscriptionProcessed).to.be
       .true
   })
 
-  function assertPayments(checkoutOrder, templateOrder) {
+  function assertPayments(checkoutOrder, templateOrders) {
     const checkoutOrderPayment = _.cloneDeep(
       checkoutOrder.paymentInfo.payments[0].obj
-    )
-    const templateOrderPayment = _.cloneDeep(
-      templateOrder.paymentInfo.payments[0].obj
     )
     delete checkoutOrderPayment.id
     delete checkoutOrderPayment.createdAt
     delete checkoutOrderPayment.lastModifiedAt
-    delete templateOrderPayment.id
-    delete templateOrderPayment.createdAt
-    delete templateOrderPayment.lastModifiedAt
-    expect(checkoutOrderPayment).to.deep.equal(templateOrderPayment)
+
+    templateOrders.forEach((templateOrder) => {
+      const templateOrderPayment = _.cloneDeep(
+        templateOrder.paymentInfo.payments[0].obj
+      )
+      delete templateOrderPayment.id
+      delete templateOrderPayment.createdAt
+      delete templateOrderPayment.lastModifiedAt
+      expect(checkoutOrderPayment).to.deep.equal(templateOrderPayment)
+    })
   }
 
-  function assertCustomFieldsEqual(checkoutOrder, templateOrder) {
+  function assertCustomFieldsEqual(checkoutOrder, templateOrders) {
     const checkoutOrderCustomFields = _.cloneDeep(checkoutOrder.custom.fields)
     delete checkoutOrderCustomFields.hasSubscription
     delete checkoutOrderCustomFields.isSubscriptionProcessed
-    expect(templateOrder.custom.fields).to.include(checkoutOrderCustomFields)
+    templateOrders.forEach((templateOrder) => {
+      expect(templateOrder.custom.fields).to.include(checkoutOrderCustomFields)
+    })
   }
 
-  function assertLineItemsEqual(checkoutOrder, templateOrder) {
+  function assertLineItemsEqual(checkoutOrder, templateOrders) {
     const checkoutOrderLineItem = _.cloneDeep(checkoutOrder.lineItems[0])
     delete checkoutOrderLineItem.addedAt
     delete checkoutOrderLineItem.id
@@ -93,32 +92,49 @@ describe('runner', () => {
     delete checkoutOrderLineItem.price.id
     delete checkoutOrderLineItem.variant.prices[0].id
 
-    const templateOrderLineItem = _.cloneDeep(templateOrder.lineItems[0])
-    delete templateOrderLineItem.addedAt
-    delete templateOrderLineItem.id
-    delete templateOrderLineItem.lastModifiedAt
-    delete templateOrderLineItem.price.id
-    delete templateOrderLineItem.variant.prices[0].id
+    templateOrders.forEach((templateOrder) => {
+      const templateOrderLineItem = _.cloneDeep(templateOrder.lineItems[0])
+      delete templateOrderLineItem.addedAt
+      delete templateOrderLineItem.id
+      delete templateOrderLineItem.lastModifiedAt
+      delete templateOrderLineItem.price.id
+      delete templateOrderLineItem.variant.prices[0].id
 
-    expect(templateOrderLineItem).to.deep.equal(checkoutOrderLineItem)
+      expect(templateOrderLineItem).to.deep.equal(checkoutOrderLineItem)
+    })
   }
 
-  function assertTemplateOrderCustomFields(checkoutOrder, templateOrder) {
-    expect(templateOrder.orderNumber).to.equal(
-      checkoutOrder.lineItems[0].custom.fields.subscriptionKey
-    )
-    const nextDeliveryDate = new Date(
-      templateOrder.custom.fields.nextDeliveryDate
-    )
-    const nextReminderDate = new Date(
-      templateOrder.custom.fields.nextReminderDate
-    )
-    const reminderDays = templateOrder.custom.fields.reminderDays
-    expect(nextDeliveryDate.getTime() - reminderDays * DAY_IN_MS).to.equal(
-      nextReminderDate.getTime()
-    )
-    expect(templateOrder.custom.fields.checkoutOrderRef.id).to.equal(
-      checkoutOrder.id
-    )
+  function assertTemplateOrderCustomFields(checkoutOrder, templateOrders) {
+    templateOrders.forEach((templateOrder) => {
+      const templateOrderLineItem = checkoutOrder.lineItems.find((lineItem) =>
+        templateOrder.orderNumber.includes(
+          lineItem.custom.fields.subscriptionKey
+        )
+      )
+      if (templateOrderLineItem.quantity > 1)
+        expect(templateOrder.orderNumber).to.match(
+          /(([a-f0-9\\-]*){1}\s*)_subscriptionKey-([0-9]+)/g
+        )
+      else
+        expect(templateOrder.orderNumber).to.equal(
+          templateOrderLineItem.custom.fields.subscriptionKey
+        )
+
+      const nextDeliveryDate = new Date(
+        templateOrder.custom.fields.nextDeliveryDate
+      )
+      if (checkoutOrder.custom.fields.nextReminderDate) {
+        const nextReminderDate = new Date(
+          templateOrder.custom.fields.nextReminderDate
+        )
+        const reminderDays = templateOrder.custom.fields.reminderDays
+        expect(nextDeliveryDate.getTime() - reminderDays * DAY_IN_MS).to.equal(
+          nextReminderDate.getTime()
+        )
+      }
+      expect(templateOrder.custom.fields.checkoutOrderRef.id).to.equal(
+        checkoutOrder.id
+      )
+    })
   }
 })

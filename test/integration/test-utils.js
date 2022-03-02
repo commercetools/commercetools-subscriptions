@@ -1,4 +1,5 @@
 import pMap from 'p-map'
+import { randomUUID } from 'crypto'
 import { ensureCustomTypes } from '../../src/setup/ensure-custom-types.js'
 import { ensureStates } from '../../src/setup/ensure-states.js'
 import { readAndParseJsonFile } from '../../src/utils/utils.js'
@@ -136,43 +137,50 @@ async function ensureProductType(apiRoot) {
 }
 
 async function ensureProducts(apiRoot) {
-  let {
-    body: { results: products },
-  } = await apiRoot.products().get().execute()
-
-  if (products.length === 0)
-    products = await pMap(
-      productDrafts,
-      async (product) => createAndPublishProduct(apiRoot, product),
-      { concurrency: 5 }
-    )
+  const products = await pMap(
+    productDrafts,
+    async (product) => createAndPublishProduct(apiRoot, product),
+    { concurrency: 5 }
+  )
 
   return products
 }
 
 async function createAndPublishProduct(apiRoot, productDraft) {
-  const { body } = await apiRoot
-    .products()
-    .post({
-      body: productDraft,
-    })
-    .execute()
-  return (
-    await apiRoot
+  try {
+    const { body: product } = await apiRoot
       .products()
-      .withId({ ID: body.id })
-      .post({
-        body: {
-          version: body.version,
-          actions: [
-            {
-              action: 'publish',
-            },
-          ],
-        },
-      })
+      .withKey({ key: productDraft.key })
+      .get()
       .execute()
-  ).body
+    return product
+  } catch (err) {
+    if (err.status === 404) {
+      const { body } = await apiRoot
+        .products()
+        .post({
+          body: productDraft,
+        })
+        .execute()
+      return (
+        await apiRoot
+          .products()
+          .withId({ ID: body.id })
+          .post({
+            body: {
+              version: body.version,
+              actions: [
+                {
+                  action: 'publish',
+                },
+              ],
+            },
+          })
+          .execute()
+      ).body
+    }
+    throw err
+  }
 }
 
 async function createPayment(apiRoot) {
@@ -189,10 +197,10 @@ async function createPayment(apiRoot) {
 
 async function createOrder(apiRoot, logger, paymentId, orderNumber) {
   orderDraft.orderNumber = orderNumber
-  orderDraft.lineItems.forEach(
-    (lineItem) =>
-      (lineItem.custom.fields.subscriptionKey = `${orderNumber}_subscriptionKey`)
-  )
+  orderDraft.lineItems.forEach((lineItem) => {
+    if (lineItem.custom?.fields?.subscriptionKey === '')
+      lineItem.custom.fields.subscriptionKey = `${randomUUID()}_subscriptionKey`
+  })
   let order
   try {
     logger.debug(
@@ -219,6 +227,9 @@ async function createOrder(apiRoot, logger, paymentId, orderNumber) {
         body: {
           actions: updateActions,
           version: body.version,
+        },
+        queryArgs: {
+          expand: 'paymentInfo.payments[*]',
         },
       })
       .execute()

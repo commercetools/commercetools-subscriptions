@@ -38,6 +38,53 @@
           "schedule": "0 0 1 Feb,May,Aug,Nov *"
         }
       }
+    },
+    {
+      "name": {
+        "en": "Beer subscription"
+      },
+      "variant": {
+        "sku": "beer01"
+      },
+      "price": {
+        "value": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 10000,
+          "fractionDigits": 2
+        },
+        "country": "DE"
+      },
+      "quantity": 3,
+      "custom": {
+        "type": {
+          "typeId": "type",
+          "key": "checkout-order-line-item"
+        },
+        "fields": {
+          "subscriptionKey": "",
+          "isSubscription": true,
+          "schedule": "* * * * *"
+        }
+      }
+    },
+    {
+      "name": {
+        "en": "Pants"
+      },
+      "variant": {
+        "sku": "pants"
+      },
+      "price": {
+        "value": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 8000,
+          "fractionDigits": 2
+        },
+        "country": "DE"
+      },
+      "quantity": 1
     }
   ],
   "custom": {
