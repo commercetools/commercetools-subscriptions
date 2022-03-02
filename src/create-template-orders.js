@@ -21,7 +21,7 @@ const INCONSISTENCY_MS = 3 * 60 * 1000
 const stats = {
   processedCheckoutOrders: 0,
   createdTemplateOrders: 0,
-  errorCheckoutOrders: 0,
+  failedCheckoutOrders: 0,
   duplicatedTemplateOrderCreation: 0,
 }
 
@@ -66,7 +66,7 @@ async function _processCheckoutOrder(checkoutOrder) {
 
     await _setCheckoutOrderProcessed(checkoutOrder)
   } catch (err) {
-    stats.errorCheckoutOrders++
+    stats.failedCheckoutOrders++
     logger.error(
       `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
         'Skipping this checkout order' +
