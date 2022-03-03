@@ -38,7 +38,10 @@ describe('create-template-orders', () => {
 
   before(async () => {
     _mockCtpEnvVars()
-    const { getApiRoot, getCtpClient } = await import('../../src/utils/client.js?testName=create-template-orders')
+    const { getApiRoot, getCtpClient } = await import(
+      // eslint-disable-next-line import/no-unresolved
+      '../../src/utils/client.js?testName=create-template-orders'
+    )
     logger = getLogger()
     apiRoot = getApiRoot()
     ctpClient = getCtpClient()
