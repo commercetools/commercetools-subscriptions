@@ -31,7 +31,7 @@ async function setActiveStateId() {
 
 async function buildQueryOfTemplateOrdersThatIsReadyToSendReminder() {
   const now = new Date().toISOString()
-  const where = `state(id="${activeStateId}") AND custom(fields(nextReminderDate >= "${now}"))`
+  const where = `state(id="${activeStateId}") AND custom(fields(nextReminderDate <= "${now}"))`
   return {
     queryBody: `query TemplateOrdersThatIsReadyToSendReminderOrdersQuery($limit: Int, $where: String) {
             orders (limit: $limit, where: $where) {
