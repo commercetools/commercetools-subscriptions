@@ -49,7 +49,7 @@ describe('create-template-orders', () => {
     _mockCommonRequestsAndResponse()
 
     nock(CTP_API_URL)
-      .post(`/${ PROJECT_KEY }/orders/import`)
+      .post(`/${PROJECT_KEY}/orders/import`)
       .reply(400, orderCreateDuplicateErrorResponse)
 
     const setIsSubscriptionProcessed = nock(CTP_API_URL)
@@ -150,7 +150,9 @@ describe('create-template-orders', () => {
 
     const addPaymentToTemplateOrder = nock(CTP_API_URL)
       // eslint-disable-next-line max-len
-      .post(`/${PROJECT_KEY}/orders/${TEMPLATE_ORDER_ID}`, (body) => body.actions.some((action) => action.action === 'addPayment'))
+      .post(`/${PROJECT_KEY}/orders/${TEMPLATE_ORDER_ID}`, (body) =>
+        body.actions.some((action) => action.action === 'addPayment')
+      )
       .reply(409, {
         statusCode: 409,
         message: 'Version mismatch. Concurrent modification.',
@@ -158,12 +160,17 @@ describe('create-template-orders', () => {
           {
             code: 'ConcurrentModification',
             message: 'Version mismatch. Concurrent modification.',
-            currentVersion: 3
-          }
-        ]
+            currentVersion: 3,
+          },
+        ],
       })
       // eslint-disable-next-line max-len
-      .post(`/${PROJECT_KEY}/orders/${TEMPLATE_ORDER_ID}`, (body) => body.actions.some((action) => action.action === 'addPayment') && body.version === 3)
+      .post(
+        `/${PROJECT_KEY}/orders/${TEMPLATE_ORDER_ID}`,
+        (body) =>
+          body.actions.some((action) => action.action === 'addPayment') &&
+          body.version === 3
+      )
       .reply(200)
 
     const setIsSubscriptionProcessed = nock(CTP_API_URL)
@@ -214,8 +221,10 @@ describe('create-template-orders', () => {
     const createNewOrder = nock(CTP_API_URL)
       .post(`/${PROJECT_KEY}/orders/import`)
       .times(10)
-      .reply(500,
-        { message: '"Client network socket disconnected before secure TLS connection was established"' })
+      .reply(500, {
+        message:
+          '"Client network socket disconnected before secure TLS connection was established"',
+      })
 
     const setIsSubscriptionProcessed = nock(CTP_API_URL)
       // eslint-disable-next-line max-len
@@ -277,7 +286,7 @@ describe('create-template-orders', () => {
     process.env.CTP_CLIENT_SECRET = 'client_secret'
   }
 
-  function _mockCommonRequestsAndResponse () {
+  function _mockCommonRequestsAndResponse() {
     nock(CTP_API_URL)
       .get(
         `/${PROJECT_KEY}/custom-objects/commercetools-subscriptions/subscriptions-lastStartTimestamp`

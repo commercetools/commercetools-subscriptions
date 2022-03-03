@@ -19,7 +19,6 @@ const LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY =
 // to address all the write inconsistencies when writing to database
 const INCONSISTENCY_MS = 3 * 60 * 1000
 
-
 async function createTemplateOrders(startDate) {
   stats = {
     processedCheckoutOrders: 0,
@@ -45,9 +44,9 @@ async function createTemplateOrders(startDate) {
     return stats
   } catch (err) {
     logger.error(
-      'Failed to process checkout orders. lastStartTimestamp was not updated. '
-      + 'Processing should be restarted on the next run.'
-      + `Error: ${JSON.stringify(serializeError(err))}`
+      'Failed to process checkout orders. lastStartTimestamp was not updated. ' +
+        'Processing should be restarted on the next run.' +
+        `Error: ${JSON.stringify(serializeError(err))}`
     )
     return stats
   }
@@ -82,10 +81,8 @@ async function _processCheckoutOrder(checkoutOrder) {
   } catch (err) {
     stats.failedCheckoutOrders++
     let cause = err
-    if (err instanceof VError)
-      cause = err.cause()
-    if (cause.code === 409 || cause.code >= 500)
-      throw err
+    if (err instanceof VError) cause = err.cause()
+    if (cause.code === 409 || cause.code >= 500) throw err
     else
       logger.error(
         `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
