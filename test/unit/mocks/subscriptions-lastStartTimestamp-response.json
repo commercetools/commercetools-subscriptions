@@ -1,0 +1,25 @@
+{
+  "limit": 20,
+  "offset": 0,
+  "count": 1,
+  "total": 1,
+  "results": [
+    {
+      "id": "dd2974e5-d111-4cd4-aba4-2d2bd59c7f0a",
+      "version": 88,
+      "createdAt": "2022-02-25T15:38:51.857Z",
+      "lastModifiedAt": "2022-03-02T17:23:44.023Z",
+      "lastModifiedBy": {
+        "clientId": "fpQ73MS9ybGmxO6Ge1WaywCi",
+        "isPlatformClient": false
+      },
+      "createdBy": {
+        "clientId": "fpQ73MS9ybGmxO6Ge1WaywCi",
+        "isPlatformClient": false
+      },
+      "container": "commercetools-subscriptions",
+      "key": "subscriptions-lastStartTimestamp",
+      "value": "2022-03-02T17:20:43.250Z"
+    }
+  ]
+}

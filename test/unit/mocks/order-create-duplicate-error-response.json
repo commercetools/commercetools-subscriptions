@@ -1,0 +1,12 @@
+{
+  "statusCode": 400,
+  "message": "A duplicate value '\"-1\"' exists for field 'orderNumber'.",
+  "errors": [
+    {
+      "code": "DuplicateField",
+      "message": "A duplicate value '\"-1\"' exists for field 'orderNumber'.",
+      "duplicateValue": "-1",
+      "field": "orderNumber"
+    }
+  ]
+}

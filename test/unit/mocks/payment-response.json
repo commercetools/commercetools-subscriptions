@@ -1,0 +1,39 @@
+{
+  "limit": 20,
+  "offset": 0,
+  "count": 1,
+  "total": 1,
+  "results": [
+    {
+      "id": "ba87bf34-bc38-4f22-8747-016df76c16d5",
+      "version": 1,
+      "lastMessageSequenceNumber": 1,
+      "createdAt": "2022-03-03T10:11:17.867Z",
+      "lastModifiedAt": "2022-03-03T10:11:17.867Z",
+      "lastModifiedBy": {
+        "clientId": "iXEtnN58fQa_wTOxHYDvi8NI",
+        "isPlatformClient": false
+      },
+      "createdBy": {
+        "clientId": "iXEtnN58fQa_wTOxHYDvi8NI",
+        "isPlatformClient": false
+      },
+      "amountPlanned": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 795,
+        "fractionDigits": 2
+      },
+      "paymentMethodInfo": {
+        "paymentInterface": "ctp-adyen-integration",
+        "method": "creditCard",
+        "name": {
+          "de": "Adyen credit card"
+        }
+      },
+      "paymentStatus": {},
+      "transactions": [],
+      "interfaceInteractions": []
+    }
+  ]
+}

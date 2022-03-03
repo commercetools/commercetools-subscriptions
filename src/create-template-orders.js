@@ -6,9 +6,9 @@ import { serializeError } from 'serialize-error'
 import { getApiRoot, getCtpClient } from './utils/client.js'
 import getLogger from './utils/logger.js'
 
-const apiRoot = getApiRoot()
-const ctpClient = getCtpClient()
-const logger = getLogger()
+let apiRoot
+let ctpClient
+let logger
 
 const LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER =
   'commercetools-subscriptions'
@@ -26,6 +26,10 @@ const stats = {
 }
 
 async function createTemplateOrders(startDate) {
+  apiRoot = getApiRoot()
+  ctpClient = getCtpClient()
+  logger = getLogger()
+
   const uri = await _buildFetchCheckoutOrdersUri()
 
   await ctpClient.fetchBatches(uri, async (orders) => {
@@ -41,9 +45,9 @@ async function createTemplateOrders(startDate) {
 async function _buildFetchCheckoutOrdersUri() {
   let where =
     'custom(fields(hasSubscription=true)) AND custom(fields(isSubscriptionProcessed is not defined))'
-  const lastStartTimestamp = await _fetchLastStartTimestamp()
-  if (lastStartTimestamp)
-    where = `createdAt > "${lastStartTimestamp.value}" AND ${where}`
+  const lastStartTimestampCustomObject = await _fetchLastStartTimestamp()
+  if (lastStartTimestampCustomObject)
+    where = `createdAt > "${lastStartTimestampCustomObject.value}" AND ${where}`
 
   const uri = ctpClient.builder.orders
     .where(where)
@@ -59,7 +63,6 @@ async function _processCheckoutOrder(checkoutOrder) {
       templateOrderDrafts,
       async (templateOrderDraft) => {
         await _createTemplateOrderAndPayments(checkoutOrder, templateOrderDraft)
-        stats.createdTemplateOrders++
       },
       { concurrency: 3 }
     )
@@ -100,7 +103,7 @@ async function _fetchLastStartTimestamp() {
         })
         .get()
         .execute()
-    ).body
+    ).body?.results?.[0]
   } catch (e) {
     if (e.code === 404) return null
     throw e
@@ -175,6 +178,7 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
       .importOrder()
       .post({ body: orderDraft })
       .execute()
+    stats.createdTemplateOrders++
 
     updateActions.push({
       action: 'transitionState',
