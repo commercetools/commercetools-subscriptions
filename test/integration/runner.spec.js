@@ -74,8 +74,12 @@ describe('runner', () => {
       expect(templateOrder.state.obj.key).to.equal('Active')
       expect(templateOrder.customerId).to.equal(checkoutOrder.customerId)
       expect(templateOrder.customerEmail).to.equal(checkoutOrder.customerEmail)
-      expect(templateOrder.shippingAddress).to.equal(checkoutOrder.shippingAddress)
-      expect(templateOrder.billingAddress).to.equal(checkoutOrder.billingAddress)
+      expect(templateOrder.shippingAddress).to.equal(
+        checkoutOrder.shippingAddress
+      )
+      expect(templateOrder.billingAddress).to.equal(
+        checkoutOrder.billingAddress
+      )
       expect(templateOrder.customerGroup).to.equal(checkoutOrder.customerGroup)
       expect(templateOrder.country).to.equal(checkoutOrder.country)
       expect(templateOrder.shippingInfo).to.equal(checkoutOrder.shippingInfo)
@@ -156,6 +160,7 @@ describe('runner', () => {
 
   function findMatchingCheckoutLineItem(checkoutOrder, templateOrder) {
     return checkoutOrder.lineItems.find((lineItem) =>
-      templateOrder.orderNumber.includes(lineItem.custom.fields.subscriptionKey))
+      templateOrder.orderNumber.includes(lineItem.custom.fields.subscriptionKey)
+    )
   }
 })

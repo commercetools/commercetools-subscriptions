@@ -117,6 +117,8 @@
         ]
       }
     ],
-    "implicit-arrow-linebreak": 0
+    "no-return-assign": [2, "except-parens"],
+    "implicit-arrow-linebreak": "off",
+    "function-paren-newline": "off"
   }
 }

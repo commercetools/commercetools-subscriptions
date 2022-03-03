@@ -14,7 +14,7 @@
         "name": "Reference",
         "referenceTypeId": "order"
       },
-      "required": true,
+      "required": false,
       "label": {
         "en": "subscriptionTemplateOrderRef"
       },
@@ -25,7 +25,7 @@
       "type": {
         "name": "DateTime"
       },
-      "required": true,
+      "required": false,
       "label": {
         "en": "deliveryDate"
       },

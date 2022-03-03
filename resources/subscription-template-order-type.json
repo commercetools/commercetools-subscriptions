@@ -13,7 +13,7 @@
       "type": {
         "name": "DateTime"
       },
-      "required": true,
+      "required": false,
       "label": {
         "en": "nextDeliveryDate"
       },
@@ -24,7 +24,7 @@
       "type": {
         "name": "String"
       },
-      "required": true,
+      "required": false,
       "label": {
         "en": "schedule"
       },
@@ -36,7 +36,7 @@
         "name": "Reference",
         "referenceTypeId": "order"
       },
-      "required": true,
+      "required": false,
       "label": {
         "en": "checkoutOrderRef"
       },

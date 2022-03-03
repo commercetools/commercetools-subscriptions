@@ -8,10 +8,13 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run cover:unit",
+    "check-coverage": "nyc check-coverage --lines 89",
+    "test": "npm run cover:unit && npm run cover:integration && npm run check-coverage",
     "check": "npm run lint && prettier --check .",
     "unit": "nyc mocha \"test/unit/**/*.spec.js\"",
+    "integration": "nyc mocha \"test/integration/**/*.spec.js\"",
     "cover:unit": "nyc --silent npm run unit",
+    "cover:integration": "nyc --silent npm run integration",
     "lint": "eslint --fix ./src ./test",
     "format": "prettier --write .",
     "setup-resources": "node ./src/setup/setup.js"
@@ -34,6 +37,7 @@
   },
   "homepage": "https://github.com/commercetools/commercetools-subscriptions#readme",
   "dependencies": {
+    "@commercetools/api-request-builder": "^5.6.3",
     "@commercetools/platform-sdk": "^2.4.1",
     "@commercetools/sdk-client": "^2.1.2",
     "@commercetools/sdk-middleware-auth": "^6.2.1",
@@ -42,11 +46,13 @@
     "@commercetools/sdk-middleware-user-agent": "^2.1.5",
     "@commercetools/sync-actions": "^4.9.6",
     "bunyan": "^1.8.15",
+    "cron-parser": "^4.2.1",
     "isomorphic-fetch": "^3.0.0",
     "lodash": "^4.17.21",
     "p-map": "^5.3.0",
     "rc": "^1.2.8",
-    "serialize-error": "^9.1.0"
+    "serialize-error": "^9.1.0",
+    "verror": "1.10.1"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
@@ -71,5 +77,10 @@
     "nock": "^13.2.4",
     "nyc": "^15.1.0",
     "prettier": "^2.5.1"
+  },
+  "mocha": {
+    "timeout": 120000,
+    "exit": true,
+    "full-trace": true
   }
 }
