@@ -9,6 +9,9 @@ const lastStartTstpResponse = await readAndParseJsonFile(
 const checkoutOrderResponse = await readAndParseJsonFile(
   'test/unit/mocks/checkout-order-response.json'
 )
+const templateOrderResponse = await readAndParseJsonFile(
+  'test/unit/mocks/template-order-response.json'
+)
 const paymentResponse = await readAndParseJsonFile(
   'test/unit/mocks/payment-response.json'
 )
@@ -180,7 +183,7 @@ describe('create-template-orders', () => {
     expect(updateLastStartTimestamp.isDone()).to.be.true
   })
 
-  it('when error is 500 error, retry and fail the job when retry limit is fetched', async () => {
+  it('when error is 409, retry with new version', async () => {
     nock(CTP_API_URL)
       .get(
         '/project-key/custom-objects/commercetools-subscriptions/subscriptions-lastStartTimestamp'
@@ -206,6 +209,95 @@ describe('create-template-orders', () => {
 
     nock(CTP_API_URL)
       .post('/project-key/orders/import')
+      .reply(200, templateOrderResponse)
+
+    const addPaymentToTemplateOrder = nock(CTP_API_URL)
+      // eslint-disable-next-line max-len
+      .post('/project-key/orders/99267ba2-1d6c-4a03-8771-df2d9524f9b8', (body) => body.actions.some((action) => action.action === 'addPayment'))
+      .reply(409, {
+        statusCode: 409,
+        message: 'Version mismatch. Concurrent modification.',
+        errors: [
+          {
+            code: 'ConcurrentModification',
+            message: 'Version mismatch. Concurrent modification.',
+            currentVersion: 3
+          }
+        ]
+      })
+      // eslint-disable-next-line max-len
+      .post('/project-key/orders/99267ba2-1d6c-4a03-8771-df2d9524f9b8', (body) => body.actions.some((action) => action.action === 'addPayment') && body.version === 3)
+      .reply(200)
+
+    const setIsSubscriptionProcessed = nock(CTP_API_URL)
+      // eslint-disable-next-line max-len
+      .post(
+        '/project-key/orders/12d7c490-a792-4abe-9a35-cdf9b113a11f',
+        (body) =>
+          JSON.stringify(body) ===
+          JSON.stringify({
+            actions: [
+              {
+                action: 'setCustomField',
+                name: 'isSubscriptionProcessed',
+                value: true,
+              },
+            ],
+            version: 3,
+          })
+      )
+      .reply(200)
+
+    const updateLastStartTimestamp = nock(CTP_API_URL)
+      // eslint-disable-next-line max-len
+      .post(
+        '/project-key/custom-objects',
+        (body) =>
+          body.container === 'commercetools-subscriptions' &&
+          body.key === 'subscriptions-lastStartTimestamp'
+      )
+      .reply(200)
+
+    const stats = await createTemplateOrders(new Date())
+
+    expect(stats).to.deep.equal({
+      processedCheckoutOrders: 1,
+      createdTemplateOrders: 1,
+      failedCheckoutOrders: 0,
+      duplicatedTemplateOrderCreation: 0,
+    })
+    expect(addPaymentToTemplateOrder.isDone()).to.be.true
+    expect(setIsSubscriptionProcessed.isDone()).to.be.true
+    expect(updateLastStartTimestamp.isDone()).to.be.true
+  })
+
+  it('when error is 500 error, retry and fail the job when retry limit is fetched', async () => {
+    nock(CTP_API_URL)
+      .get(
+        '/project-key/custom-objects/commercetools-subscriptions/subscriptions-lastStartTimestamp'
+      )
+      .reply(200, lastStartTstpResponse)
+
+    nock(CTP_API_URL)
+      .get('/project-key/orders')
+      .query(
+        (actualQueryObject) =>
+          actualQueryObject.where ===
+          // eslint-disable-next-line max-len
+          'createdAt > "2022-03-02T17:20:43.250Z" AND custom(fields(hasSubscription=true)) AND custom(fields(isSubscriptionProcessed is not defined))'
+      )
+      .reply(200, checkoutOrderResponse)
+
+    nock(CTP_API_URL)
+      .post(
+        '/project-key/payments',
+        (body) => body.paymentMethodInfo.paymentInterface
+      )
+      .reply(200, paymentResponse)
+
+    const createNewOrder = nock(CTP_API_URL)
+      .post('/project-key/orders/import')
+      .times(10)
       .reply(500,
         { message: '"Client network socket disconnected before secure TLS connection was established"' })
 
@@ -246,6 +338,7 @@ describe('create-template-orders', () => {
       failedCheckoutOrders: 1,
       duplicatedTemplateOrderCreation: 0,
     })
+    expect(createNewOrder.isDone()).to.be.true
     expect(setIsSubscriptionProcessed.isDone()).to.be.false
     expect(updateLastStartTimestamp.isDone()).to.be.false
   })
