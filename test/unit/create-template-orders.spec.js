@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { createTemplateOrders } from '../../src/create-template-orders.js'
 import { readAndParseJsonFile } from '../../src/utils/utils.js'
 import getLogger from '../../src/utils/logger.js'
+import { reloadModule } from '../integration/test-utils.js'
 
 const lastStartTstpResponse = await readAndParseJsonFile(
   'test/unit/mocks/subscriptions-lastStartTimestamp-response.json'
@@ -38,9 +39,8 @@ describe('create-template-orders', () => {
 
   before(async () => {
     _mockCtpEnvVars()
-    const { getApiRoot, getCtpClient } = await import(
-      // eslint-disable-next-line import/no-unresolved
-      '../../src/utils/client.js?testName=create-template-orders'
+    const { getApiRoot, getCtpClient } = await reloadModule(
+      '../../src/utils/client.js'
     )
     logger = getLogger()
     apiRoot = getApiRoot()
