@@ -1,6 +1,7 @@
 import { createTemplateOrders } from './create-template-orders.js'
 import getLogger from './utils/logger.js'
 import { getPackageJson } from './config.js'
+import { sendReminders } from './send-reminders.js'
 
 async function run() {
   const startDate = new Date()
@@ -12,6 +13,9 @@ async function run() {
   logger.info(
     `Creating template orders process finished: ${JSON.stringify(stats)}`
   )
+
+  const sendReminderStats = await sendReminders()
+  logger.info(sendReminderStats)
 
   const endDate = new Date()
   const executionTimeInSeconds = Math.floor(
