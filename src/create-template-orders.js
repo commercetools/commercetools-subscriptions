@@ -27,20 +27,30 @@ async function createTemplateOrders(startDate) {
     failedCheckoutOrders: 0,
     duplicatedTemplateOrderCreation: 0,
   }
-  apiRoot = getApiRoot()
-  ctpClient = getCtpClient()
-  logger = getLogger()
 
-  const uri = await _buildFetchCheckoutOrdersUri()
+  try {
+    apiRoot = getApiRoot()
+    ctpClient = getCtpClient()
+    logger = getLogger()
 
-  await ctpClient.fetchBatches(uri, async (orders) => {
-    stats.processedCheckoutOrders += orders.length
-    await pMap(orders, _processCheckoutOrder, { concurrency: 3 })
-  })
+    const uri = await _buildFetchCheckoutOrdersUri()
 
-  await _updateLastStartTimestamp(startDate)
+    await ctpClient.fetchBatches(uri, async (orders) => {
+      stats.processedCheckoutOrders += orders.length
+      await pMap(orders, _processCheckoutOrder, { concurrency: 3 })
+    })
 
-  return stats
+    await _updateLastStartTimestamp(startDate)
+
+    return stats
+  } catch (err) {
+    logger.error(
+      'Failed to process checkout orders. lastStartTimestamp was not updated. '
+      + 'Processing should be restarted on the next run.'
+      + `Error: ${JSON.stringify(serializeError(err))}`
+    )
+    return stats
+  }
 }
 
 async function _buildFetchCheckoutOrdersUri() {
@@ -71,11 +81,17 @@ async function _processCheckoutOrder(checkoutOrder) {
     await _setCheckoutOrderProcessed(checkoutOrder)
   } catch (err) {
     stats.failedCheckoutOrders++
-    logger.error(
-      `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
-        'Skipping this checkout order' +
-        ` Error: ${JSON.stringify(serializeError(err))}`
-    )
+    let cause = err
+    if (err instanceof VError)
+      cause = err.cause()
+    if (cause.code === 409 || cause.code >= 500)
+      throw err
+    else
+      logger.error(
+        `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
+          'Skipping this checkout order' +
+          ` Error: ${JSON.stringify(serializeError(err))}`
+      )
   }
 }
 
