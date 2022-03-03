@@ -2,6 +2,7 @@ import nock from 'nock'
 import { expect } from 'chai'
 import { createTemplateOrders } from '../../src/create-template-orders.js'
 import { readAndParseJsonFile } from '../../src/utils/utils.js'
+import getLogger from '../../src/utils/logger.js'
 
 const lastStartTstpResponse = await readAndParseJsonFile(
   'test/unit/mocks/subscriptions-lastStartTimestamp-response.json'
@@ -26,19 +27,29 @@ describe('create-template-orders', () => {
   let ctpProjectKey
   let ctpClientId
   let ctpClientSecret
+  let logger
+  let apiRoot
+  let ctpClient
   const CTP_API_URL = 'https://api.europe-west1.gcp.commercetools.com'
   const CTP_AUTH_URL = 'https://auth.europe-west1.gcp.commercetools.com'
   const PROJECT_KEY = 'project-key'
   const TEMPLATE_ORDER_ID = '99267ba2-1d6c-4a03-8771-df2d9524f9b8'
   const CHECKOUT_ORDER_ID = '12d7c490-a792-4abe-9a35-cdf9b113a11f'
 
-  before(() => {
-    _mockCtpOAuthEndpoint()
+  before(async () => {
     _mockCtpEnvVars()
+    const { getApiRoot, getCtpClient } = await import('../../src/utils/client.js?testName=create-template-orders')
+    logger = getLogger()
+    apiRoot = getApiRoot()
+    ctpClient = getCtpClient()
   })
 
   after(() => {
     _restoreCtpEnvVars()
+  })
+
+  beforeEach(() => {
+    _mockCtpOAuthEndpoint()
   })
 
   afterEach(() => {
@@ -81,7 +92,12 @@ describe('create-template-orders', () => {
       )
       .reply(200)
 
-    const stats = await createTemplateOrders(new Date())
+    const stats = await createTemplateOrders({
+      ctpClient,
+      apiRoot,
+      logger,
+      startDate: new Date(),
+    })
 
     expect(stats).to.deep.equal({
       processedCheckoutOrders: 1,
@@ -129,7 +145,12 @@ describe('create-template-orders', () => {
       )
       .reply(200)
 
-    const stats = await createTemplateOrders(new Date())
+    const stats = await createTemplateOrders({
+      ctpClient,
+      apiRoot,
+      logger,
+      startDate: new Date(),
+    })
 
     expect(stats).to.deep.equal({
       processedCheckoutOrders: 1,
@@ -202,7 +223,12 @@ describe('create-template-orders', () => {
       )
       .reply(200)
 
-    const stats = await createTemplateOrders(new Date())
+    const stats = await createTemplateOrders({
+      ctpClient,
+      apiRoot,
+      logger,
+      startDate: new Date(),
+    })
 
     expect(stats).to.deep.equal({
       processedCheckoutOrders: 1,
@@ -255,7 +281,12 @@ describe('create-template-orders', () => {
       )
       .reply(200)
 
-    const stats = await createTemplateOrders(new Date())
+    const stats = await createTemplateOrders({
+      ctpClient,
+      apiRoot,
+      logger,
+      startDate: new Date(),
+    })
 
     expect(stats).to.deep.equal({
       processedCheckoutOrders: 1,

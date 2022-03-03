@@ -3,8 +3,6 @@ import parser from 'cron-parser'
 import _ from 'lodash'
 import VError from 'verror'
 import { serializeError } from 'serialize-error'
-import { getApiRoot, getCtpClient } from './utils/client.js'
-import getLogger from './utils/logger.js'
 
 let apiRoot
 let ctpClient
@@ -19,7 +17,12 @@ const LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY =
 // to address all the write inconsistencies when writing to database
 const INCONSISTENCY_MS = 3 * 60 * 1000
 
-async function createTemplateOrders(startDate) {
+async function createTemplateOrders({
+  apiRoot: _apiRoot,
+  ctpClient: _ctpClient,
+  logger: _logger,
+  startDate,
+}) {
   stats = {
     processedCheckoutOrders: 0,
     createdTemplateOrders: 0,
@@ -28,9 +31,9 @@ async function createTemplateOrders(startDate) {
   }
 
   try {
-    apiRoot = getApiRoot()
-    ctpClient = getCtpClient()
-    logger = getLogger()
+    apiRoot = _apiRoot
+    ctpClient = _ctpClient
+    logger = _logger
 
     const uri = await _buildFetchCheckoutOrdersUri()
 
