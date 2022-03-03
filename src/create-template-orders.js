@@ -162,15 +162,13 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
           apiRoot.payments().post({ body: paymentDraft }).execute()
         )
       )
-      updateActions = paymentCreateResponses.map(
-        (paymentCreateResponse) => ({
-          action: 'addPayment',
-          payment: {
-            type: 'payment',
-            id: paymentCreateResponse.body.id,
-          },
-        })
-      )
+      updateActions = paymentCreateResponses.map((paymentCreateResponse) => ({
+        action: 'addPayment',
+        payment: {
+          type: 'payment',
+          id: paymentCreateResponse.body.id,
+        },
+      }))
     }
     const { body: templateOrder } = await apiRoot
       .orders()
@@ -182,8 +180,8 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
       action: 'transitionState',
       state: {
         typeId: 'state',
-        key: 'Active'
-      }
+        key: 'Active',
+      },
     })
 
     await _updatePaymentAndStateWithRetry(templateOrder, updateActions)
