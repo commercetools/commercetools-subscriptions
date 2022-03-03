@@ -9,6 +9,7 @@ import getLogger from './utils/logger.js'
 let apiRoot
 let ctpClient
 let logger
+let stats
 
 const LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER =
   'commercetools-subscriptions'
@@ -18,14 +19,14 @@ const LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY =
 // to address all the write inconsistencies when writing to database
 const INCONSISTENCY_MS = 3 * 60 * 1000
 
-const stats = {
-  processedCheckoutOrders: 0,
-  createdTemplateOrders: 0,
-  failedCheckoutOrders: 0,
-  duplicatedTemplateOrderCreation: 0,
-}
 
 async function createTemplateOrders(startDate) {
+  stats = {
+    processedCheckoutOrders: 0,
+    createdTemplateOrders: 0,
+    failedCheckoutOrders: 0,
+    duplicatedTemplateOrderCreation: 0,
+  }
   apiRoot = getApiRoot()
   ctpClient = getCtpClient()
   logger = getLogger()

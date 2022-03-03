@@ -17,6 +17,11 @@ const orderCreateDuplicateErrorResponse = await readAndParseJsonFile(
   'test/unit/mocks/order-create-duplicate-error-response.json'
 )
 
+const badRequestErrorResponse = await readAndParseJsonFile(
+  'test/unit/mocks/bad-request-error-response.json'
+)
+
+
 describe('create-template-orders', () => {
   let ctpProjectKey
   let ctpClientId
@@ -65,7 +70,7 @@ describe('create-template-orders', () => {
       .post('/project-key/orders/import')
       .reply(400, orderCreateDuplicateErrorResponse)
 
-    nock(CTP_API_URL)
+    const setIsSubscriptionProcessed = nock(CTP_API_URL)
       // eslint-disable-next-line max-len
       .post(
         '/project-key/orders/12d7c490-a792-4abe-9a35-cdf9b113a11f',
@@ -84,7 +89,7 @@ describe('create-template-orders', () => {
       )
       .reply(200)
 
-    nock(CTP_API_URL)
+    const updateLastStartTimestamp = nock(CTP_API_URL)
       // eslint-disable-next-line max-len
       .post(
         '/project-key/custom-objects',
@@ -102,11 +107,78 @@ describe('create-template-orders', () => {
       failedCheckoutOrders: 0,
       duplicatedTemplateOrderCreation: 1,
     })
+    expect(setIsSubscriptionProcessed.isDone()).to.be.true
+    expect(updateLastStartTimestamp.isDone()).to.be.true
   })
 
-  it('when error is 400 bad request error, log it and skip creation', () => {})
+  it('when error is 400 bad request error, log it and skip creation', async () => {
+    nock(CTP_API_URL)
+      .get(
+        '/project-key/custom-objects/commercetools-subscriptions/subscriptions-lastStartTimestamp'
+      )
+      .reply(200, lastStartTstpResponse)
 
-  it('when error is 500 error, retry and fail the job when try limit is fetched', () => {})
+    nock(CTP_API_URL)
+      .get('/project-key/orders')
+      .query(
+        (actualQueryObject) =>
+          actualQueryObject.where ===
+          // eslint-disable-next-line max-len
+          'createdAt > "2022-03-02T17:20:43.250Z" AND custom(fields(hasSubscription=true)) AND custom(fields(isSubscriptionProcessed is not defined))'
+      )
+      .reply(200, checkoutOrderResponse)
+
+    nock(CTP_API_URL)
+      .post(
+        '/project-key/payments',
+        (body) => body.paymentMethodInfo.paymentInterface
+      )
+      .reply(200, paymentResponse)
+
+    nock(CTP_API_URL)
+      .post('/project-key/orders/import')
+      .reply(400, badRequestErrorResponse)
+
+    const setIsSubscriptionProcessed = nock(CTP_API_URL)
+      // eslint-disable-next-line max-len
+      .post(
+        '/project-key/orders/12d7c490-a792-4abe-9a35-cdf9b113a11f',
+        (body) =>
+          JSON.stringify(body) ===
+          JSON.stringify({
+            actions: [
+              {
+                action: 'setCustomField',
+                name: 'isSubscriptionProcessed',
+                value: true,
+              },
+            ],
+            version: 3,
+          })
+      )
+      .reply(200)
+
+    const updateLastStartTimestamp = nock(CTP_API_URL)
+      // eslint-disable-next-line max-len
+      .post(
+        '/project-key/custom-objects',
+        (body) =>
+          body.container === 'commercetools-subscriptions' &&
+          body.key === 'subscriptions-lastStartTimestamp'
+      )
+      .reply(200)
+
+    const stats = await createTemplateOrders(new Date())
+
+    expect(stats).to.deep.equal({
+      processedCheckoutOrders: 1,
+      createdTemplateOrders: 0,
+      failedCheckoutOrders: 1,
+      duplicatedTemplateOrderCreation: 0,
+    })
+    expect(setIsSubscriptionProcessed.isDone()).to.be.false
+    expect(updateLastStartTimestamp.isDone()).to.be.true
+  })
 
   function _mockCtpOAuthEndpoint() {
     nock(CTP_AUTH_URL).persist().post('/oauth/token').reply(200, {
