@@ -107,9 +107,9 @@ async function _fetchLastStartTimestamp() {
   }
 }
 
-async function _addPaymentWithRetry(
+async function _updatePaymentAndStateWithRetry(
   templateOrder,
-  addPaymentActions,
+  updateActions,
   version = templateOrder.version
 ) {
   let retryCount = 0
@@ -121,7 +121,7 @@ async function _addPaymentWithRetry(
         .withId({ ID: templateOrder.id })
         .post({
           body: {
-            actions: addPaymentActions,
+            actions: updateActions,
             version,
           },
         })
@@ -134,7 +134,7 @@ async function _addPaymentWithRetry(
         if (retryCount > maxRetry) {
           const retryMessage =
             'Got a concurrent modification error' +
-            ` when creating template order with number "${templateOrder.orderNumber}".` +
+            ` when updating template order with number "${templateOrder.orderNumber}".` +
             ` Version tried "${version}",` +
             ` currentVersion: "${currentVersion}".`
           throw new VError(
@@ -154,7 +154,7 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
     const checkoutPayments = checkoutOrder.paymentInfo?.payments?.map(
       (p) => p.obj
     )
-    let addPaymentActions
+    let updateActions
     if (checkoutPayments) {
       const paymentDrafts = checkoutPayments.map(_createPaymentDraft)
       const paymentCreateResponses = await Promise.all(
@@ -162,7 +162,7 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
           apiRoot.payments().post({ body: paymentDraft }).execute()
         )
       )
-      addPaymentActions = paymentCreateResponses.map(
+      updateActions = paymentCreateResponses.map(
         (paymentCreateResponse) => ({
           action: 'addPayment',
           payment: {
@@ -178,8 +178,15 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
       .post({ body: orderDraft })
       .execute()
 
-    if (addPaymentActions)
-      await _addPaymentWithRetry(templateOrder, addPaymentActions)
+    updateActions.push({
+      action: 'transitionState',
+      state: {
+        typeId: 'state',
+        key: 'Active'
+      }
+    })
+
+    await _updatePaymentAndStateWithRetry(templateOrder, updateActions)
   } catch (err) {
     if (!_isDuplicateOrderError(err)) {
       const errMsg =
