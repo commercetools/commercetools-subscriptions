@@ -5,7 +5,11 @@
   ],
   "globals": {
     "describe": "readonly",
-    "it": "readonly"
+    "it": "readonly",
+    "before": "readonly",
+    "beforeEach": "readonly",
+    "after": "readonly",
+    "afterEach": "readonly"
   },
   "env": {
     "node": true
@@ -112,6 +116,9 @@
           "**/*.spec.js"
         ]
       }
-    ]
+    ],
+    "no-return-assign": [2, "except-parens"],
+    "implicit-arrow-linebreak": "off",
+    "function-paren-newline": "off"
   }
 }

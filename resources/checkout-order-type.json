@@ -13,7 +13,7 @@
       "type": {
         "name": "Boolean"
       },
-      "required": true,
+      "required": false,
       "label": {
         "en": "hasSubscription"
       },
@@ -24,7 +24,7 @@
       "type": {
         "name": "Boolean"
       },
-      "required": true,
+      "required": false,
       "label": {
         "en": "isSubscriptionProcessed"
       },

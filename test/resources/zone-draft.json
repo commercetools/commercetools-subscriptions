@@ -1,0 +1,9 @@
+{
+  "key": "test-zone-key",
+  "name": "de",
+  "locations": [
+    {
+      "country": "DE"
+    }
+  ]
+}

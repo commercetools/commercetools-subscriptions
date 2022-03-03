@@ -4,7 +4,9 @@ import { createUserAgentMiddleware } from '@commercetools/sdk-middleware-user-ag
 import { createHttpMiddleware } from '@commercetools/sdk-middleware-http'
 import { createQueueMiddleware } from '@commercetools/sdk-middleware-queue'
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
+import { createRequestBuilder } from '@commercetools/api-request-builder'
 import fetch from 'isomorphic-fetch'
+import _ from 'lodash'
 import { getClientConfig, getConcurrency, getPackageJson } from '../config.js'
 
 const packageJson = await getPackageJson()
@@ -55,13 +57,53 @@ function createCtpClient({
 }
 
 let apiRoot
-export default function getApiRoot() {
+let ctpClient
+
+function getRequestBuilder(projectKey) {
+  return createRequestBuilder({ projectKey })
+}
+
+function getCtpClient() {
+  if (ctpClient) return ctpClient
+  const clientConfig = getClientConfig()
+  const customMethods = {
+    get builder() {
+      return getRequestBuilder(clientConfig.projectKey)
+    },
+
+    fetchBatches(uri, callback, opts = { accumulate: false }) {
+      return this.process(
+        this.buildRequestOptions(uri.build()),
+        (data) => Promise.resolve(callback(data.body.results)),
+        opts
+      )
+    },
+
+    buildRequestOptions(uri, method = 'GET', body = undefined) {
+      return {
+        uri,
+        method,
+        body,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      }
+    },
+  }
+  ctpClient = _.merge(customMethods, createCtpClient(clientConfig))
+  return ctpClient
+}
+
+function getApiRoot() {
   if (apiRoot) return apiRoot
 
   const clientConfig = getClientConfig()
-  const ctpClient = createCtpClient(clientConfig)
-  apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+  const _ctpClient = getCtpClient()
+  apiRoot = createApiBuilderFromCtpClient(_ctpClient).withProjectKey({
     projectKey: clientConfig.projectKey,
   })
   return apiRoot
 }
+
+export { getApiRoot, getCtpClient }

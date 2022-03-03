@@ -1,0 +1,13 @@
+{
+  "name": "vatFull",
+  "key": "test-tax-category",
+  "description": "test tax category",
+  "rates": [
+    {
+      "name": "de",
+      "amount": 0.19,
+      "includedInPrice": true,
+      "country": "DE"
+    }
+  ]
+}

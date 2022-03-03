@@ -1,0 +1,101 @@
+[
+  {
+    "key": "product-1",
+    "productType": {
+      "typeId": "product-type",
+      "key": "mainProductType"
+    },
+    "name": {
+      "en": "Wine subscription"
+    },
+    "categoryOrderHints": {},
+    "slug": {
+      "en": "wine-subscription"
+    },
+    "masterVariant": {
+      "id": 1,
+      "sku": "wine01",
+      "prices": [
+        {
+          "value": {
+            "type": "centPrecision",
+            "currencyCode": "EUR",
+            "centAmount": 18000,
+            "fractionDigits": 2
+          },
+          "country": "DE"
+        }
+      ]
+    },
+    "taxCategory": {
+      "typeId": "tax-category",
+      "key": "test-tax-category"
+    }
+  },
+  {
+    "key": "product-2",
+    "productType": {
+      "typeId": "product-type",
+      "key": "mainProductType"
+    },
+    "name": {
+      "en": "Beer subscription"
+    },
+    "categoryOrderHints": {},
+    "slug": {
+      "en": "beer-subscription"
+    },
+    "masterVariant": {
+      "id": 1,
+      "sku": "beer01",
+      "prices": [
+        {
+          "value": {
+            "type": "centPrecision",
+            "currencyCode": "EUR",
+            "centAmount": 10000,
+            "fractionDigits": 2
+          },
+          "country": "DE"
+        }
+      ]
+    },
+    "taxCategory": {
+      "typeId": "tax-category",
+      "key": "test-tax-category"
+    }
+  },
+  {
+    "key": "product-3",
+    "productType": {
+      "typeId": "product-type",
+      "key": "mainProductType"
+    },
+    "name": {
+      "en": "Pants"
+    },
+    "categoryOrderHints": {},
+    "slug": {
+      "en": "Pants"
+    },
+    "masterVariant": {
+      "id": 1,
+      "sku": "pants",
+      "prices": [
+        {
+          "value": {
+            "type": "centPrecision",
+            "currencyCode": "EUR",
+            "centAmount": 8000,
+            "fractionDigits": 2
+          },
+          "country": "DE"
+        }
+      ]
+    },
+    "taxCategory": {
+      "typeId": "tax-category",
+      "key": "test-tax-category"
+    }
+  }
+]
