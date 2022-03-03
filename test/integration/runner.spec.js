@@ -37,12 +37,13 @@ describe('runner', () => {
       .get({
         queryArgs: {
           where: `custom(fields(checkoutOrderRef(id="${checkoutOrder.id}")))`,
-          expand: 'paymentInfo.payments[*]',
+          expand: ['paymentInfo.payments[*]', 'state'],
         },
       })
       .execute()
 
     expect(templateOrders).to.have.lengthOf(4)
+    assertTemplateOrderAttributes(checkoutOrder, templateOrders)
     assertCustomFieldsEqual(checkoutOrder, templateOrders)
     assertLineItemsEqual(checkoutOrder, templateOrders)
     assertTemplateOrderCustomFields(checkoutOrder, templateOrders)
@@ -55,6 +56,37 @@ describe('runner', () => {
     expect(checkoutOrderUpdated.custom.fields.isSubscriptionProcessed).to.be
       .true
   })
+
+  function assertTemplateOrderAttributes(checkoutOrder, templateOrders) {
+    templateOrders.forEach((templateOrder) => {
+      const checkoutOrderLineItem = findMatchingCheckoutLineItem(
+        checkoutOrder,
+        templateOrder
+      )
+      if (checkoutOrderLineItem.quantity > 1)
+        expect(templateOrder.orderNumber).to.match(
+          /(([a-f0-9\\-]*){1}\s*)_subscriptionKey-([0-9]+)/g
+        )
+      else
+        expect(templateOrder.orderNumber).to.equal(
+          checkoutOrderLineItem.custom.fields.subscriptionKey
+        )
+      expect(templateOrder.state.obj.key).to.equal('Active')
+      expect(templateOrder.customerId).to.equal(checkoutOrder.customerId)
+      expect(templateOrder.customerEmail).to.equal(checkoutOrder.customerEmail)
+      expect(templateOrder.shippingAddress).to.equal(
+        checkoutOrder.shippingAddress
+      )
+      expect(templateOrder.billingAddress).to.equal(
+        checkoutOrder.billingAddress
+      )
+      expect(templateOrder.customerGroup).to.equal(checkoutOrder.customerGroup)
+      expect(templateOrder.country).to.equal(checkoutOrder.country)
+      expect(templateOrder.shippingInfo).to.equal(checkoutOrder.shippingInfo)
+      expect(templateOrder.taxMode).to.equal(checkoutOrder.taxMode)
+      expect(templateOrder.inventoryMode).to.equal('None')
+    })
+  }
 
   function assertPayments(checkoutOrder, templateOrders) {
     const checkoutOrderPayment = _.cloneDeep(
@@ -108,19 +140,6 @@ describe('runner', () => {
 
   function assertTemplateOrderCustomFields(checkoutOrder, templateOrders) {
     templateOrders.forEach((templateOrder) => {
-      const checkoutOrderLineItem = findMatchingCheckoutLineItem(
-        checkoutOrder,
-        templateOrder
-      )
-      if (checkoutOrderLineItem.quantity > 1)
-        expect(templateOrder.orderNumber).to.match(
-          /(([a-f0-9\\-]*){1}\s*)_subscriptionKey-([0-9]+)/g
-        )
-      else
-        expect(templateOrder.orderNumber).to.equal(
-          checkoutOrderLineItem.custom.fields.subscriptionKey
-        )
-
       const nextDeliveryDate = new Date(
         templateOrder.custom.fields.nextDeliveryDate
       )

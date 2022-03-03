@@ -15,7 +15,7 @@ async function run() {
   )
 
   const sendReminderStats = await sendReminders()
-  logger.info(sendReminderStats)
+  logger.info(`Reminders are sent: ${JSON.stringify(sendReminderStats)}`)
 
   const endDate = new Date()
   const executionTimeInSeconds = Math.floor(
