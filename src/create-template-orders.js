@@ -287,8 +287,8 @@ function _generateTemplateOrderImportDraft(
   if (cutoffDays) {
     nextDeliveryDate.setDate(nextDeliveryDate.getDate() - cutoffDays)
     if (nextDeliveryDate.toISOString() < checkoutOrder.createdAt) {
-      nextDeliveryDateISOString = nextDeliveryDate.toISOString()
       nextDeliveryCronDate = cronExpression.next()
+      nextDeliveryDateISOString = nextDeliveryCronDate.toISOString()
     }
   }
   const reminderDays = lineItem.custom.fields.reminderDays
