@@ -311,88 +311,108 @@ describe('create-template-orders', () => {
   })
 
   describe('nextDeliveryDate and reminderDate calculation', () => {
-    it('when schedule is "0 0 1 Feb,May,Aug,Nov *" and today is 15th Jan,' +
-      'it should set nextDeliveryDate to 1st Feb', async () => {
-      try {
-        _mockCommonRequestsAndResponse()
-        timekeeper.freeze(new Date(2022, 0, 15))
-        let templateOrder
-        const checkoutOrderResponseClone = _.cloneDeep(checkoutOrderResponse)
-        delete checkoutOrderResponseClone.results[0].lineItems[0].custom.fields.cutoffDays
-        delete checkoutOrderResponseClone.results[0].lineItems[0].custom.fields.reminderDays
+    it(
+      'when schedule is "0 0 1 Feb,May,Aug,Nov *" and today is 15th Jan,' +
+        'it should set nextDeliveryDate to 1st Feb',
+      async () => {
+        try {
+          _mockCommonRequestsAndResponse()
+          timekeeper.freeze(new Date(2022, 0, 15))
+          let templateOrder
+          const checkoutOrderResponseClone = _.cloneDeep(checkoutOrderResponse)
+          delete checkoutOrderResponseClone.results[0].lineItems[0].custom
+            .fields.cutoffDays
+          delete checkoutOrderResponseClone.results[0].lineItems[0].custom
+            .fields.reminderDays
 
-        nock(CTP_API_URL)
-          .get(`/${PROJECT_KEY}/orders`)
-          .query(
-            (actualQueryObject) =>
-              actualQueryObject.where ===
-              // eslint-disable-next-line max-len
-              'createdAt > "2022-03-02T17:20:43.250Z" AND custom(fields(hasSubscription=true)) AND custom(fields(isSubscriptionProcessed is not defined))'
-          )
-          .reply(200, checkoutOrderResponseClone)
+          nock(CTP_API_URL)
+            .get(`/${PROJECT_KEY}/orders`)
+            .query(
+              (actualQueryObject) =>
+                actualQueryObject.where ===
+                // eslint-disable-next-line max-len
+                'createdAt > "2022-03-02T17:20:43.250Z" AND custom(fields(hasSubscription=true)) AND custom(fields(isSubscriptionProcessed is not defined))'
+            )
+            .reply(200, checkoutOrderResponseClone)
 
-        nock(CTP_API_URL)
-          .post(`/${PROJECT_KEY}/orders/import`)
-          .reply((uri, requestBody) => {
-            templateOrder = requestBody
-            return [200, templateOrderResponse]
+          nock(CTP_API_URL)
+            .post(`/${PROJECT_KEY}/orders/import`)
+            .reply((uri, requestBody) => {
+              templateOrder = requestBody
+              return [200, templateOrderResponse]
+            })
+
+          await createTemplateOrders({
+            ctpClient,
+            apiRoot,
+            logger,
+            startDate: new Date(),
           })
 
-        await createTemplateOrders({
-          ctpClient,
-          apiRoot,
-          logger,
-          startDate: new Date(),
-        })
-
-        const nextDeliveryDate = new Date(templateOrder.custom.fields.nextDeliveryDate)
-        expect(nextDeliveryDate.getTime()).to.equal(new Date(2022, 1, 1).getTime())
-        expect(templateOrder.custom.fields.nextReminderDate).to.not.exist
-      } finally {
-        timekeeper.reset()
-      }
-    })
-
-    it('when schedule is "0 0 1 Feb,May,Aug,Nov *" and today is 31th Jan and cutOffDays ad reminderDays are 5, ' +
-      'it should set nextDeliveryDate to 1st May', async () => {
-      try {
-        _mockCommonRequestsAndResponse()
-        timekeeper.freeze(new Date(2022, 0, 31))
-        let templateOrder
-
-        nock(CTP_API_URL)
-          .get(`/${PROJECT_KEY}/orders`)
-          .query(
-            (actualQueryObject) =>
-              actualQueryObject.where ===
-              // eslint-disable-next-line max-len
-              'createdAt > "2022-03-02T17:20:43.250Z" AND custom(fields(hasSubscription=true)) AND custom(fields(isSubscriptionProcessed is not defined))'
+          const nextDeliveryDate = new Date(
+            templateOrder.custom.fields.nextDeliveryDate
           )
-          .reply(200, checkoutOrderResponse)
+          expect(nextDeliveryDate.getTime()).to.equal(
+            new Date(2022, 1, 1).getTime()
+          )
+          expect(templateOrder.custom.fields.nextReminderDate).to.not.exist
+        } finally {
+          timekeeper.reset()
+        }
+      }
+    )
 
-        nock(CTP_API_URL)
-          .post(`/${PROJECT_KEY}/orders/import`)
-          .reply((uri, requestBody) => {
-            templateOrder = requestBody
-            return [200, templateOrderResponse]
+    it(
+      'when schedule is "0 0 1 Feb,May,Aug,Nov *" and today is 31th Jan and cutOffDays ad reminderDays are 5, ' +
+        'it should set nextDeliveryDate to 1st May',
+      async () => {
+        try {
+          _mockCommonRequestsAndResponse()
+          timekeeper.freeze(new Date(2022, 0, 31))
+          let templateOrder
+
+          nock(CTP_API_URL)
+            .get(`/${PROJECT_KEY}/orders`)
+            .query(
+              (actualQueryObject) =>
+                actualQueryObject.where ===
+                // eslint-disable-next-line max-len
+                'createdAt > "2022-03-02T17:20:43.250Z" AND custom(fields(hasSubscription=true)) AND custom(fields(isSubscriptionProcessed is not defined))'
+            )
+            .reply(200, checkoutOrderResponse)
+
+          nock(CTP_API_URL)
+            .post(`/${PROJECT_KEY}/orders/import`)
+            .reply((uri, requestBody) => {
+              templateOrder = requestBody
+              return [200, templateOrderResponse]
+            })
+
+          await createTemplateOrders({
+            ctpClient,
+            apiRoot,
+            logger,
+            startDate: new Date(),
           })
 
-        await createTemplateOrders({
-          ctpClient,
-          apiRoot,
-          logger,
-          startDate: new Date(),
-        })
-
-        const nextDeliveryDate = new Date(templateOrder.custom.fields.nextDeliveryDate)
-        const nextReminderDate = new Date(templateOrder.custom.fields.nextReminderDate)
-        expect(nextDeliveryDate.getTime()).to.equal(new Date(2022, 4, 1).getTime())
-        expect(nextReminderDate.getTime()).to.equal(new Date(2022, 3, 26).getTime())
-        expect(templateOrder.custom.fields.cutoffDays).to.not.exist
-      } finally {
-        timekeeper.reset()
+          const nextDeliveryDate = new Date(
+            templateOrder.custom.fields.nextDeliveryDate
+          )
+          const nextReminderDate = new Date(
+            templateOrder.custom.fields.nextReminderDate
+          )
+          expect(nextDeliveryDate.getTime()).to.equal(
+            new Date(2022, 4, 1).getTime()
+          )
+          expect(nextReminderDate.getTime()).to.equal(
+            new Date(2022, 3, 26).getTime()
+          )
+          expect(templateOrder.custom.fields.cutoffDays).to.not.exist
+        } finally {
+          timekeeper.reset()
+        }
       }
-    })
+    )
 
     function _mockCommonRequestsAndResponse() {
       nock(CTP_API_URL)
@@ -451,7 +471,7 @@ describe('create-template-orders', () => {
     process.env.CTP_CLIENT_SECRET = 'client_secret'
   }
 
-  function _mockGetLastStartTimestamp () {
+  function _mockGetLastStartTimestamp() {
     nock(CTP_API_URL)
       .persist()
       .get(
@@ -460,7 +480,7 @@ describe('create-template-orders', () => {
       .reply(200, lastStartTstpResponse)
   }
 
-  function _mockCreatePayment () {
+  function _mockCreatePayment() {
     nock(CTP_API_URL)
       .persist()
       .post(
