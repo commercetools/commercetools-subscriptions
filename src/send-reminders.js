@@ -13,24 +13,24 @@ const stats = {
 let activeStateId
 
 async function sendReminders() {
-  await setActiveStateId()
+  await _setActiveStateId()
 
-  const orderQuery = await buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
+  const orderQuery = await _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
     activeStateId
   )
   for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
-    await pMap(templateOrders, processTemplateOrder, { concurrency: 3 })
+    await pMap(templateOrders, _processTemplateOrder, { concurrency: 3 })
   return stats
 }
 
-async function setActiveStateId() {
+async function _setActiveStateId() {
   const {
     body: { id },
   } = await apiRoot.states().withKey({ key: 'Active' }).get().execute()
   activeStateId = id
 }
 
-async function buildQueryOfTemplateOrdersThatIsReadyToSendReminder() {
+async function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder() {
   const now = new Date().toISOString()
   const where = `state(id="${activeStateId}") AND custom(fields(nextReminderDate <= "${now}"))`
   return {
@@ -61,7 +61,7 @@ const updateActions = [
   },
 ]
 
-async function processTemplateOrder({ id, orderNumber, version }) {
+async function _processTemplateOrder({ id, orderNumber, version }) {
   let retryCount = 0
   const maxRetry = 10
   while (true)
