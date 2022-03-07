@@ -38,7 +38,6 @@ async function createTemplateOrders({
     const uri = await _buildFetchCheckoutOrdersUri()
 
     await ctpClient.fetchBatches(uri, async (orders) => {
-      stats.processedCheckoutOrders += orders.length
       await pMap(orders, _processCheckoutOrder, { concurrency: 3 })
     })
 
@@ -92,6 +91,8 @@ async function _processCheckoutOrder(checkoutOrder) {
           'Skipping this checkout order' +
           ` Error: ${JSON.stringify(serializeError(err))}`
       )
+  } finally {
+    stats.processedCheckoutOrders++
   }
 }
 
