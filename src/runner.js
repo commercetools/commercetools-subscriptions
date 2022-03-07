@@ -1,7 +1,7 @@
 import { createTemplateOrders } from './create-template-orders.js'
 import getLogger from './utils/logger.js'
 import { getPackageJson } from './config.js'
-import { getApiRoot, getCtpClient } from './utils/client'
+import { getApiRoot, getCtpClient } from './utils/client.js'
 
 async function run() {
   const startDate = new Date()
