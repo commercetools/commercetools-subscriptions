@@ -1,26 +1,45 @@
 import pMap from 'p-map'
 import VError from 'verror'
-import { getApiRoot, getCtpClient } from './utils/client.js'
+import { serializeError } from 'serialize-error'
 
-const apiRoot = getApiRoot()
-const ctpClient = getCtpClient()
-
-const stats = {
-  processedTemplateOrders: 0,
-  skippedTemplateOrders: 0
-}
-
+let apiRoot
+let ctpClient
+let logger
+let stats
 let activeStateId
 
-async function sendReminders() {
-  await _setActiveStateId()
+async function sendReminders({
+  apiRoot: _apiRoot,
+  ctpClient: _ctpClient,
+  logger: _logger,
+}) {
+  stats = {
+    processedTemplateOrders: 0,
+    updatedTemplateOrders: 0,
+    skippedTemplateOrders: 0,
+  }
 
-  const orderQuery = await _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
-    activeStateId
-  )
-  for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
-    await pMap(templateOrders, _processTemplateOrder, { concurrency: 3 })
-  return stats
+  try {
+    apiRoot = _apiRoot
+    ctpClient = _ctpClient
+    logger = _logger
+
+    await _setActiveStateId()
+
+    const orderQuery =
+      await _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(activeStateId)
+
+    for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
+      await pMap(templateOrders, _processTemplateOrder, { concurrency: 3 })
+
+    return stats
+  } catch (err) {
+    logger.error(
+      'Failed on send reminders, processing should be restarted on the next run.' +
+        `Error: ${JSON.stringify(serializeError(err))}`
+    )
+    return stats
+  }
 }
 
 async function _setActiveStateId() {
@@ -64,6 +83,8 @@ const updateActions = [
 async function _processTemplateOrder({ id, orderNumber, version }) {
   let retryCount = 0
   const maxRetry = 10
+  stats.processedTemplateOrders++
+  // eslint-disable-next-line no-constant-condition
   while (true)
     try {
       await apiRoot
@@ -76,11 +97,12 @@ async function _processTemplateOrder({ id, orderNumber, version }) {
           },
         })
         .execute()
+      stats.updatedTemplateOrders++
       break
     } catch (err) {
       if (err.statusCode === 409) {
         retryCount += 1
-        const currentVersion = _fetchCurrentVersionOnRetry(id)
+        const currentVersion = await _fetchCurrentVersionOnRetry(id)
         if (!currentVersion) {
           stats.skippedTemplateOrders++
           break
@@ -102,8 +124,6 @@ async function _processTemplateOrder({ id, orderNumber, version }) {
         version = currentVersion
       } else throw err
     }
-
-  stats.processedTemplateOrders++
 }
 
 async function _fetchCurrentVersionOnRetry(id) {
@@ -114,8 +134,7 @@ async function _fetchCurrentVersionOnRetry(id) {
       const nextReminderDate = templateOrder.custom?.fields?.nextReminderDate
       if (nextReminderDate) {
         const now = new Date().toISOString()
-        if (nextReminderDate <= now)
-          return templateOrder.version
+        if (nextReminderDate <= now) return templateOrder.version
       }
     }
   }
@@ -125,13 +144,13 @@ async function _fetchCurrentVersionOnRetry(id) {
 async function _fetchTemplateOrder(id) {
   try {
     return (
-        await apiRoot
-            .orders()
-            .withId({
-              ID: id
-            })
-            .get()
-            .execute()
+      await apiRoot
+        .orders()
+        .withId({
+          ID: id,
+        })
+        .get()
+        .execute()
     ).body
   } catch (e) {
     if (e.code === 404) return null
