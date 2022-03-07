@@ -98,7 +98,7 @@ Checkout order with subscriptions contains following custom fields:
 | Name                    | Type    | Description                                                                                                                           | Required |
 | ----------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | hasSubscription         | boolean | True if the order contains line items that should be processed as subscriptions                                                       | YES      |
-| isSubscriptionProcessed | boolean | True if the order has already been processed by `commercetools-subscriptions.` This attribute is set by `commercetools-subscriptions` |
+| isSubscriptionProcessed | boolean | True if the order has already been processed by `commercetools-subscriptions.` This attribute is set by `commercetools-subscriptions` | NO       |
 
 ### Checkout line item custom fields
 
