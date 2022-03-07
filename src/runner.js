@@ -1,7 +1,7 @@
 import { createTemplateOrders } from './create-template-orders.js'
 import getLogger from './utils/logger.js'
 import { getPackageJson } from './config.js'
-import { sendReminders } from './send-reminders.js'
+import { getApiRoot, getCtpClient } from './utils/client'
 
 async function run() {
   const startDate = new Date()
@@ -9,13 +9,18 @@ async function run() {
   const logger = getLogger()
   logger.info(`${packageJson.name} started`)
 
-  const stats = await createTemplateOrders(startDate)
+  const apiRoot = getApiRoot()
+  const ctpClient = getCtpClient()
+
+  const stats = await createTemplateOrders({
+    apiRoot,
+    ctpClient,
+    logger,
+    startDate,
+  })
   logger.info(
     `Creating template orders process finished: ${JSON.stringify(stats)}`
   )
-
-  const sendReminderStats = await sendReminders()
-  logger.info(`Reminders are sent: ${JSON.stringify(sendReminderStats)}`)
 
   const endDate = new Date()
   const executionTimeInSeconds = Math.floor(
