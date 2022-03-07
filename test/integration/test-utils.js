@@ -257,4 +257,8 @@ function isValidDate(d) {
   return d instanceof Date && !isNaN(d)
 }
 
-export { ensureResources, createOrderByOrderNumber, isValidDate }
+async function reloadModule(path) {
+  return import(`${path}?testName=${randomUUID()}`)
+}
+
+export { ensureResources, createOrderByOrderNumber, isValidDate, reloadModule }

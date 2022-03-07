@@ -3,12 +3,11 @@ import parser from 'cron-parser'
 import _ from 'lodash'
 import VError from 'verror'
 import { serializeError } from 'serialize-error'
-import { getApiRoot, getCtpClient } from './utils/client.js'
-import getLogger from './utils/logger.js'
 
-const apiRoot = getApiRoot()
-const ctpClient = getCtpClient()
-const logger = getLogger()
+let apiRoot
+let ctpClient
+let logger
+let stats
 
 const LAST_START_TIMESTAMP_CUSTOM_OBJECT_CONTAINER =
   'commercetools-subscriptions'
@@ -18,32 +17,49 @@ const LAST_START_TIMESTAMP_CUSTOM_OBJECT_KEY =
 // to address all the write inconsistencies when writing to database
 const INCONSISTENCY_MS = 3 * 60 * 1000
 
-const stats = {
-  processedCheckoutOrders: 0,
-  createdTemplateOrders: 0,
-  failedCheckoutOrders: 0,
-  duplicatedTemplateOrderCreation: 0,
-}
+async function createTemplateOrders({
+  apiRoot: _apiRoot,
+  ctpClient: _ctpClient,
+  logger: _logger,
+  startDate,
+}) {
+  stats = {
+    processedCheckoutOrders: 0,
+    createdTemplateOrders: 0,
+    failedCheckoutOrders: 0,
+    duplicatedTemplateOrderCreation: 0,
+  }
 
-async function createTemplateOrders(startDate) {
-  const uri = await _buildFetchCheckoutOrdersUri()
+  try {
+    apiRoot = _apiRoot
+    ctpClient = _ctpClient
+    logger = _logger
 
-  await ctpClient.fetchBatches(uri, async (orders) => {
-    stats.processedCheckoutOrders += orders.length
-    await pMap(orders, _processCheckoutOrder, { concurrency: 3 })
-  })
+    const uri = await _buildFetchCheckoutOrdersUri()
 
-  await _updateLastStartTimestamp(startDate)
+    await ctpClient.fetchBatches(uri, async (orders) => {
+      await pMap(orders, _processCheckoutOrder, { concurrency: 3 })
+    })
 
-  return stats
+    await _updateLastStartTimestamp(startDate)
+
+    return stats
+  } catch (err) {
+    logger.error(
+      'Failed to process checkout orders. lastStartTimestamp was not updated. ' +
+        'Processing should be restarted on the next run.' +
+        `Error: ${JSON.stringify(serializeError(err))}`
+    )
+    return stats
+  }
 }
 
 async function _buildFetchCheckoutOrdersUri() {
   let where =
     'custom(fields(hasSubscription=true)) AND custom(fields(isSubscriptionProcessed is not defined))'
-  const lastStartTimestamp = await _fetchLastStartTimestamp()
-  if (lastStartTimestamp)
-    where = `createdAt > "${lastStartTimestamp.value}" AND ${where}`
+  const lastStartTimestampCustomObject = await _fetchLastStartTimestamp()
+  if (lastStartTimestampCustomObject)
+    where = `createdAt > "${lastStartTimestampCustomObject.value}" AND ${where}`
 
   const uri = ctpClient.builder.orders
     .where(where)
@@ -59,7 +75,6 @@ async function _processCheckoutOrder(checkoutOrder) {
       templateOrderDrafts,
       async (templateOrderDraft) => {
         await _createTemplateOrderAndPayments(checkoutOrder, templateOrderDraft)
-        stats.createdTemplateOrders++
       },
       { concurrency: 3 }
     )
@@ -67,11 +82,17 @@ async function _processCheckoutOrder(checkoutOrder) {
     await _setCheckoutOrderProcessed(checkoutOrder)
   } catch (err) {
     stats.failedCheckoutOrders++
-    logger.error(
-      `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
-        'Skipping this checkout order' +
-        ` Error: ${JSON.stringify(serializeError(err))}`
-    )
+    let cause = err
+    if (err instanceof VError) cause = err.cause()
+    if (cause.code === 409 || cause.code >= 500) throw err
+    else
+      logger.error(
+        `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
+          'Skipping this checkout order' +
+          ` Error: ${JSON.stringify(serializeError(err))}`
+      )
+  } finally {
+    stats.processedCheckoutOrders++
   }
 }
 
@@ -100,7 +121,7 @@ async function _fetchLastStartTimestamp() {
         })
         .get()
         .execute()
-    ).body
+    ).body?.results?.[0]
   } catch (e) {
     if (e.code === 404) return null
     throw e
@@ -175,6 +196,7 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
       .importOrder()
       .post({ body: orderDraft })
       .execute()
+    stats.createdTemplateOrders++
 
     updateActions.push({
       action: 'transitionState',
@@ -266,8 +288,8 @@ function _generateTemplateOrderImportDraft(
   if (cutoffDays) {
     nextDeliveryDate.setDate(nextDeliveryDate.getDate() - cutoffDays)
     if (nextDeliveryDate.toISOString() < checkoutOrder.createdAt) {
-      nextDeliveryDateISOString = nextDeliveryDate.toISOString()
       nextDeliveryCronDate = cronExpression.next()
+      nextDeliveryDateISOString = nextDeliveryCronDate.toISOString()
     }
   }
   const reminderDays = lineItem.custom.fields.reminderDays

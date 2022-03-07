@@ -1,0 +1,142 @@
+{
+  "type": "Order",
+  "id": "99267ba2-1d6c-4a03-8771-df2d9524f9b8",
+  "version": 3,
+  "lastMessageSequenceNumber": 3,
+  "createdAt": "2022-03-03T15:03:12.955Z",
+  "lastModifiedAt": "2022-03-03T15:03:13.032Z",
+  "lastModifiedBy": {
+    "clientId": "fpQ73MS9ybGmxO6Ge1WaywCi",
+    "isPlatformClient": false
+  },
+  "createdBy": {
+    "clientId": "fpQ73MS9ybGmxO6Ge1WaywCi",
+    "isPlatformClient": false
+  },
+  "orderNumber": "c1cee95f-8d18-45ed-8cac-9cc046b35fe5_subscriptionKey-3",
+  "customerEmail": "test@test.com",
+  "totalPrice": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 30000,
+    "fractionDigits": 2
+  },
+  "orderState": "Open",
+  "syncInfo": [],
+  "returnInfo": [],
+  "state": {
+    "typeId": "state",
+    "id": "09015358-70e9-4025-b4b6-3febcaaf06de"
+  },
+  "taxMode": "External",
+  "inventoryMode": "None",
+  "taxRoundingMode": "HalfEven",
+  "taxCalculationMode": "LineItemLevel",
+  "origin": "Customer",
+  "lineItems": [
+    {
+      "id": "07703856-b59d-40a0-9c06-128e10eb7b30",
+      "productId": "ad5ac869-6b87-4460-85bc-41eae2758086",
+      "productKey": "product-2",
+      "name": {
+        "en": "Beer subscription"
+      },
+      "productType": {
+        "typeId": "product-type",
+        "id": "85da8cfb-86a5-4461-9865-1a09cb3881d6",
+        "version": 1
+      },
+      "productSlug": {
+        "en": "beer-subscription"
+      },
+      "variant": {
+        "id": 1,
+        "sku": "beer01",
+        "prices": [
+          {
+            "id": "1cef7d33-2c62-41d5-be75-83af7b0ecfb4",
+            "value": {
+              "type": "centPrecision",
+              "currencyCode": "EUR",
+              "centAmount": 10000,
+              "fractionDigits": 2
+            },
+            "country": "DE"
+          }
+        ],
+        "images": [],
+        "attributes": [],
+        "assets": []
+      },
+      "price": {
+        "id": "577ff2c5-d77e-43f2-91a2-f91201d8f42c",
+        "value": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 10000,
+          "fractionDigits": 2
+        },
+        "country": "DE"
+      },
+      "quantity": 3,
+      "discountedPricePerQuantity": [],
+      "addedAt": "2022-03-03T15:03:12.944Z",
+      "lastModifiedAt": "2022-03-03T15:03:12.944Z",
+      "state": [
+        {
+          "quantity": 3,
+          "state": {
+            "typeId": "state",
+            "id": "b394f7f1-1b15-476c-a995-bd149e67815d"
+          }
+        }
+      ],
+      "priceMode": "Platform",
+      "totalPrice": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 30000,
+        "fractionDigits": 2
+      },
+      "custom": {
+        "type": {
+          "typeId": "type",
+          "id": "72e67b0a-373f-4901-b542-608d414df6c2"
+        },
+        "fields": {
+          "subscriptionKey": "c1cee95f-8d18-45ed-8cac-9cc046b35fe5_subscriptionKey",
+          "isSubscription": true,
+          "schedule": "* * * * *"
+        }
+      },
+      "lineItemMode": "Standard"
+    }
+  ],
+  "customLineItems": [],
+  "transactionFee": false,
+  "discountCodes": [],
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "id": "cb0cac8a-1f91-4971-9703-5772d43c94af"
+    },
+    "fields": {
+      "nextDeliveryDate": "2022-03-03T15:04:00.000Z",
+      "schedule": "* * * * *",
+      "checkoutOrderRef": {
+        "typeId": "order",
+        "id": "8692afe0-7726-4934-89b8-4a2bb7b5402a"
+      }
+    }
+  },
+  "paymentInfo": {
+    "payments": [
+      {
+        "typeId": "payment",
+        "id": "b0e845f3-91ae-49b7-b9e9-df708cf8b94c"
+      }
+    ]
+  },
+  "itemShippingAddresses": [],
+  "refusedGifts": []
+}
