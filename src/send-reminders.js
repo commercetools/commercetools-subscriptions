@@ -7,6 +7,7 @@ const ctpClient = getCtpClient()
 
 const stats = {
   processedTemplateOrders: 0,
+  skippedTemplateOrders: 0
 }
 
 let activeStateId
@@ -62,7 +63,7 @@ const updateActions = [
 
 async function processTemplateOrder({ id, orderNumber, version }) {
   let retryCount = 0
-  const maxRetry = 20
+  const maxRetry = 10
   while (true)
     try {
       await apiRoot
@@ -79,9 +80,12 @@ async function processTemplateOrder({ id, orderNumber, version }) {
     } catch (err) {
       if (err.statusCode === 409) {
         retryCount += 1
-        // todo: check latest state and other fields and decide if retry is needed.
-        // const templateOrder = fetchTemplateOrder(id)
-        const currentVersion = err.body.errors[0].currentVersion
+        const currentVersion = _fetchCurrentVersionOnRetry(id)
+        if (!currentVersion) {
+          stats.skippedTemplateOrders++
+          break
+        }
+
         if (retryCount > maxRetry) {
           const retryMessage =
             'Got a concurrent modification error when updating state from (Active to SendReminder)' +
@@ -102,21 +106,37 @@ async function processTemplateOrder({ id, orderNumber, version }) {
   stats.processedTemplateOrders++
 }
 
-// async function fetchTemplateOrder(id) {
-//   try {
-//     return (
-//         await apiRoot
-//             .orders()
-//             .withId({
-//               ID: id
-//             })
-//             .get()
-//             .execute()
-//     ).body
-//   } catch (e) {
-//     if (e.code === 404) return null
-//     throw e
-//   }
-// }
+async function _fetchCurrentVersionOnRetry(id) {
+  const templateOrder = await _fetchTemplateOrder(id)
+  if (templateOrder) {
+    const stateId = templateOrder.state?.id
+    if (stateId && stateId === activeStateId) {
+      const nextReminderDate = templateOrder.custom?.fields?.nextReminderDate
+      if (nextReminderDate) {
+        const now = new Date().toISOString()
+        if (nextReminderDate <= now)
+          return templateOrder.version
+      }
+    }
+  }
+  return null
+}
+
+async function _fetchTemplateOrder(id) {
+  try {
+    return (
+        await apiRoot
+            .orders()
+            .withId({
+              ID: id
+            })
+            .get()
+            .execute()
+    ).body
+  } catch (e) {
+    if (e.code === 404) return null
+    throw e
+  }
+}
 
 export { sendReminders }
