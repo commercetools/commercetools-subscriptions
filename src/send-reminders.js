@@ -133,7 +133,16 @@ async function _processTemplateOrder(
       } else throw err
     }
 }
-
+/*
+ * Ensures on retry (409) the order has matching the condition below:
+ * state(id="${activeStateId}") AND custom(fields(nextReminderDate <= "${now}")
+ * for retrying to set state to 'sendReminder',
+ * @param id order id
+ * @param activeStateId state id with the key 'Active'
+ * @returns {Promise<null|*>} Returns the latest version of the template order if matches the condition,
+ *   otherwise returns null for the latest version.
+ * @private
+ */
 async function _fetchCurrentVersionOnRetry(id, activeStateId) {
   const templateOrder = await _fetchTemplateOrder(id)
   if (templateOrder) {
