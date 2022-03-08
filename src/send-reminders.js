@@ -31,15 +31,14 @@ async function sendReminders({
 
     for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
       await pMap(templateOrders, _processTemplateOrder, { concurrency: 3 })
-
-    return stats
   } catch (err) {
     logger.error(
       'Failed on send reminders, processing should be restarted on the next run.' +
         `Error: ${JSON.stringify(serializeError(err))}`
     )
-    return stats
   }
+
+  return stats
 }
 
 async function _setActiveStateId() {
