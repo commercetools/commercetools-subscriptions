@@ -74,16 +74,6 @@ async function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
   }
 }
 
-const updateActions = [
-  {
-    action: 'transitionState',
-    state: {
-      typeId: 'state',
-      key: 'SendReminder',
-    },
-  },
-]
-
 async function _processTemplateOrder(
   activeStateId,
   { id, orderNumber, version }
@@ -99,7 +89,15 @@ async function _processTemplateOrder(
         .withId({ ID: id })
         .post({
           body: {
-            actions: updateActions,
+            actions: [
+              {
+                action: 'transitionState',
+                state: {
+                  typeId: 'state',
+                  key: 'SendReminder',
+                },
+              },
+            ],
             version,
           },
         })
