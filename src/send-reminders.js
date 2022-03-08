@@ -6,7 +6,6 @@ let apiRoot
 let ctpClient
 let logger
 let stats
-let activeStateId
 
 async function sendReminders({
   apiRoot: _apiRoot,
@@ -24,13 +23,17 @@ async function sendReminders({
     ctpClient = _ctpClient
     logger = _logger
 
-    await _setActiveStateId()
+    const activeStateId = await _fetchActiveStateId()
 
     const orderQuery =
       await _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(activeStateId)
 
     for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
-      await pMap(templateOrders, _processTemplateOrder, { concurrency: 3 })
+      await pMap(
+        templateOrders,
+        (order) => _processTemplateOrder(activeStateId, order),
+        { concurrency: 3 }
+      )
   } catch (err) {
     logger.error(
       'Failed on send reminders, processing should be restarted on the next run.' +
@@ -41,14 +44,16 @@ async function sendReminders({
   return stats
 }
 
-async function _setActiveStateId() {
+async function _fetchActiveStateId() {
   const {
     body: { id },
   } = await apiRoot.states().withKey({ key: 'Active' }).get().execute()
-  activeStateId = id
+  return id
 }
 
-async function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder() {
+async function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
+  activeStateId
+) {
   const now = new Date().toISOString()
   const where = `state(id="${activeStateId}") AND custom(fields(nextReminderDate <= "${now}"))`
   return {
@@ -79,7 +84,10 @@ const updateActions = [
   },
 ]
 
-async function _processTemplateOrder({ id, orderNumber, version }) {
+async function _processTemplateOrder(
+  activeStateId,
+  { id, orderNumber, version }
+) {
   let retryCount = 0
   const maxRetry = 10
   stats.processedTemplateOrders++
@@ -101,7 +109,10 @@ async function _processTemplateOrder({ id, orderNumber, version }) {
     } catch (err) {
       if (err.statusCode === 409) {
         retryCount += 1
-        const currentVersion = await _fetchCurrentVersionOnRetry(id)
+        const currentVersion = await _fetchCurrentVersionOnRetry(
+          id,
+          activeStateId
+        )
         if (!currentVersion) {
           stats.skippedTemplateOrders++
           break
@@ -125,7 +136,7 @@ async function _processTemplateOrder({ id, orderNumber, version }) {
     }
 }
 
-async function _fetchCurrentVersionOnRetry(id) {
+async function _fetchCurrentVersionOnRetry(id, activeStateId) {
   const templateOrder = await _fetchTemplateOrder(id)
   if (templateOrder) {
     const stateId = templateOrder.state?.id
