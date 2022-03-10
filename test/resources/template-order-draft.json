@@ -62,15 +62,6 @@
       "discountedPricePerQuantity": [],
       "addedAt": "2022-03-01T17:27:27.249Z",
       "lastModifiedAt": "2022-03-01T17:27:27.249Z",
-      "state": [
-        {
-          "quantity": 1,
-          "state": {
-            "typeId": "state",
-            "id": "b394f7f1-1b15-476c-a995-bd149e67815d"
-          }
-        }
-      ],
       "priceMode": "Platform",
       "totalPrice": {
         "type": "centPrecision",
@@ -81,7 +72,7 @@
       "custom": {
         "type": {
           "typeId": "type",
-          "id": "72e67b0a-373f-4901-b542-608d414df6c2"
+          "key": "checkout-order-line-item"
         },
         "fields": {
           "subscriptionKey": "1646155644124_subscriptionKey",
