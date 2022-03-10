@@ -12,6 +12,7 @@ describe('send-reminders', () => {
   let logger
   let apiRoot
   let ctpClient
+  const activeStateId = 'activeStateId'
   const CTP_API_URL = 'https://api.europe-west1.gcp.commercetools.com'
   const CTP_AUTH_URL = 'https://auth.europe-west1.gcp.commercetools.com'
   const PROJECT_KEY = 'project-key'
@@ -41,9 +42,8 @@ describe('send-reminders', () => {
   it(
     'given Active template orders ' +
       'when the nextReminderDate <= now' +
-      'then it should set state "sendReminder"',
+      'then it should set state "commercetools-subscriptions-sendReminder"',
     async () => {
-      _mockActiveState()
       _mockTemplateOrders()
       const sendReminderStateSet = nock(CTP_API_URL)
         .post(
@@ -56,7 +56,7 @@ describe('send-reminders', () => {
                   action: 'transitionState',
                   state: {
                     typeId: 'state',
-                    key: 'SendReminder',
+                    key: 'commercetools-subscriptions-sendReminder',
                   },
                 },
               ],
@@ -65,7 +65,12 @@ describe('send-reminders', () => {
         )
         .reply(200)
 
-      const stats = await sendReminders({ apiRoot, ctpClient, logger })
+      const stats = await sendReminders({
+        apiRoot,
+        ctpClient,
+        logger,
+        activeStateId,
+      })
       expect(stats).to.deep.equal({
         processedTemplateOrders: 1,
         skippedTemplateOrders: 0,
@@ -76,7 +81,6 @@ describe('send-reminders', () => {
   )
 
   it('should skip processing if there is no matching template orders', async () => {
-    _mockActiveState()
     nock(CTP_API_URL)
       .post(`/${PROJECT_KEY}/graphql`, (body) =>
         body.query.includes(
@@ -90,7 +94,12 @@ describe('send-reminders', () => {
           },
         },
       })
-    const stats = await sendReminders({ apiRoot, ctpClient, logger })
+    const stats = await sendReminders({
+      apiRoot,
+      ctpClient,
+      logger,
+      activeStateId,
+    })
     expect(stats).to.deep.equal({
       processedTemplateOrders: 0,
       skippedTemplateOrders: 0,
@@ -100,7 +109,6 @@ describe('send-reminders', () => {
 
   describe('error handling', () => {
     it('should retry on 409s', async () => {
-      _mockActiveState()
       _mockTemplateOrders()
       const sendReminderStateSet = nock(CTP_API_URL)
         .post(
@@ -129,25 +137,30 @@ describe('send-reminders', () => {
         .reply(200)
 
       const orderRefetched = nock(CTP_API_URL)
-        .get(`/${PROJECT_KEY}/orders/aca5925a-7078-4455-8e0f-3956069418c6`)
+        .get(`/${PROJECT_KEY}/orders`)
+        .query((actualQueryObject) =>
+          actualQueryObject.where.includes(
+            'id="aca5925a-7078-4455-8e0f-3956069418c6" ' +
+              'AND state(id="activeStateId") AND custom(fields(nextReminderDate <='
+          )
+        )
         .reply(200, {
-          version: 4,
-          id: 'aca5925a-7078-4455-8e0f-3956069418c6',
-          state: {
-            typeId: 'state',
-            id: 'activeStateId',
-          },
-          custom: {
-            fields: {
-              nextReminderDate: '2022-04-25T22:00:00.000Z',
+          results: [
+            {
+              version: 4,
             },
-          },
+          ],
         })
 
       try {
         // exact same date
         timekeeper.freeze(new Date('2022-04-25T22:00:00.000Z'))
-        const stats = await sendReminders({ apiRoot, ctpClient, logger })
+        const stats = await sendReminders({
+          apiRoot,
+          ctpClient,
+          logger,
+          activeStateId,
+        })
         expect(stats).to.deep.equal({
           processedTemplateOrders: 1,
           skippedTemplateOrders: 0,
@@ -161,7 +174,6 @@ describe('send-reminders', () => {
     })
 
     it('should skip on 409 when the sendReminder condition does not match', async () => {
-      _mockActiveState()
       _mockTemplateOrders()
       const sendReminderStateSet = nock(CTP_API_URL)
         .post(
@@ -181,25 +193,26 @@ describe('send-reminders', () => {
           ],
         })
       const orderRefetched = nock(CTP_API_URL)
-        .get(`/${PROJECT_KEY}/orders/aca5925a-7078-4455-8e0f-3956069418c6`)
+        .get(`/${PROJECT_KEY}/orders`)
+        .query((actualQueryObject) =>
+          actualQueryObject.where.includes(
+            'id="aca5925a-7078-4455-8e0f-3956069418c6" ' +
+              'AND state(id="activeStateId") AND custom(fields(nextReminderDate <='
+          )
+        )
         .reply(200, {
-          version: 4,
-          id: 'aca5925a-7078-4455-8e0f-3956069418c6',
-          state: {
-            typeId: 'state',
-            id: 'activeStateId',
-          },
-          custom: {
-            fields: {
-              nextReminderDate: '2022-04-25T22:00:00.000Z',
-            },
-          },
+          results: [],
         })
 
       try {
         // 15 min before
         timekeeper.freeze(new Date('2022-04-25T21:45:00.000Z'))
-        const stats = await sendReminders({ apiRoot, ctpClient, logger })
+        const stats = await sendReminders({
+          apiRoot,
+          ctpClient,
+          logger,
+          activeStateId,
+        })
         expect(stats).to.deep.equal({
           processedTemplateOrders: 1,
           skippedTemplateOrders: 1,
@@ -213,7 +226,6 @@ describe('send-reminders', () => {
     })
 
     it('should fail process on 5xxs', async () => {
-      _mockActiveState()
       _mockTemplateOrders()
 
       // currently no retry for 5xx.
@@ -228,7 +240,12 @@ describe('send-reminders', () => {
           message: 'Some TEST API error',
         })
 
-      const stats = await sendReminders({ apiRoot, ctpClient, logger })
+      const stats = await sendReminders({
+        apiRoot,
+        ctpClient,
+        logger,
+        activeStateId,
+      })
       expect(stats).to.deep.equal({
         processedTemplateOrders: 1,
         skippedTemplateOrders: 0,
@@ -262,15 +279,6 @@ describe('send-reminders', () => {
     process.env.CTP_CLIENT_SECRET = ctpClientSecret
   }
 
-  function _mockActiveState() {
-    nock(CTP_API_URL)
-      .persist()
-      .get(`/${PROJECT_KEY}/states/key=Active`)
-      .reply(200, {
-        id: 'activeStateId',
-      })
-  }
-
   function _mockTemplateOrders() {
     const templateOrdersResponse = {
       data: {
@@ -287,6 +295,7 @@ describe('send-reminders', () => {
       },
     }
     nock(CTP_API_URL)
+      .persist()
       .post(`/${PROJECT_KEY}/graphql`, (body) =>
         body.query.includes(
           'TemplateOrdersThatIsReadyToSendReminderOrdersQuery'

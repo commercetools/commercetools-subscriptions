@@ -11,6 +11,7 @@ async function sendReminders({
   apiRoot: _apiRoot,
   ctpClient: _ctpClient,
   logger: _logger,
+  activeStateId,
 }) {
   stats = {
     processedTemplateOrders: 0,
@@ -23,10 +24,8 @@ async function sendReminders({
     ctpClient = _ctpClient
     logger = _logger
 
-    const activeStateId = await _fetchActiveStateId()
-
     const orderQuery =
-      await _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(activeStateId)
+      _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(activeStateId)
 
     for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
       await pMap(
@@ -44,18 +43,7 @@ async function sendReminders({
   return stats
 }
 
-async function _fetchActiveStateId() {
-  const {
-    body: { id },
-  } = await apiRoot.states().withKey({ key: 'Active' }).get().execute()
-  return id
-}
-
-async function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
-  activeStateId
-) {
-  const now = new Date().toISOString()
-  const where = `state(id="${activeStateId}") AND custom(fields(nextReminderDate <= "${now}"))`
+function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(activeStateId) {
   return {
     queryBody: `query TemplateOrdersThatIsReadyToSendReminderOrdersQuery($limit: Int, $where: String) {
             orders (limit: $limit, where: $where) {
@@ -69,9 +57,14 @@ async function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
     endpoint: 'orders',
     variables: {
       limit: 100,
-      where,
+      where: _buildWhereClauseForReadyToSendReminderOrders(activeStateId),
     },
   }
+}
+
+function _buildWhereClauseForReadyToSendReminderOrders(activeStateId) {
+  const now = new Date().toISOString()
+  return `state(id="${activeStateId}") AND custom(fields(nextReminderDate <= "${now}"))`
 }
 
 async function _processTemplateOrder(
@@ -94,7 +87,7 @@ async function _processTemplateOrder(
                 action: 'transitionState',
                 state: {
                   typeId: 'state',
-                  key: 'SendReminder',
+                  key: 'commercetools-subscriptions-sendReminder',
                 },
               },
             ],
@@ -124,9 +117,7 @@ async function _processTemplateOrder(
             ` currentVersion: "${currentVersion}".`
           throw new VError(
             err,
-            `${retryMessage} Won't retry again` +
-              ` because of a reached limit ${maxRetry}` +
-              ' max retries.'
+            `${retryMessage} Won't retry again since maximum retry limit of ${maxRetry} is reached.`
           )
         }
         version = currentVersion
@@ -144,35 +135,22 @@ async function _processTemplateOrder(
  * @private
  */
 async function _fetchCurrentVersionOnRetry(id, activeStateId) {
-  const templateOrder = await _fetchTemplateOrder(id)
-  if (templateOrder) {
-    const stateId = templateOrder.state?.id
-    if (stateId && stateId === activeStateId) {
-      const nextReminderDate = templateOrder.custom?.fields?.nextReminderDate
-      if (nextReminderDate) {
-        const now = new Date().toISOString()
-        if (nextReminderDate <= now) return templateOrder.version
-      }
-    }
-  }
-  return null
-}
+  const {
+    body: {
+      results: [templateOrder],
+    },
+  } = await apiRoot
+    .orders()
+    .get({
+      queryArgs: {
+        where: `id="${id}" AND ${_buildWhereClauseForReadyToSendReminderOrders(
+          activeStateId
+        )}`,
+      },
+    })
+    .execute()
 
-async function _fetchTemplateOrder(id) {
-  try {
-    return (
-      await apiRoot
-        .orders()
-        .withId({
-          ID: id,
-        })
-        .get()
-        .execute()
-    ).body
-  } catch (e) {
-    if (e.code === 404) return null
-    throw e
-  }
+  return templateOrder?.version
 }
 
 export { sendReminders }
