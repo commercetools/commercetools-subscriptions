@@ -13,30 +13,28 @@ Resources below are required for the commercetools-subscriptions to operate corr
 
 ### States
 
-1. [Active](../resources/active-state.json)
-1. [Cancelled](../resources/cancelled-state.json)
-1. [Error](../resources/error-state.json)
-1. [Paused](../resources/paused-state.json)
-1. [Reminder sent](../resources/reminder-sent-state.json)
-1. [Send reminder](../resources/send-reminder-state.json)
+States allow to put the `subscription-template-order` into different states and since order state changes emit a [OrderStateTransitionMessage](https://docs.commercetools.com/api/message-types#orderstatetransitionmessage) one can either pull them from the message queue or query directly from the API.
 
-You can create these resources by running the command `npm run setup-resources` as below.
+The `subscription-template-order` is using its own state machine which is not shared with other states required by the shop. Below is the list of all the required states:
+
+1. [commercetools-subscriptions-active](../resources/active-state.json)
+1. [commercetools-subscriptions-sendReminder](../resources/send-reminder-state.json)
+1. [commercetools-subscriptions-cancelled](../resources/cancelled-state.json)
+1. [commercetools-subscriptions-error](../resources/error-state.json)
+1. [commercetools-subscriptions-paused](../resources/paused-state.json)
+1. [commercetools-subscriptions-reminderSent](../resources/reminder-sent-state.json)
+
+We created a script to create required subscription-states:
 
 ```
 export CTP_PROJECT_KEY=xxx
 export CTP_CLIENT_ID=xxx
 export CTP_CLIENT_SECRET=xxx
-export EXISTING_ORDER_TYPE_KEY=xxx
-export EXISTING_ORDER_LINE_ITEM_TYPE_KEY=xxx
-export EXISTING_SUBSCRIPTION_ORDER_TYPE_KEY=xxx
-npm run setup-resources
+npm run "setup-subscription-states"
 ```
 
-| Name                                 | Content                                                                                                                                                                                                                                                                                                    | Required |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| CTP_PROJECT_KEY                      | commercetools project key                                                                                                                                                                                                                                                                                  | YES      |
-| CTP_CLIENT_ID                        | OAuth 2.0 client_id and can be used to obtain a token.                                                                                                                                                                                                                                                     | YES      |
-| CTP_CLIENT_SECRET                    | OAuth 2.0 client_secret and can be used to obtain a token.                                                                                                                                                                                                                                                 | YES      |
-| EXISTING_ORDER_TYPE_KEY              | Key of the existing order custom type. If provided, the script will merge `fieldDefinitions` from this type to the checkout order type. Use this option if you already have an order custom type and you want to use the attributes from this type with the checkout order type                            | NO       |
-| EXISTING_ORDER_LINE_ITEM_TYPE_KEY    | Key of the existing line item custom type. If provided, the script will merge `fieldDefinitions` from this type to the checkout order line item type. Use this option if you already have a line item custom type and you want to use the attributes from this type with the checkout order line item type | NO       |
-| EXISTING_SUBSCRIPTION_ORDER_TYPE_KEY | Key of the existing order custom type. If provided, the script will merge `fieldDefinitions` from this type to the subscription order type. Use this option if you already have an order custom type and you want to use the attributes from this type with the subscription order type                    | NO       |
+| Name              | Content                                                    | Required |
+| ----------------- | ---------------------------------------------------------- | -------- |
+| CTP_PROJECT_KEY   | commercetools project key                                  | YES      |
+| CTP_CLIENT_ID     | OAuth 2.0 client_id and can be used to obtain a token.     | YES      |
+| CTP_CLIENT_SECRET | OAuth 2.0 client_secret and can be used to obtain a token. | YES      |

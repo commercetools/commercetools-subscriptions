@@ -1,14 +1,30 @@
 {
-  "key": "Cancelled",
+  "key": "commercetools-subscriptions-cancelled",
   "type": "OrderState",
   "roles": [],
   "name": {
-    "en": "Cancelled"
+    "en": "commercetools-subscriptions-cancelled"
   },
   "transitions": [
     {
       "typeId": "state",
-      "key": "Active"
+      "key": "commercetools-subscriptions-active"
+    },
+    {
+      "typeId": "state",
+      "key": "commercetools-subscriptions-sendReminder"
+    },
+    {
+      "typeId": "state",
+      "key": "commercetools-subscriptions-paused"
+    },
+    {
+      "typeId": "state",
+      "key": "commercetools-subscriptions-error"
+    },
+    {
+      "typeId": "state",
+      "key": "commercetools-subscriptions-reminderSent"
     }
   ],
   "initial": false

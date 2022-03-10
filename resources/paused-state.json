@@ -1,22 +1,30 @@
 {
-  "key": "Paused",
+  "key": "commercetools-subscriptions-paused",
   "type": "OrderState",
   "roles": [],
   "name": {
-    "en": "Paused"
+    "en": "commercetools-subscriptions-paused"
   },
   "transitions": [
     {
       "typeId": "state",
-      "key": "Active"
+      "key": "commercetools-subscriptions-active"
     },
     {
       "typeId": "state",
-      "key": "Cancelled"
+      "key": "commercetools-subscriptions-sendReminder"
     },
     {
       "typeId": "state",
-      "key": "Error"
+      "key": "commercetools-subscriptions-cancelled"
+    },
+    {
+      "typeId": "state",
+      "key": "commercetools-subscriptions-error"
+    },
+    {
+      "typeId": "state",
+      "key": "commercetools-subscriptions-reminderSent"
     }
   ],
   "initial": false
