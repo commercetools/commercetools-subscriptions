@@ -9,6 +9,7 @@ import {
   REMINDER_SENT_STATE,
   SEND_REMINDER_STATE,
 } from './states-constants.js'
+import { serializeError } from 'serialize-error'
 
 let apiRoot
 let ctpClient
@@ -27,6 +28,7 @@ async function createSubscriptionOrders({
     successUrlCalls: 0,
     recoverableErrorUrlCalls: 0,
     unrecoverableErrorUrlCalls: 0,
+    skippedTemplateOrders: 0,
   }
   apiRoot = _apiRoot
   ctpClient = _ctpClient
@@ -43,8 +45,19 @@ async function createSubscriptionOrders({
     await _buildQueryForTemplateOrdersThatNeedSubscriptionOrders(stateIds)
 
   for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
+    // eslint-disable-next-line no-loop-func
     await pMap(templateOrders, async (templateOrder) => {
-      await _processTemplateOrder(templateOrder, subscriptionOrderCreationUrl, headers)
+      try {
+        await _processTemplateOrder(templateOrder, subscriptionOrderCreationUrl, headers)
+      } catch (err) {
+        stats.skippedTemplateOrders++
+        logger.error(
+          'Failed to process template order. This template order will be skipped. '
+          + 'Processing will be restarted on the next run. '
+          + `Order details: ${JSON.stringify(templateOrder)}`
+          + `Error: ${JSON.stringify(serializeError(err))}`
+        )
+      }
     }, { concurrency: 3 })
 
   return stats
