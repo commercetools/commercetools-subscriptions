@@ -160,9 +160,7 @@ async function _updatePaymentAndStateWithRetry(
             ` currentVersion: "${currentVersion}".`
           throw new VError(
             err,
-            `${retryMessage} Won't retry again` +
-              ` because of a reached limit ${maxRetry}` +
-              ' max retries.'
+            `${retryMessage} Won't retry again since maximum retry limit of ${maxRetry} is reached.`
           )
         }
         version = currentVersion

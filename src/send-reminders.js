@@ -47,7 +47,11 @@ async function sendReminders({
 async function _fetchActiveStateId() {
   const {
     body: { id },
-  } = await apiRoot.states().withKey({ key: 'commercetools-subscriptions-active' }).get().execute()
+  } = await apiRoot
+    .states()
+    .withKey({ key: 'commercetools-subscriptions-active' })
+    .get()
+    .execute()
   return id
 }
 
@@ -124,9 +128,7 @@ async function _processTemplateOrder(
             ` currentVersion: "${currentVersion}".`
           throw new VError(
             err,
-            `${retryMessage} Won't retry again` +
-              ` because of a reached limit ${maxRetry}` +
-              ' max retries.'
+            `${retryMessage} Won't retry again since maximum retry limit of ${maxRetry} is reached.`
           )
         }
         version = currentVersion
