@@ -11,6 +11,7 @@ async function sendReminders({
   apiRoot: _apiRoot,
   ctpClient: _ctpClient,
   logger: _logger,
+  activeStateId,
 }) {
   stats = {
     processedTemplateOrders: 0,
@@ -23,9 +24,8 @@ async function sendReminders({
     ctpClient = _ctpClient
     logger = _logger
 
-    const activeStateId = await _fetchActiveStateId()
-
-    const orderQuery = _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(activeStateId)
+    const orderQuery =
+      _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(activeStateId)
 
     for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
       await pMap(
@@ -43,20 +43,7 @@ async function sendReminders({
   return stats
 }
 
-async function _fetchActiveStateId() {
-  const {
-    body: { id },
-  } = await apiRoot
-    .states()
-    .withKey({ key: 'commercetools-subscriptions-active' })
-    .get()
-    .execute()
-  return id
-}
-
-function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
-  activeStateId
-) {
+function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(activeStateId) {
   return {
     queryBody: `query TemplateOrdersThatIsReadyToSendReminderOrdersQuery($limit: Int, $where: String) {
             orders (limit: $limit, where: $where) {

@@ -25,7 +25,13 @@ async function run() {
     )}`
   )
 
-  const sendReminderStats = await sendReminders({ apiRoot, ctpClient, logger })
+  const activeStateId = await _fetchActiveStateId(apiRoot)
+  const sendReminderStats = await sendReminders({
+    apiRoot,
+    ctpClient,
+    logger,
+    activeStateId,
+  })
   logger.info(`Reminders are sent: ${JSON.stringify(sendReminderStats)}`)
 
   const endDate = new Date()
@@ -35,6 +41,17 @@ async function run() {
   logger.info(
     `${packageJson.name} completed in ${executionTimeInSeconds} seconds`
   )
+}
+
+async function _fetchActiveStateId(apiRoot) {
+  const {
+    body: { id },
+  } = await apiRoot
+    .states()
+    .withKey({ key: 'commercetools-subscriptions-active' })
+    .get()
+    .execute()
+  return id
 }
 
 export { run }
