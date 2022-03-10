@@ -36,11 +36,16 @@ async function createSubscriptionOrders({
     stateKeyToIdMap.get(SEND_REMINDER_STATE),
     stateKeyToIdMap.get(REMINDER_SENT_STATE),
   ]
+  const config = getSubscriptionConfig()
+  const headers = _buildHeaders(config)
+  const subscriptionOrderCreationUrl = config.subscriptionOrderCreationUrl
   const orderQuery =
     await _buildQueryForTemplateOrdersThatNeedSubscriptionOrders(stateIds)
 
   for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
-    await pMap(templateOrders, _processTemplateOrder, { concurrency: 3 })
+    await pMap(templateOrders, async (templateOrder) => {
+      await _processTemplateOrder(templateOrder, subscriptionOrderCreationUrl, headers)
+    }, { concurrency: 3 })
 
   return stats
 }
@@ -51,11 +56,7 @@ async function _processTemplateOrder({
   orderNumber,
   custom: { customFieldsRaw },
   state: { key: stateKey },
-}) {
-  const config = getSubscriptionConfig()
-  const headers = _buildHeaders(config)
-  const subscriptionOrderCreationUrl = config.subscriptionOrderCreationUrl
-
+}, subscriptionOrderCreationUrl, headers) {
   const deliveryDate = customFieldsRaw.find(
     (attr) => attr.name === 'nextDeliveryDate'
   ).value
