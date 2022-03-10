@@ -71,12 +71,12 @@ async function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
     endpoint: 'orders',
     variables: {
       limit: 100,
-      where: buildWhereClauseForReadyToSendReminderOrders(activeStateId),
+      where: _buildWhereClauseForReadyToSendReminderOrders(activeStateId),
     },
   }
 }
 
-function buildWhereClauseForReadyToSendReminderOrders(activeStateId) {
+function _buildWhereClauseForReadyToSendReminderOrders(activeStateId) {
   const now = new Date().toISOString()
   return `state(id="${activeStateId}") AND custom(fields(nextReminderDate <= "${now}"))`
 }
@@ -157,7 +157,7 @@ async function _fetchCurrentVersionOnRetry(id, activeStateId) {
     .orders()
     .get({
       queryArgs: {
-        where: `id="${id}" AND ${buildWhereClauseForReadyToSendReminderOrders(
+        where: `id="${id}" AND ${_buildWhereClauseForReadyToSendReminderOrders(
           activeStateId
         )}`,
       },
