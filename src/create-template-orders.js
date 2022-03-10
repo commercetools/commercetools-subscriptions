@@ -200,7 +200,7 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
       action: 'transitionState',
       state: {
         typeId: 'state',
-        key: 'Active',
+        key: 'commercetools-subscriptions-active',
       },
     })
 

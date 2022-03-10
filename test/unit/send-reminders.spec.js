@@ -41,7 +41,7 @@ describe('send-reminders', () => {
   it(
     'given Active template orders ' +
       'when the nextReminderDate <= now' +
-      'then it should set state "sendReminder"',
+      'then it should set state "commercetools-subscriptions-sendReminder"',
     async () => {
       _mockActiveState()
       _mockTemplateOrders()
@@ -56,7 +56,7 @@ describe('send-reminders', () => {
                   action: 'transitionState',
                   state: {
                     typeId: 'state',
-                    key: 'SendReminder',
+                    key: 'commercetools-subscriptions-sendReminder',
                   },
                 },
               ],
@@ -265,7 +265,7 @@ describe('send-reminders', () => {
   function _mockActiveState() {
     nock(CTP_API_URL)
       .persist()
-      .get(`/${PROJECT_KEY}/states/key=Active`)
+      .get(`/${PROJECT_KEY}/states/key=commercetools-subscriptions-active`)
       .reply(200, {
         id: 'activeStateId',
       })

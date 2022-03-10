@@ -98,7 +98,7 @@ async function _processTemplateOrder(
                 action: 'transitionState',
                 state: {
                   typeId: 'state',
-                  key: 'SendReminder',
+                  key: 'commercetools-subscriptions-sendReminder',
                 },
               },
             ],
