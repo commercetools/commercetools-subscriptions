@@ -60,13 +60,13 @@ async function _processTemplateOrder({
   const deliveryDate = customFieldsRaw.find(
     (attr) => attr.name === 'nextDeliveryDate'
   ).value
-  const subscriptionOrderExists =
+  const doesSubscriptionOrderExists =
     await _fetchOrderBySubscriptionTemplateOrderRefAndDeliveryDate(
       id,
       deliveryDate
     )
 
-  if (subscriptionOrderExists) {
+  if (doesSubscriptionOrderExists) {
     logger.info(
       `Template order ${orderNumber}: ` +
         `Subscription order was already created for date ${deliveryDate}. Will update the template order only.`
