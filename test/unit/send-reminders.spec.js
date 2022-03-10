@@ -129,19 +129,19 @@ describe('send-reminders', () => {
         .reply(200)
 
       const orderRefetched = nock(CTP_API_URL)
-        .get(`/${PROJECT_KEY}/orders/aca5925a-7078-4455-8e0f-3956069418c6`)
+        .get(`/${PROJECT_KEY}/orders`)
+        .query((actualQueryObject) =>
+          actualQueryObject.where.includes(
+            'id="aca5925a-7078-4455-8e0f-3956069418c6" ' +
+              'AND state(id="activeStateId") AND custom(fields(nextReminderDate <='
+          )
+        )
         .reply(200, {
-          version: 4,
-          id: 'aca5925a-7078-4455-8e0f-3956069418c6',
-          state: {
-            typeId: 'state',
-            id: 'activeStateId',
-          },
-          custom: {
-            fields: {
-              nextReminderDate: '2022-04-25T22:00:00.000Z',
+          results: [
+            {
+              version: 4,
             },
-          },
+          ],
         })
 
       try {
@@ -181,19 +181,15 @@ describe('send-reminders', () => {
           ],
         })
       const orderRefetched = nock(CTP_API_URL)
-        .get(`/${PROJECT_KEY}/orders/aca5925a-7078-4455-8e0f-3956069418c6`)
+        .get(`/${PROJECT_KEY}/orders`)
+        .query((actualQueryObject) =>
+          actualQueryObject.where.includes(
+            'id="aca5925a-7078-4455-8e0f-3956069418c6" ' +
+              'AND state(id="activeStateId") AND custom(fields(nextReminderDate <='
+          )
+        )
         .reply(200, {
-          version: 4,
-          id: 'aca5925a-7078-4455-8e0f-3956069418c6',
-          state: {
-            typeId: 'state',
-            id: 'activeStateId',
-          },
-          custom: {
-            fields: {
-              nextReminderDate: '2022-04-25T22:00:00.000Z',
-            },
-          },
+          results: [],
         })
 
       try {

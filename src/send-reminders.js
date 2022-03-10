@@ -58,8 +58,6 @@ async function _fetchActiveStateId() {
 async function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
   activeStateId
 ) {
-  const now = new Date().toISOString()
-  const where = `state(id="${activeStateId}") AND custom(fields(nextReminderDate <= "${now}"))`
   return {
     queryBody: `query TemplateOrdersThatIsReadyToSendReminderOrdersQuery($limit: Int, $where: String) {
             orders (limit: $limit, where: $where) {
@@ -73,9 +71,14 @@ async function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
     endpoint: 'orders',
     variables: {
       limit: 100,
-      where,
+      where: buildWhereClauseForReadyToSendReminderOrders(activeStateId),
     },
   }
+}
+
+function buildWhereClauseForReadyToSendReminderOrders(activeStateId) {
+  const now = new Date().toISOString()
+  return `state(id="${activeStateId}") AND custom(fields(nextReminderDate <= "${now}"))`
 }
 
 async function _processTemplateOrder(
@@ -146,35 +149,22 @@ async function _processTemplateOrder(
  * @private
  */
 async function _fetchCurrentVersionOnRetry(id, activeStateId) {
-  const templateOrder = await _fetchTemplateOrder(id)
-  if (templateOrder) {
-    const stateId = templateOrder.state?.id
-    if (stateId && stateId === activeStateId) {
-      const nextReminderDate = templateOrder.custom?.fields?.nextReminderDate
-      if (nextReminderDate) {
-        const now = new Date().toISOString()
-        if (nextReminderDate <= now) return templateOrder.version
-      }
-    }
-  }
-  return null
-}
+  const {
+    body: {
+      results: [templateOrder],
+    },
+  } = await apiRoot
+    .orders()
+    .get({
+      queryArgs: {
+        where: `id="${id}" AND ${buildWhereClauseForReadyToSendReminderOrders(
+          activeStateId
+        )}`,
+      },
+    })
+    .execute()
 
-async function _fetchTemplateOrder(id) {
-  try {
-    return (
-      await apiRoot
-        .orders()
-        .withId({
-          ID: id,
-        })
-        .get()
-        .execute()
-    ).body
-  } catch (e) {
-    if (e.code === 404) return null
-    throw e
-  }
+  return templateOrder?.version
 }
 
 export { sendReminders }
