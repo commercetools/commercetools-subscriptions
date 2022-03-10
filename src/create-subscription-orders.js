@@ -3,7 +3,12 @@ import pMap from 'p-map'
 import parser from 'cron-parser'
 import { getSubscriptionConfig } from './config.js'
 import { updateOrderWithRetry } from './utils/utils.js'
-import { ACTIVE_STATE, ERROR_STATE, REMINDER_SENT_STATE, SEND_REMINDER_STATE } from './states-constants.js'
+import {
+  ACTIVE_STATE,
+  ERROR_STATE,
+  REMINDER_SENT_STATE,
+  SEND_REMINDER_STATE,
+} from './states-constants.js'
 
 let apiRoot
 let ctpClient
@@ -224,10 +229,8 @@ function _buildHeaders(config) {
   const username = config.basicAuthUsername
   const password = config.basicAuthPassword
   let headers = config.customHeaders
-  if (headers)
-    headers = JSON.parse(headers)
-  else
-    headers = {}
+  if (headers) headers = JSON.parse(headers)
+  else headers = {}
   if (username && password)
     headers['Authorization'] = `Basic ${Buffer.from(
       `${username}:${password}`

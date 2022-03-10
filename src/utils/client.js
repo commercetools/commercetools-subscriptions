@@ -36,7 +36,7 @@ function createCtpClient({
     contactEmail: packageJson.author.email,
   })
 
-  const arrayFrom500To509 = Array.from({ length: 100 }, (_, i) => i + 500)
+  const arrayFrom500To509 = Array.from({ length: 100 }, (ignore, i) => i + 500)
   const httpMiddleware = createHttpMiddleware({
     maskSensitiveHeaderData: true,
     host: apiUrl,

@@ -5,7 +5,6 @@ import getLogger from '../../src/utils/logger.js'
 import { ensureResources, createTemplateOrder } from './test-utils.js'
 import { ACTIVE_STATE } from '../../src/states-constants.js'
 
-
 describe('create-subscription-orders', () => {
   const apiRoot = getApiRoot()
   const ctpClient = getCtpClient()

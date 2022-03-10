@@ -4,7 +4,12 @@ import { createSubscriptionOrders } from '../../src/create-subscription-orders.j
 import { reloadModule } from '../integration/test-utils.js'
 import getLogger from '../../src/utils/logger.js'
 import { readAndParseJsonFile } from '../../src/utils/utils.js'
-import { ACTIVE_STATE, ERROR_STATE, REMINDER_SENT_STATE, SEND_REMINDER_STATE } from '../../src/states-constants.js'
+import {
+  ACTIVE_STATE,
+  ERROR_STATE,
+  REMINDER_SENT_STATE,
+  SEND_REMINDER_STATE,
+} from '../../src/states-constants.js'
 
 const templateOrdersToCreateSubscriptionGraphqlResponse =
   await readAndParseJsonFile(

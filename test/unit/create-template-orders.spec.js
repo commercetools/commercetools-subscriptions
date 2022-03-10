@@ -253,9 +253,7 @@ describe('create-template-orders', () => {
         })
         .post(`/${PROJECT_KEY}/orders/import`)
         .reply(200, templateOrderResponse)
-        .post(
-          `/${PROJECT_KEY}/orders/${TEMPLATE_ORDER_ID}`
-        )
+        .post(`/${PROJECT_KEY}/orders/${TEMPLATE_ORDER_ID}`)
         .reply(200)
 
       const setIsSubscriptionProcessed = nock(CTP_API_URL)

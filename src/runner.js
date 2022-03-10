@@ -4,7 +4,11 @@ import { getPackageJson } from './config.js'
 import { getApiRoot, getCtpClient } from './utils/client.js'
 import { sendReminders } from './send-reminders.js'
 import { createSubscriptionOrders } from './create-subscription-orders.js'
-import { ACTIVE_STATE, REMINDER_SENT_STATE, SEND_REMINDER_STATE } from './states-constants.js'
+import {
+  ACTIVE_STATE,
+  REMINDER_SENT_STATE,
+  SEND_REMINDER_STATE,
+} from './states-constants.js'
 
 async function run() {
   const startDate = new Date()
@@ -40,7 +44,7 @@ async function run() {
     apiRoot,
     ctpClient,
     logger,
-    stateKeyToIdMap
+    stateKeyToIdMap,
   })
   logger.info(
     `Create subscription orders finished: ${JSON.stringify(

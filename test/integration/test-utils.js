@@ -67,7 +67,13 @@ async function createTemplateOrder(apiRoot, logger) {
   orderDraft.custom.fields.nextReminderDate = new Date(
     new Date().getTime() - 5 * 24 * 60 * 60 * 1000
   ).toISOString()
-  return createOrder(apiRoot, logger, paymentResponse.id, orderDraft, ACTIVE_STATE)
+  return createOrder(
+    apiRoot,
+    logger,
+    paymentResponse.id,
+    orderDraft,
+    ACTIVE_STATE
+  )
 }
 
 async function ensureZones(apiRoot) {
