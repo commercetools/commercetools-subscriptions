@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import pMap from 'p-map'
 import parser from 'cron-parser'
+import { serializeError } from 'serialize-error'
 import { getSubscriptionConfig } from './config.js'
 import { updateOrderWithRetry } from './utils/utils.js'
 import {
@@ -9,7 +10,6 @@ import {
   REMINDER_SENT_STATE,
   SEND_REMINDER_STATE,
 } from './states-constants.js'
-import { serializeError } from 'serialize-error'
 
 let apiRoot
 let ctpClient
@@ -44,32 +44,44 @@ async function createSubscriptionOrders({
   const orderQuery =
     await _buildQueryForTemplateOrdersThatNeedSubscriptionOrders(stateIds)
 
+  // eslint-disable-next-line no-loop-func
   for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
-    // eslint-disable-next-line no-loop-func
-    await pMap(templateOrders, async (templateOrder) => {
-      try {
-        await _processTemplateOrder(templateOrder, subscriptionOrderCreationUrl, headers)
-      } catch (err) {
-        stats.skippedTemplateOrders++
-        logger.error(
-          'Failed to process template order. This template order will be skipped. '
-          + 'Processing will be restarted on the next run. '
-          + `Order details: ${JSON.stringify(templateOrder)}`
-          + `Error: ${JSON.stringify(serializeError(err))}`
-        )
-      }
-    }, { concurrency: 3 })
+    await pMap(
+      templateOrders,
+      async (templateOrder) => {
+        try {
+          await _processTemplateOrder(
+            templateOrder,
+            subscriptionOrderCreationUrl,
+            headers
+          )
+        } catch (err) {
+          stats.skippedTemplateOrders++
+          logger.error(
+            'Failed to process template order. This template order will be skipped. ' +
+              'Processing will be restarted on the next run. ' +
+              `Order details: ${JSON.stringify(templateOrder)}` +
+              `Error: ${JSON.stringify(serializeError(err))}`
+          )
+        }
+      },
+      { concurrency: 3 }
+    )
 
   return stats
 }
 
-async function _processTemplateOrder({
-  id,
-  version,
-  orderNumber,
-  custom: { customFieldsRaw },
-  state: { key: stateKey },
-}, subscriptionOrderCreationUrl, headers) {
+async function _processTemplateOrder(
+  {
+    id,
+    version,
+    orderNumber,
+    custom: { customFieldsRaw },
+    state: { key: stateKey },
+  },
+  subscriptionOrderCreationUrl,
+  headers
+) {
   const deliveryDate = customFieldsRaw.find(
     (attr) => attr.name === 'nextDeliveryDate'
   ).value
