@@ -28,7 +28,6 @@ async function createTemplateOrders({
   stats = {
     processedCheckoutOrders: 0,
     createdTemplateOrders: 0,
-    failedCheckoutOrders: 0,
     duplicatedTemplateOrderCreation: 0,
     skippedTemplateOrders: 0,
   }
@@ -84,7 +83,6 @@ async function _processCheckoutOrder(checkoutOrder) {
 
     await _setCheckoutOrderProcessed(checkoutOrder)
   } catch (err) {
-    stats.failedCheckoutOrders++
     let cause = err
     if (err instanceof VError) cause = err.cause()
     if (cause.code === 409 || cause.code >= 500) throw err

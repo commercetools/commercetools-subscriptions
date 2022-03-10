@@ -108,8 +108,8 @@ describe('create-template-orders', () => {
       expect(stats).to.deep.equal({
         processedCheckoutOrders: 1,
         createdTemplateOrders: 0,
-        failedCheckoutOrders: 0,
         duplicatedTemplateOrderCreation: 1,
+        skippedTemplateOrders: 0,
       })
       expect(setIsSubscriptionProcessed.isDone()).to.be.true
       expect(updateLastStartTimestamp.isDone()).to.be.true
@@ -159,8 +159,8 @@ describe('create-template-orders', () => {
       expect(stats).to.deep.equal({
         processedCheckoutOrders: 1,
         createdTemplateOrders: 0,
-        failedCheckoutOrders: 1,
         duplicatedTemplateOrderCreation: 0,
+        skippedTemplateOrders: 1,
       })
       expect(setIsSubscriptionProcessed.isDone()).to.be.false
       expect(updateLastStartTimestamp.isDone()).to.be.true
@@ -233,8 +233,8 @@ describe('create-template-orders', () => {
       expect(stats).to.deep.equal({
         processedCheckoutOrders: 1,
         createdTemplateOrders: 1,
-        failedCheckoutOrders: 0,
         duplicatedTemplateOrderCreation: 0,
+        skippedTemplateOrders: 0,
       })
       expect(addPaymentToTemplateOrder.isDone()).to.be.true
       expect(setIsSubscriptionProcessed.isDone()).to.be.true
@@ -293,8 +293,8 @@ describe('create-template-orders', () => {
       expect(stats).to.deep.equal({
         processedCheckoutOrders: 1,
         createdTemplateOrders: 1,
-        failedCheckoutOrders: 0,
         duplicatedTemplateOrderCreation: 0,
+        skippedTemplateOrders: 0,
       })
       expect(createNewOrder.isDone()).to.be.true
       expect(setIsSubscriptionProcessed.isDone()).to.be.true
