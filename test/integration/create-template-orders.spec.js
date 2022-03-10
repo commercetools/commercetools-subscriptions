@@ -29,7 +29,7 @@ describe('runner', () => {
       apiRoot,
       ctpClient,
       logger,
-      startDate: new Date()
+      startDate: new Date(),
     })
 
     const {
