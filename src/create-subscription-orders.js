@@ -42,7 +42,7 @@ async function createSubscriptionOrders({
   const headers = _buildHeaders(config)
   const subscriptionOrderCreationUrl = config.subscriptionOrderCreationUrl
   const orderQuery =
-    await _buildQueryForTemplateOrdersThatNeedSubscriptionOrders(stateIds)
+    await _buildQueryForTemplateOrdersToCreateSubscriptionOrders(stateIds)
 
   // eslint-disable-next-line no-loop-func
   for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
@@ -217,7 +217,7 @@ async function _fetchOrderBySubscriptionTemplateOrderRefAndDeliveryDate(
   return response.body?.data?.orders?.results?.[0]
 }
 
-function _buildQueryForTemplateOrdersThatNeedSubscriptionOrders(stateIds) {
+function _buildQueryForTemplateOrdersToCreateSubscriptionOrders(stateIds) {
   const now = new Date().toISOString()
   const where = `state(id in ("${stateIds.join(
     '","'
