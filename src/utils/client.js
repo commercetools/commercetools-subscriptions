@@ -36,13 +36,12 @@ function createCtpClient({
     contactEmail: packageJson.author.email,
   })
 
-  const arrayFrom500To509 = Array.from({ length: 100 }, (ignore, i) => i + 500)
   const httpMiddleware = createHttpMiddleware({
     maskSensitiveHeaderData: true,
     host: apiUrl,
     enableRetry: true,
     retryConfig: {
-      retryCodes: arrayFrom500To509,
+      retryCodes: [500, 502, 503, 504],
     },
     fetch,
   })
