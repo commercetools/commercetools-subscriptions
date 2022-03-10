@@ -3,7 +3,7 @@
   "type": "OrderState",
   "roles": [],
   "name": {
-    "en": "commercetools-subscriptions-reminderSent"
+    "en": "Reminder Sent"
   },
   "transitions": [
     {
