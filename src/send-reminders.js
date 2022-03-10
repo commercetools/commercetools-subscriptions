@@ -25,8 +25,7 @@ async function sendReminders({
 
     const activeStateId = await _fetchActiveStateId()
 
-    const orderQuery =
-      await _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(activeStateId)
+    const orderQuery = _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(activeStateId)
 
     for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
       await pMap(
@@ -55,7 +54,7 @@ async function _fetchActiveStateId() {
   return id
 }
 
-async function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
+function _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(
   activeStateId
 ) {
   return {
