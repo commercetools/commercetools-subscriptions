@@ -9,7 +9,8 @@
     "before": "readonly",
     "beforeEach": "readonly",
     "after": "readonly",
-    "afterEach": "readonly"
+    "afterEach": "readonly",
+    "xit": "readonly"
   },
   "env": {
     "node": true
