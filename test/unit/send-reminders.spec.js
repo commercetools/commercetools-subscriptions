@@ -4,6 +4,7 @@ import timekeeper from 'timekeeper'
 import getLogger from '../../src/utils/logger.js'
 import { reloadModule } from '../integration/test-utils.js'
 import { sendReminders } from '../../src/send-reminders.js'
+import { SEND_REMINDER_STATE } from '../../src/states-constants.js'
 
 describe('send-reminders', () => {
   let ctpProjectKey
@@ -42,7 +43,7 @@ describe('send-reminders', () => {
   it(
     'given Active template orders ' +
       'when the nextReminderDate <= now' +
-      'then it should set state "commercetools-subscriptions-sendReminder"',
+      `then it should set state "${SEND_REMINDER_STATE}"`,
     async () => {
       _mockTemplateOrders()
       const sendReminderStateSet = nock(CTP_API_URL)
@@ -56,7 +57,7 @@ describe('send-reminders', () => {
                   action: 'transitionState',
                   state: {
                     typeId: 'state',
-                    key: 'commercetools-subscriptions-sendReminder',
+                    key: SEND_REMINDER_STATE,
                   },
                 },
               ],

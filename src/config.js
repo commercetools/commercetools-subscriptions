@@ -34,6 +34,15 @@ function getClientConfig() {
   }
 }
 
+function getSubscriptionConfig() {
+  return {
+    subscriptionOrderCreationUrl: process.env.SUBSCRIPTION_ORDER_CREATION_URL,
+    customHeaders: process.env.CUSTOM_HEADERS,
+    basicAuthUsername: process.env.BASIC_AUTH_USERNAME,
+    basicAuthPassword: process.env.BASIC_AUTH_PASSWORD,
+  }
+}
+
 function getSubscriptionSetupConfig() {
   return {
     existingOrderTypeKey: process.env.EXISTING_ORDER_TYPE_KEY,
@@ -58,10 +67,18 @@ function loadConfigFromFile() {
   return config
 }
 
+function _validateConfigs() {
+  // todo: add validation for required env vars
+  return true
+}
+
+_validateConfigs()
+
 export {
   getLogLevel,
   getPackageJson,
   getConcurrency,
   getClientConfig,
   getSubscriptionSetupConfig,
+  getSubscriptionConfig,
 }

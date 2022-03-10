@@ -1,6 +1,7 @@
 import pMap from 'p-map'
 import VError from 'verror'
 import { serializeError } from 'serialize-error'
+import { ACTIVE_STATE, SEND_REMINDER_STATE } from './states-constants.js'
 
 let apiRoot
 let ctpClient
@@ -87,7 +88,7 @@ async function _processTemplateOrder(
                 action: 'transitionState',
                 state: {
                   typeId: 'state',
-                  key: 'commercetools-subscriptions-sendReminder',
+                  key: SEND_REMINDER_STATE,
                 },
               },
             ],
@@ -111,7 +112,7 @@ async function _processTemplateOrder(
 
         if (retryCount > maxRetry) {
           const retryMessage =
-            'Got a concurrent modification error when updating state from (Active to SendReminder)' +
+            `Got a concurrent modification error when updating state from (${ACTIVE_STATE} to ${SEND_REMINDER_STATE})` +
             ` of the template order with number "${orderNumber}".` +
             ` Version tried "${version}",` +
             ` currentVersion: "${currentVersion}".`
@@ -127,9 +128,9 @@ async function _processTemplateOrder(
 /*
  * Ensures on retry (409) the order has matching the condition below:
  * state(id="${activeStateId}") AND custom(fields(nextReminderDate <= "${now}")
- * for retrying to set state to 'sendReminder',
+ * for retrying to set state to 'commercetools-subscriptions-sendReminder',
  * @param id order id
- * @param activeStateId state id with the key 'Active'
+ * @param activeStateId state id with the key 'commercetools-subscriptions-active'
  * @returns {Promise<null|*>} Returns the latest version of the template order if matches the condition,
  *   otherwise returns null for the latest version.
  * @private

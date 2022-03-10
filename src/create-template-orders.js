@@ -3,6 +3,8 @@ import parser from 'cron-parser'
 import _ from 'lodash'
 import VError from 'verror'
 import { serializeError } from 'serialize-error'
+import { updateOrderWithRetry } from './utils/utils.js'
+import { ACTIVE_STATE } from './states-constants.js'
 
 let apiRoot
 let ctpClient
@@ -128,52 +130,12 @@ async function _fetchLastStartTimestamp() {
   }
 }
 
-async function _updatePaymentAndStateWithRetry(
-  templateOrder,
-  updateActions,
-  version = templateOrder.version
-) {
-  let retryCount = 0
-  const maxRetry = 20
-  while (true)
-    try {
-      await apiRoot
-        .orders()
-        .withId({ ID: templateOrder.id })
-        .post({
-          body: {
-            actions: updateActions,
-            version,
-          },
-        })
-        .execute()
-      break
-    } catch (err) {
-      if (err.statusCode === 409) {
-        retryCount += 1
-        const currentVersion = err.body.errors[0].currentVersion
-        if (retryCount > maxRetry) {
-          const retryMessage =
-            'Got a concurrent modification error' +
-            ` when updating template order with number "${templateOrder.orderNumber}".` +
-            ` Version tried "${version}",` +
-            ` currentVersion: "${currentVersion}".`
-          throw new VError(
-            err,
-            `${retryMessage} Won't retry again since maximum retry limit of ${maxRetry} is reached.`
-          )
-        }
-        version = currentVersion
-      } else throw err
-    }
-}
-
 async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
   try {
     const checkoutPayments = checkoutOrder.paymentInfo?.payments?.map(
       (p) => p.obj
     )
-    let updateActions
+    let updateActions = []
     if (checkoutPayments) {
       const paymentDrafts = checkoutPayments.map(_createPaymentDraft)
       const paymentCreateResponses = await Promise.all(
@@ -200,11 +162,17 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
       action: 'transitionState',
       state: {
         typeId: 'state',
-        key: 'commercetools-subscriptions-active',
+        key: ACTIVE_STATE,
       },
     })
 
-    await _updatePaymentAndStateWithRetry(templateOrder, updateActions)
+    await updateOrderWithRetry(
+      apiRoot,
+      templateOrder.id,
+      updateActions,
+      templateOrder.version,
+      templateOrder.orderNumber
+    )
   } catch (err) {
     if (!_isDuplicateOrderError(err)) {
       const errMsg =
@@ -330,7 +298,7 @@ function _generateTemplateOrderImportDraft(
     inventoryMode: 'None',
     state: {
       typeId: 'state',
-      key: 'Active',
+      key: ACTIVE_STATE,
     },
   }
   delete templateOrder.custom.fields.hasSubscription
