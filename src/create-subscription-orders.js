@@ -48,6 +48,7 @@ async function createSubscriptionOrders({
   for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
     await pMap(
       templateOrders,
+      // eslint-disable-next-line no-loop-func
       async (templateOrder) => {
         try {
           await _processTemplateOrder(
