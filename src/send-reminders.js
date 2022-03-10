@@ -47,7 +47,7 @@ async function sendReminders({
 async function _fetchActiveStateId() {
   const {
     body: { id },
-  } = await apiRoot.states().withKey({ key: 'Active' }).get().execute()
+  } = await apiRoot.states().withKey({ key: 'commercetools-subscriptions-active' }).get().execute()
   return id
 }
 
