@@ -191,9 +191,9 @@ async function _fetchOrderBySubscriptionTemplateOrderRefAndDeliveryDate(
   return response.body?.data?.orders?.results?.[0]
 }
 
-function _buildQueryForTemplateOrdersThatNeedSubscriptionOrders(validStates) {
+function _buildQueryForTemplateOrdersThatNeedSubscriptionOrders(stateIds) {
   const now = new Date().toISOString()
-  const where = `state(id in ("${validStates.join(
+  const where = `state(id in ("${stateIds.join(
     '","'
   )}")) AND custom(fields(nextDeliveryDate <= "${now}"))`
 
