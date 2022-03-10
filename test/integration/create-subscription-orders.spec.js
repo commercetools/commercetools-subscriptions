@@ -18,7 +18,7 @@ describe('create-subscription-orders', () => {
     shippingMethodId = resources.shippingMethodId
   })
 
-  it('should call subscriptionOrderCreationUrl with correct parameters', async () => {
+  it('should call subscription order endpoint and process template orders', async () => {
     const templateOrder = await createTemplateOrder(
       apiRoot,
       logger,

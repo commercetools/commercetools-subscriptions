@@ -85,6 +85,7 @@ describe('create-subscription-orders', () => {
       successUrlCalls: 0,
       recoverableErrorUrlCalls: 0,
       unrecoverableErrorUrlCalls: 0,
+      skippedTemplateOrders: 0,
     })
   })
 
@@ -127,6 +128,7 @@ describe('create-subscription-orders', () => {
       successUrlCalls: 1,
       recoverableErrorUrlCalls: 0,
       unrecoverableErrorUrlCalls: 0,
+      skippedTemplateOrders: 0,
     })
 
     expect(headers['loyalty-partner-forward'][0]).to.equal('123')
@@ -168,6 +170,7 @@ describe('create-subscription-orders', () => {
       successUrlCalls: 0,
       recoverableErrorUrlCalls: 0,
       unrecoverableErrorUrlCalls: 0,
+      skippedTemplateOrders: 0,
     })
 
     expect(scope.isDone()).to.be.false
@@ -211,6 +214,7 @@ describe('create-subscription-orders', () => {
           successUrlCalls: 0,
           recoverableErrorUrlCalls: 1,
           unrecoverableErrorUrlCalls: 0,
+          skippedTemplateOrders: 0,
         })
         expect(templateOrderUpdateScope.isDone()).to.be.false
       })
@@ -253,6 +257,7 @@ describe('create-subscription-orders', () => {
       successUrlCalls: 0,
       recoverableErrorUrlCalls: 0,
       unrecoverableErrorUrlCalls: 1,
+      skippedTemplateOrders: 0,
     })
     expect(templateOrderUpdates).to.deep.equal({
       actions: [
