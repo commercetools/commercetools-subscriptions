@@ -30,6 +30,7 @@ async function createTemplateOrders({
     createdTemplateOrders: 0,
     failedCheckoutOrders: 0,
     duplicatedTemplateOrderCreation: 0,
+    skippedTemplateOrders: 0,
   }
 
   try {
@@ -87,12 +88,14 @@ async function _processCheckoutOrder(checkoutOrder) {
     let cause = err
     if (err instanceof VError) cause = err.cause()
     if (cause.code === 409 || cause.code >= 500) throw err
-    else
+    else {
+      stats.skippedTemplateOrders++
       logger.error(
         `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
           'Skipping this checkout order' +
           ` Error: ${JSON.stringify(serializeError(err))}`
       )
+    }
   } finally {
     stats.processedCheckoutOrders++
   }
