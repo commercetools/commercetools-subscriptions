@@ -120,6 +120,7 @@
     "no-return-assign": [2, "except-parens"],
     "implicit-arrow-linebreak": "off",
     "function-paren-newline": "off",
-    "object-curly-newline": "off"
+    "object-curly-newline": "off",
+    "generator-star-spacing": "off"
   }
 }
