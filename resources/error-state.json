@@ -1,5 +1,5 @@
 {
-  "key": "Error",
+  "key": "commercetools-subscriptions-error",
   "type": "OrderState",
   "roles": [],
   "name": {
@@ -8,7 +8,23 @@
   "transitions": [
     {
       "typeId": "state",
-      "key": "Active"
+      "key": "commercetools-subscriptions-active"
+    },
+    {
+      "typeId": "state",
+      "key": "commercetools-subscriptions-sendReminder"
+    },
+    {
+      "typeId": "state",
+      "key": "commercetools-subscriptions-cancelled"
+    },
+    {
+      "typeId": "state",
+      "key": "commercetools-subscriptions-paused"
+    },
+    {
+      "typeId": "state",
+      "key": "commercetools-subscriptions-reminderSent"
     }
   ],
   "initial": false
