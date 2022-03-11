@@ -18,4 +18,4 @@ jobs:
       CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
       CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
     steps:
-      - run: ./../../deployment-examples/aws/k8s/deploy_to_eks.sh
+      - run: ./deploy_to_eks.sh
