@@ -15,7 +15,7 @@ Resources below are required for the commercetools-subscriptions to operate corr
 
 States allow to put the `subscription-template-order` into different states and since order state changes emit a [OrderStateTransitionMessage](https://docs.commercetools.com/api/message-types#orderstatetransitionmessage) one can either pull them from the message queue or query directly from the API.
 
-The `subscription-template-order` is using its own state machine which is not shared with other states required by the shop. Below is the list of all the required states:
+The `subscription-template-order` is using its own state machine. Below is the list of all the required states:
 
 1. [commercetools-subscriptions-active](../resources/active-state.json)
 1. [commercetools-subscriptions-sendReminder](../resources/send-reminder-state.json)
