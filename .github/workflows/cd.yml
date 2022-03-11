@@ -18,6 +18,8 @@ jobs:
       CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
       CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
       AWS_ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY }}
+      AWS_REGION_CODE: ${{ secrets.AWS_REGION_CODE }}
+      AWS_ECR_PATH: ${{ secrets.AWS_ECR_PATH }}
     steps:
       - uses: actions/checkout@v2
       - run: deployment-examples/aws/k8s/deploy_to_eks.sh

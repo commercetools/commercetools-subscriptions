@@ -6,7 +6,7 @@ set -e
 ## ----------------------
 export IMAGE_BASE_NAME=$AWS_ECR_REPOSITORY
 export TAG="0.0.1"
-export REGION_CODE="${{ secrets.AWS_REGION_CODE }}"
+export REGION_CODE=$AWS_REGION_CODE
 export CLUSTER_NAME="ct-subs2-cluster"
 ## ----------------------
 
@@ -19,7 +19,7 @@ export HELM_CHART_TEMPLATE_NAME="cronjob"
 export HELM_CHARTS_LOCAL_FOLDER="charts-templates"
 
 printf "\n- Build and push docker images to AWS ECR\n"
-ECR_PATH="${{ secrets.AWS_ECR_PATH }}"
+ECR_PATH=$AWS_ECR_PATH
 IMAGE_FULL_NAME="${ECR_PATH}/${IMAGE_BASE_NAME}"
 
 aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin "$ECR_PATH"
