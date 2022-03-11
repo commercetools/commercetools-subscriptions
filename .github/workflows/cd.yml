@@ -18,5 +18,7 @@ jobs:
       CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
       CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
     steps:
+      - uses: actions/checkout@v2
       - run: |
-          echo ls
+        cd ../../../deployment-examples/aws/k8s/
+        ./deploy_to_eks.sh
