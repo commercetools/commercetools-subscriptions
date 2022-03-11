@@ -40,6 +40,9 @@ function createCtpClient({
     maskSensitiveHeaderData: true,
     host: apiUrl,
     enableRetry: true,
+    retryConfig: {
+      retryCodes: [500, 502, 503, 504],
+    },
     fetch,
   })
 

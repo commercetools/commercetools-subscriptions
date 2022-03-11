@@ -5,18 +5,15 @@ import { ensureResources, createOrderByOrderNumber } from './test-utils.js'
 import { run } from '../../src/runner.js'
 import getLogger from '../../src/utils/logger.js'
 import { getApiRoot } from '../../src/utils/client.js'
+import { ACTIVE_STATE } from '../../src/states-constants.js'
 
 describe('runner', () => {
   const apiRoot = getApiRoot()
   const logger = getLogger()
-  let productIds
-  let shippingMethodId
   const DAY_IN_MS = 24 * 60 * 60 * 1000
 
   before(async () => {
-    const resources = await ensureResources(apiRoot, logger)
-    productIds = resources.productIds
-    shippingMethodId = resources.shippingMethodId
+    await ensureResources(apiRoot, logger)
   })
 
   it('should create a template order from the checkout order', async () => {
@@ -24,8 +21,6 @@ describe('runner', () => {
     const checkoutOrder = await createOrderByOrderNumber(
       apiRoot,
       logger,
-      productIds,
-      shippingMethodId,
       orderNumber
     )
     await run()
@@ -71,7 +66,7 @@ describe('runner', () => {
         expect(templateOrder.orderNumber).to.equal(
           checkoutOrderLineItem.custom.fields.subscriptionKey
         )
-      expect(templateOrder.state.obj.key).to.equal('Active')
+      expect(templateOrder.state.obj.key).to.equal(ACTIVE_STATE)
       expect(templateOrder.customerId).to.equal(checkoutOrder.customerId)
       expect(templateOrder.customerEmail).to.equal(checkoutOrder.customerEmail)
       expect(templateOrder.shippingAddress).to.equal(

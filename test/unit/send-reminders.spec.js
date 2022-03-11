@@ -4,6 +4,7 @@ import timekeeper from 'timekeeper'
 import getLogger from '../../src/utils/logger.js'
 import { reloadModule } from '../integration/test-utils.js'
 import { sendReminders } from '../../src/send-reminders.js'
+import { SEND_REMINDER_STATE } from '../../src/states-constants.js'
 
 describe('send-reminders', () => {
   let ctpProjectKey
@@ -42,7 +43,7 @@ describe('send-reminders', () => {
   it(
     'given Active template orders ' +
       'when the nextReminderDate <= now' +
-      'then it should set state "commercetools-subscriptions-sendReminder"',
+      `then it should set state "${SEND_REMINDER_STATE}"`,
     async () => {
       _mockTemplateOrders()
       const sendReminderStateSet = nock(CTP_API_URL)
@@ -56,7 +57,7 @@ describe('send-reminders', () => {
                   action: 'transitionState',
                   state: {
                     typeId: 'state',
-                    key: 'commercetools-subscriptions-sendReminder',
+                    key: SEND_REMINDER_STATE,
                   },
                 },
               ],
@@ -225,20 +226,25 @@ describe('send-reminders', () => {
       }
     })
 
-    it('should fail process on 5xxs', async () => {
+    it('should retry on 500 and then success', async () => {
       _mockTemplateOrders()
 
-      // currently no retry for 5xx.
       const sendReminderStateSet = nock(CTP_API_URL)
         .post(
           `/${PROJECT_KEY}/orders/aca5925a-7078-4455-8e0f-3956069418c6`,
           (body) =>
             body.actions.some((action) => action.action === 'transitionState')
         )
-        .times(1)
+        .times(2)
         .reply(500, {
           message: 'Some TEST API error',
         })
+        .post(
+          `/${PROJECT_KEY}/orders/aca5925a-7078-4455-8e0f-3956069418c6`,
+          (body) =>
+            body.actions.some((action) => action.action === 'transitionState')
+        )
+        .reply(200)
 
       const stats = await sendReminders({
         apiRoot,
@@ -249,7 +255,7 @@ describe('send-reminders', () => {
       expect(stats).to.deep.equal({
         processedTemplateOrders: 1,
         skippedTemplateOrders: 0,
-        updatedTemplateOrders: 0,
+        updatedTemplateOrders: 1,
       })
       expect(sendReminderStateSet.isDone()).to.be.true
     })

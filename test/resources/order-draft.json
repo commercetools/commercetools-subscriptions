@@ -64,7 +64,7 @@
         "fields": {
           "subscriptionKey": "",
           "isSubscription": true,
-          "schedule": "* * * * *"
+          "schedule": "0 0 1 Mar *"
         }
       }
     },

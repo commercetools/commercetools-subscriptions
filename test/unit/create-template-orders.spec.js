@@ -108,8 +108,8 @@ describe('create-template-orders', () => {
       expect(stats).to.deep.equal({
         processedCheckoutOrders: 1,
         createdTemplateOrders: 0,
-        failedCheckoutOrders: 0,
         duplicatedTemplateOrderCreation: 1,
+        skippedTemplateOrders: 0,
       })
       expect(setIsSubscriptionProcessed.isDone()).to.be.true
       expect(updateLastStartTimestamp.isDone()).to.be.true
@@ -159,8 +159,8 @@ describe('create-template-orders', () => {
       expect(stats).to.deep.equal({
         processedCheckoutOrders: 1,
         createdTemplateOrders: 0,
-        failedCheckoutOrders: 1,
         duplicatedTemplateOrderCreation: 0,
+        skippedTemplateOrders: 1,
       })
       expect(setIsSubscriptionProcessed.isDone()).to.be.false
       expect(updateLastStartTimestamp.isDone()).to.be.true
@@ -233,24 +233,28 @@ describe('create-template-orders', () => {
       expect(stats).to.deep.equal({
         processedCheckoutOrders: 1,
         createdTemplateOrders: 1,
-        failedCheckoutOrders: 0,
         duplicatedTemplateOrderCreation: 0,
+        skippedTemplateOrders: 0,
       })
       expect(addPaymentToTemplateOrder.isDone()).to.be.true
       expect(setIsSubscriptionProcessed.isDone()).to.be.true
       expect(updateLastStartTimestamp.isDone()).to.be.true
     })
 
-    it('when error is 500 error, retry and fail the job when retry limit is fetched', async () => {
+    it('when error is 500 error, retry 2 times and success', async () => {
       _mockCommonRequestsAndResponse()
 
       const createNewOrder = nock(CTP_API_URL)
         .post(`/${PROJECT_KEY}/orders/import`)
-        .times(10)
+        .times(2)
         .reply(500, {
           message:
             '"Client network socket disconnected before secure TLS connection was established"',
         })
+        .post(`/${PROJECT_KEY}/orders/import`)
+        .reply(200, templateOrderResponse)
+        .post(`/${PROJECT_KEY}/orders/${TEMPLATE_ORDER_ID}`)
+        .reply(200)
 
       const setIsSubscriptionProcessed = nock(CTP_API_URL)
         .post(
@@ -288,13 +292,13 @@ describe('create-template-orders', () => {
 
       expect(stats).to.deep.equal({
         processedCheckoutOrders: 1,
-        createdTemplateOrders: 0,
-        failedCheckoutOrders: 1,
+        createdTemplateOrders: 1,
         duplicatedTemplateOrderCreation: 0,
+        skippedTemplateOrders: 0,
       })
       expect(createNewOrder.isDone()).to.be.true
-      expect(setIsSubscriptionProcessed.isDone()).to.be.false
-      expect(updateLastStartTimestamp.isDone()).to.be.false
+      expect(setIsSubscriptionProcessed.isDone()).to.be.true
+      expect(updateLastStartTimestamp.isDone()).to.be.true
     })
 
     function _mockCommonRequestsAndResponse() {

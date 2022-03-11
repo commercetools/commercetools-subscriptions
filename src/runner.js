@@ -3,6 +3,12 @@ import getLogger from './utils/logger.js'
 import { getPackageJson } from './config.js'
 import { getApiRoot, getCtpClient } from './utils/client.js'
 import { sendReminders } from './send-reminders.js'
+import { createSubscriptionOrders } from './create-subscription-orders.js'
+import {
+  ACTIVE_STATE,
+  REMINDER_SENT_STATE,
+  SEND_REMINDER_STATE,
+} from './states-constants.js'
 
 async function run() {
   const startDate = new Date()
@@ -25,14 +31,26 @@ async function run() {
     )}`
   )
 
-  const activeStateId = await _fetchActiveStateId(apiRoot)
+  const stateKeyToIdMap = await _fetchStateKeyToIdMap(apiRoot)
   const sendReminderStats = await sendReminders({
     apiRoot,
     ctpClient,
     logger,
-    activeStateId,
+    activeStateId: stateKeyToIdMap.get(ACTIVE_STATE),
   })
   logger.info(`Reminders are sent: ${JSON.stringify(sendReminderStats)}`)
+
+  const createSubscriptionOrdersStats = await createSubscriptionOrders({
+    apiRoot,
+    ctpClient,
+    logger,
+    stateKeyToIdMap,
+  })
+  logger.info(
+    `Create subscription orders finished: ${JSON.stringify(
+      createSubscriptionOrdersStats
+    )}`
+  )
 
   const endDate = new Date()
   const executionTimeInSeconds = Math.floor(
@@ -43,15 +61,20 @@ async function run() {
   )
 }
 
-async function _fetchActiveStateId(apiRoot) {
+async function _fetchStateKeyToIdMap(apiRoot) {
   const {
-    body: { id },
+    body: { results },
   } = await apiRoot
     .states()
-    .withKey({ key: 'commercetools-subscriptions-active' })
-    .get()
+    .get({
+      queryArgs: {
+        where:
+          // eslint-disable-next-line max-len
+          `key in ("${ACTIVE_STATE}", "${SEND_REMINDER_STATE}", "${REMINDER_SENT_STATE}")`,
+      },
+    })
     .execute()
-  return id
+  return new Map(results.map((state) => [state.key, state.id]))
 }
 
 export { run }
