@@ -4,7 +4,7 @@ set -e
 
 ## edit those environment variables
 ## ----------------------
-export IMAGE_BASE_NAME="${{ AWS_ECR_REPOSITORY }}"
+export IMAGE_BASE_NAME=$AWS_ECR_REPOSITORY
 export TAG="0.0.1"
 export REGION_CODE="${{ secrets.AWS_REGION_CODE }}"
 export CLUSTER_NAME="ct-subs2-cluster"
