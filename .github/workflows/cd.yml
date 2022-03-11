@@ -32,6 +32,4 @@ jobs:
           AWS_ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY }}
           AWS_REGION_CODE: ${{ secrets.AWS_REGION_CODE }}
           AWS_ECR_PATH: ${{ secrets.AWS_ECR_PATH }}
-        run: |
-          ls -lt
-          deployment-examples/aws/k8s/deploy_to_eks.sh
+        run: deployment-examples/aws/k8s/deploy_to_eks.sh
