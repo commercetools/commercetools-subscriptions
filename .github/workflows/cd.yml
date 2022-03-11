@@ -19,4 +19,4 @@ jobs:
       CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
     steps:
       - run: |
-          ls
+          echo ls
