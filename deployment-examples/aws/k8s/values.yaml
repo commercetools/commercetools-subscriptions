@@ -6,7 +6,7 @@ image:
 ## edit those environment variables
 ## ----------------------
 nonSensitiveEnvs:
-  CTP_PROJECT_KEY: '${{ secrets.CTP_PROJECT_KEY }}'
+  CTP_PROJECT_KEY: '${{ CTP_PROJECT_KEY }}'
   CTP_API_URL: 'https://api.europe-west1.gcp.commercetools.com'
   CTP_AUTH_URL: 'https://auth.europe-west1.gcp.commercetools.com'
 

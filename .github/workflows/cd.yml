@@ -1,0 +1,21 @@
+# This workflow will build docker images and publish to docker hub
+# For more information see: https://github.com/marketplace/actions/build-and-push-docker-images
+
+name: CD
+
+on: [push]
+#on:
+#  push:
+#    tags:
+#      - 'v*.*.*'
+
+jobs:
+  build:
+    concurrency: build
+    runs-on: ubuntu-latest
+    env:
+      CTP_PROJECT_KEY: ctp-subscriptions-ci-it
+      CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
+      CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
+    steps:
+      - run: ./../deployment-examples/aws/k8s/deploy_to_eks.sh
