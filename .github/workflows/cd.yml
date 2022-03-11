@@ -20,5 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-        cd ../../deployment-examples/aws/k8s/
-        ./deploy_to_eks.sh
+          ls -la
+          cd ../../deployment-examples/aws/k8s
+          ./deploy_to_eks.sh
