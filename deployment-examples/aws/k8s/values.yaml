@@ -1,5 +1,5 @@
 image:
-  repository: "${{ secrets.AWS_ECR_PATH }}/${{ secrets.AWS_ECR_REPOSITORY }}"
+  repository: '${{ secrets.AWS_ECR_PATH }}/${{ secrets.AWS_ECR_REPOSITORY }}'
   tag: '0.0.1'
   pullPolicy: 'Always'
 
@@ -26,4 +26,4 @@ resources:
 concurrency: Forbid
 
 # Avoid scheduling with this hack: as there is no day like 31 Feb :)
-schedule:  '*/5 * * * *'
+schedule: '*/5 * * * *'
