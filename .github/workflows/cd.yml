@@ -26,7 +26,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: $AWS_ECR_PATH
+          aws-region: AWS_REGION_CODE
 
       - name: Build docker and deploy to ECR
         run: deployment-examples/aws/k8s/deploy_to_eks.sh
