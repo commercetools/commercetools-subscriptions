@@ -29,5 +29,5 @@ jobs:
           aws-region: $AWS_ECR_PATH
 
       - name: Build docker and deploy to ECR
-      - uses: actions/checkout@v2
-      - run: deployment-examples/aws/k8s/deploy_to_eks.sh
+        uses: actions/checkout@v2
+        run: deployment-examples/aws/k8s/deploy_to_eks.sh
