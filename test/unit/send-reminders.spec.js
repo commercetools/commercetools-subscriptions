@@ -226,23 +226,25 @@ describe('send-reminders', () => {
       }
     })
 
-    // This test doesn't work as nodejs retries by default 10 times with exponential backup.
-    // This retry and fail takes forever to finish,
-    // so this test needs to be changed to 'Retry 2 times and then success'
-    xit('should fail process on 5xxs', async () => {
+    it('should retry on 500 and then success', async () => {
       _mockTemplateOrders()
 
-      // currently no retry for 5xx.
       const sendReminderStateSet = nock(CTP_API_URL)
         .post(
           `/${PROJECT_KEY}/orders/aca5925a-7078-4455-8e0f-3956069418c6`,
           (body) =>
             body.actions.some((action) => action.action === 'transitionState')
         )
-        .times(1)
+        .times(2)
         .reply(500, {
           message: 'Some TEST API error',
         })
+        .post(
+          `/${PROJECT_KEY}/orders/aca5925a-7078-4455-8e0f-3956069418c6`,
+          (body) =>
+            body.actions.some((action) => action.action === 'transitionState')
+        )
+        .reply(200)
 
       const stats = await sendReminders({
         apiRoot,
@@ -253,7 +255,7 @@ describe('send-reminders', () => {
       expect(stats).to.deep.equal({
         processedTemplateOrders: 1,
         skippedTemplateOrders: 0,
-        updatedTemplateOrders: 0,
+        updatedTemplateOrders: 1,
       })
       expect(sendReminderStateSet.isDone()).to.be.true
     })
