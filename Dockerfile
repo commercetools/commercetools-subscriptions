@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN apk --no-cache add g++ gcc libgcc libstdc++ linux-headers make python
+RUN apk add --no-cache --virtual .gyp python3 make g++
 RUN npm install --quiet node-gyp -g
 
 RUN npm ci --only=prod
