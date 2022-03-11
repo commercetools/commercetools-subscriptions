@@ -17,9 +17,7 @@ jobs:
       CTP_PROJECT_KEY: ctp-subscriptions-ci-it
       CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
       CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
+      AWS_ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY }}
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          ls -la
-          cd deployment-examples/aws/k8s
-          ./deploy_to_eks.sh
+      - run: deployment-examples/aws/k8s/deploy_to_eks.sh
