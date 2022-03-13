@@ -10,7 +10,7 @@
 
 Create all the required custom types and states located in [resources folder](./resources).  Check [project requirements](./docs/HowToRun.md#commercetools-project-requirements) for more details.
 
-## Step 1: Create checkout order with subscriptions
+## Step 1: Create a checkout order with subscriptions
 
 `commercetools-subscriptions` processes only orders with subscription line items.
 
