@@ -8,7 +8,7 @@
 
 ## Before you begin
 
-Create all the required custom types and states located in [resources folder](./resources).  Check [project requirements](./docs/HowToRun.md#commercetools-project-requirements) for more details.
+Create all the required custom types and states located in [resources folder](./resources). Check [project requirements](./docs/HowToRun.md#commercetools-project-requirements) for more details.
 
 ## Step 1: Create a checkout order with subscriptions
 
