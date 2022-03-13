@@ -8,7 +8,7 @@ import { getApiRoot, getCtpClient } from '../../src/utils/client.js'
 import { ACTIVE_STATE } from '../../src/states-constants.js'
 import { createTemplateOrders } from '../../src/create-template-orders.js'
 
-describe('runner', () => {
+describe('create-template-orders', () => {
   const apiRoot = getApiRoot()
   const ctpClient = getCtpClient()
   const logger = getLogger()
