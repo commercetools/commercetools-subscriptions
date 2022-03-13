@@ -52,7 +52,7 @@ the example, there is 1 subscription line item for wine and 1 line item for pant
         "fields": {
           "cutoffDays": 5,
           "reminderDays": 5,
-          "subscriptionKey": "",
+          "subscriptionKey": "UNIQUE_SUBSCRIPTION_KEY",
           "isSubscription": true,
           "schedule": "0 0 1 Feb,May,Aug,Nov *"
         }
