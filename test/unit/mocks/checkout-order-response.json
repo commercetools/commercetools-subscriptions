@@ -1,0 +1,175 @@
+{
+  "limit": 20,
+  "offset": 0,
+  "count": 1,
+  "total": 1,
+  "results": [
+    {
+      "type": "Order",
+      "id": "12d7c490-a792-4abe-9a35-cdf9b113a11f",
+      "version": 3,
+      "lastMessageSequenceNumber": 2,
+      "createdAt": "2022-03-03T10:11:16.858Z",
+      "lastModifiedAt": "2022-03-03T10:11:18.257Z",
+      "lastModifiedBy": {
+        "clientId": "iXEtnN58fQa_wTOxHYDvi8NI",
+        "isPlatformClient": false
+      },
+      "createdBy": {
+        "clientId": "iXEtnN58fQa_wTOxHYDvi8NI",
+        "isPlatformClient": false
+      },
+      "orderNumber": "1646302276551",
+      "customerEmail": "test@test.com",
+      "totalPrice": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 18000,
+        "fractionDigits": 2
+      },
+      "orderState": "Complete",
+      "paymentState": "Paid",
+      "syncInfo": [],
+      "returnInfo": [],
+      "taxMode": "External",
+      "inventoryMode": "None",
+      "taxRoundingMode": "HalfEven",
+      "taxCalculationMode": "LineItemLevel",
+      "origin": "Customer",
+      "lineItems": [
+        {
+          "id": "1bea71c8-7712-4db4-945f-095085e0e69b",
+          "productId": "8671cacd-500e-44ac-b6ee-2beada092441",
+          "productKey": "product-1",
+          "name": {
+            "en": "Wine subscription"
+          },
+          "productType": {
+            "typeId": "product-type",
+            "id": "93b85ce4-bd0a-4c42-9aa5-a45c71915c4a"
+          },
+          "productSlug": {
+            "en": "wine-subscription"
+          },
+          "variant": {
+            "id": 1,
+            "sku": "wine01",
+            "prices": [
+              {
+                "id": "91cc2648-5b51-497d-8a24-69b77b762a23",
+                "value": {
+                  "type": "centPrecision",
+                  "currencyCode": "EUR",
+                  "centAmount": 18000,
+                  "fractionDigits": 2
+                },
+                "country": "DE"
+              }
+            ],
+            "images": [],
+            "attributes": [],
+            "assets": []
+          },
+          "price": {
+            "id": "a9c9dd05-ea46-4b34-b6a2-c31592156117",
+            "value": {
+              "type": "centPrecision",
+              "currencyCode": "EUR",
+              "centAmount": 18000,
+              "fractionDigits": 2
+            },
+            "country": "DE"
+          },
+          "quantity": 1,
+          "discountedPricePerQuantity": [],
+          "addedAt": "2022-03-03T10:11:16.817Z",
+          "lastModifiedAt": "2022-03-03T10:11:16.817Z",
+          "state": [
+            {
+              "quantity": 1,
+              "state": {
+                "typeId": "state",
+                "id": "e380a2fb-77f3-482b-bf83-2060876200ba"
+              }
+            }
+          ],
+          "priceMode": "Platform",
+          "totalPrice": {
+            "type": "centPrecision",
+            "currencyCode": "EUR",
+            "centAmount": 18000,
+            "fractionDigits": 2
+          },
+          "custom": {
+            "type": {
+              "typeId": "type",
+              "id": "08c2d736-f2d8-4869-a2ef-fd8f56ff48a3"
+            },
+            "fields": {
+              "subscriptionKey": "275c10d0-1f1e-4463-9c7f-66a6abc7ce7b_subscriptionKey",
+              "reminderDays": 5,
+              "schedule": "0 0 1 Feb,May,Aug,Nov *",
+              "cutoffDays": 5,
+              "isSubscription": true
+            }
+          },
+          "lineItemMode": "Standard"
+        }
+      ],
+      "customLineItems": [],
+      "transactionFee": false,
+      "discountCodes": [],
+      "custom": {
+        "type": {
+          "typeId": "type",
+          "id": "8d3ce166-fff7-4ff4-bd01-6ec42d392a88"
+        },
+        "fields": {
+          "hasSubscription": true,
+          "isSubscriptionProcessed": true
+        }
+      },
+      "paymentInfo": {
+        "payments": [
+          {
+            "typeId": "payment",
+            "id": "25aa5d5e-6e18-4a59-b5b6-e95ec481e46a",
+            "obj": {
+              "id": "25aa5d5e-6e18-4a59-b5b6-e95ec481e46a",
+              "version": 1,
+              "lastMessageSequenceNumber": 1,
+              "createdAt": "2022-03-03T10:11:16.688Z",
+              "lastModifiedAt": "2022-03-03T10:11:16.688Z",
+              "lastModifiedBy": {
+                "clientId": "iXEtnN58fQa_wTOxHYDvi8NI",
+                "isPlatformClient": false
+              },
+              "createdBy": {
+                "clientId": "iXEtnN58fQa_wTOxHYDvi8NI",
+                "isPlatformClient": false
+              },
+              "amountPlanned": {
+                "type": "centPrecision",
+                "currencyCode": "EUR",
+                "centAmount": 795,
+                "fractionDigits": 2
+              },
+              "paymentMethodInfo": {
+                "paymentInterface": "ctp-adyen-integration",
+                "method": "creditCard",
+                "name": {
+                  "de": "Adyen credit card"
+                }
+              },
+              "paymentStatus": {},
+              "transactions": [],
+              "interfaceInteractions": []
+            }
+          }
+        ]
+      },
+      "itemShippingAddresses": [],
+      "refusedGifts": []
+    }
+  ]
+}

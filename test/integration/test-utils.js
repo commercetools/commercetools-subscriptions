@@ -1,8 +1,10 @@
 import pMap from 'p-map'
+import _ from 'lodash'
 import { randomUUID } from 'crypto'
 import { ensureCustomTypes } from '../../src/setup/ensure-custom-types.js'
 import { ensureStates } from '../../src/setup/ensure-states.js'
 import { readAndParseJsonFile } from '../../src/utils/utils.js'
+import { ACTIVE_STATE } from '../../src/states-constants.js'
 
 const zoneDraft = await readAndParseJsonFile('test/resources/zone-draft.json')
 const taxCategoryDraft = await readAndParseJsonFile(
@@ -20,7 +22,12 @@ const shippingMethodDraft = await readAndParseJsonFile(
 const paymentDraft = await readAndParseJsonFile(
   'test/resources/payment-draft.json'
 )
-const orderDraft = await readAndParseJsonFile('test/resources/order-draft.json')
+const checkoutOrderDraft = await readAndParseJsonFile(
+  'test/resources/order-draft.json'
+)
+const templateOrderDraft = await readAndParseJsonFile(
+  'test/resources/template-order-draft.json'
+)
 
 async function ensureResources(apiRoot, logger) {
   await ensureCustomTypes(apiRoot, logger)
@@ -41,15 +48,32 @@ async function ensureResources(apiRoot, logger) {
   }
 }
 
-async function createOrderByOrderNumber(
-  apiRoot,
-  logger,
-  productIds,
-  shippingMethodId,
-  orderNumber
-) {
+async function createOrderByOrderNumber(apiRoot, logger, orderNumber) {
   const paymentResponse = await createPayment(apiRoot)
-  return createOrder(apiRoot, logger, paymentResponse.id, orderNumber)
+  const orderDraft = _.cloneDeep(checkoutOrderDraft)
+  orderDraft.orderNumber = orderNumber
+  orderDraft.lineItems.forEach((lineItem) => {
+    if (lineItem.custom?.fields?.subscriptionKey === '')
+      lineItem.custom.fields.subscriptionKey = `${randomUUID()}_subscriptionKey`
+  })
+  return createOrder(apiRoot, logger, paymentResponse.id, orderDraft)
+}
+
+async function createTemplateOrder(apiRoot, logger) {
+  const paymentResponse = await createPayment(apiRoot)
+  const orderDraft = _.cloneDeep(templateOrderDraft)
+  orderDraft.orderNumber = `${randomUUID()}_subscriptionKey`
+  orderDraft.custom.fields.nextDeliveryDate = new Date().toISOString()
+  orderDraft.custom.fields.nextReminderDate = new Date(
+    new Date().getTime() - 5 * 24 * 60 * 60 * 1000
+  ).toISOString()
+  return createOrder(
+    apiRoot,
+    logger,
+    paymentResponse.id,
+    orderDraft,
+    ACTIVE_STATE
+  )
 }
 
 async function ensureZones(apiRoot) {
@@ -195,16 +219,17 @@ async function createPayment(apiRoot) {
   return payment
 }
 
-async function createOrder(apiRoot, logger, paymentId, orderNumber) {
-  orderDraft.orderNumber = orderNumber
-  orderDraft.lineItems.forEach((lineItem) => {
-    if (lineItem.custom?.fields?.subscriptionKey === '')
-      lineItem.custom.fields.subscriptionKey = `${randomUUID()}_subscriptionKey`
-  })
+async function createOrder(
+  apiRoot,
+  logger,
+  paymentId,
+  orderDraft,
+  stateKey = null
+) {
   let order
   try {
     logger.debug(
-      `About to create order in test project with orderNumber ${orderNumber}`
+      `About to create order in test project with orderNumber ${orderDraft.orderNumber}`
     )
     const { body } = await apiRoot
       .orders()
@@ -220,6 +245,14 @@ async function createOrder(apiRoot, logger, paymentId, orderNumber) {
         },
       },
     ]
+    if (stateKey)
+      updateActions.push({
+        action: 'transitionState',
+        state: {
+          typeId: 'state',
+          key: stateKey,
+        },
+      })
     const { body: orderWithPayment } = await apiRoot
       .orders()
       .withId({ ID: body.id })
@@ -235,9 +268,11 @@ async function createOrder(apiRoot, logger, paymentId, orderNumber) {
       .execute()
     order = orderWithPayment
   } catch (e) {
-    logger.debug('Failed to create order in test project.', e)
-    logger.debug('Fetch order by number.')
-    order = await fetchOrderByOrderNumber(apiRoot, orderNumber)
+    logger.debug(
+      'Failed to create order in test project. Fetch order by number.',
+      e
+    )
+    order = await fetchOrderByOrderNumber(apiRoot, orderDraft.orderNumber)
   }
 
   return order
@@ -257,4 +292,14 @@ function isValidDate(d) {
   return d instanceof Date && !isNaN(d)
 }
 
-export { ensureResources, createOrderByOrderNumber, isValidDate }
+async function reloadModule(path) {
+  return import(`${path}?testName=${randomUUID()}`)
+}
+
+export {
+  ensureResources,
+  createOrderByOrderNumber,
+  isValidDate,
+  createTemplateOrder,
+  reloadModule,
+}

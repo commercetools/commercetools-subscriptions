@@ -1,0 +1,31 @@
+{
+  "data": {
+    "orders": {
+      "results": [
+        {
+          "id": "6ea7dbba-be0e-49d3-975d-fe214e094eae",
+          "version": 3,
+          "custom": {
+            "customFieldsRaw": [
+              {
+                "name": "nextDeliveryDate",
+                "value": "2022-03-09T11:02:01.543Z"
+              },
+              {
+                "name": "reminderDays",
+                "value": 5
+              },
+              {
+                "name": "schedule",
+                "value": "0 0 1 Feb,May,Aug,Nov *"
+              }
+            ]
+          },
+          "state": {
+            "key": "commercetools-subscriptions-active"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "type": "Order",
+  "orderNumber": "1646155644124_subscriptionKey",
+  "customerEmail": "test@test.com",
+  "totalPrice": {
+    "type": "centPrecision",
+    "currencyCode": "EUR",
+    "centAmount": 18000,
+    "fractionDigits": 2
+  },
+  "orderState": "Open",
+  "syncInfo": [],
+  "returnInfo": [],
+  "taxMode": "External",
+  "inventoryMode": "None",
+  "taxRoundingMode": "HalfEven",
+  "taxCalculationMode": "LineItemLevel",
+  "origin": "Customer",
+  "lineItems": [
+    {
+      "productKey": "product-1",
+      "name": {
+        "en": "Wine subscription"
+      },
+      "productType": {
+        "typeId": "product-type",
+        "id": "85da8cfb-86a5-4461-9865-1a09cb3881d6",
+        "version": 1
+      },
+      "productSlug": {
+        "en": "wine-subscription"
+      },
+      "variant": {
+        "sku": "wine01",
+        "prices": [
+          {
+            "id": "344de94e-ebca-49d5-bc21-a1e1e9fb18fe",
+            "value": {
+              "type": "centPrecision",
+              "currencyCode": "EUR",
+              "centAmount": 18000,
+              "fractionDigits": 2
+            },
+            "country": "DE"
+          }
+        ],
+        "images": [],
+        "attributes": [],
+        "assets": []
+      },
+      "price": {
+        "id": "e35397fb-4c35-47cb-b5e4-eee3249c2e71",
+        "value": {
+          "type": "centPrecision",
+          "currencyCode": "EUR",
+          "centAmount": 18000,
+          "fractionDigits": 2
+        },
+        "country": "DE"
+      },
+      "quantity": 1,
+      "discountedPricePerQuantity": [],
+      "addedAt": "2022-03-01T17:27:27.249Z",
+      "lastModifiedAt": "2022-03-01T17:27:27.249Z",
+      "priceMode": "Platform",
+      "totalPrice": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 18000,
+        "fractionDigits": 2
+      },
+      "custom": {
+        "type": {
+          "typeId": "type",
+          "key": "checkout-order-line-item"
+        },
+        "fields": {
+          "subscriptionKey": "1646155644124_subscriptionKey",
+          "reminderDays": 5,
+          "schedule": "0 0 1 Feb,May,Aug,Nov *",
+          "cutoffDays": 5,
+          "isSubscription": true
+        }
+      },
+      "lineItemMode": "Standard"
+    }
+  ],
+  "customLineItems": [],
+  "transactionFee": false,
+  "discountCodes": [],
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "key": "subscription-template-order"
+    },
+    "fields": {
+      "nextDeliveryDate": "2022-04-30T22:00:00.000Z",
+      "nextReminderDate": "2022-04-25T22:00:00.000Z",
+      "reminderDays": 5,
+      "schedule": "0 0 1 Feb,May,Aug,Nov *"
+    }
+  },
+  "itemShippingAddresses": [],
+  "refusedGifts": []
+}

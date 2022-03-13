@@ -7,6 +7,7 @@ import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
 import { createRequestBuilder } from '@commercetools/api-request-builder'
 import fetch from 'isomorphic-fetch'
 import _ from 'lodash'
+import util from 'util'
 import { getClientConfig, getConcurrency, getPackageJson } from '../config.js'
 
 const packageJson = await getPackageJson()
@@ -39,6 +40,9 @@ function createCtpClient({
     maskSensitiveHeaderData: true,
     host: apiUrl,
     enableRetry: true,
+    retryConfig: {
+      retryCodes: [500, 502, 503, 504],
+    },
     fetch,
   })
 
@@ -77,6 +81,54 @@ function getCtpClient() {
         (data) => Promise.resolve(callback(data.body.results)),
         opts
       )
+    },
+
+    async *fetchPagesGraphQl({ queryBody, variables, endpoint }) {
+      const originalWhere = variables.where
+      // ensure limit is always set since it helps to avoid last/obsolete request
+      if (!variables.limit) variables.limit = 20
+
+      let lastId = null
+
+      // to ensure we do not fetch duplicate results we have to sort by id only
+      variables.sort = ['id asc']
+
+      while (true) {
+        const where = [lastId ? `id > "${lastId}"` : null, originalWhere]
+          .filter(Boolean)
+          .join(' AND ')
+
+        if (where) variables.where = where
+
+        const data = await this.queryGraphQl(queryBody, variables)
+
+        if (_.get(data, 'body.errors.length')) {
+          const e = { queryBody, variables, errors: data }
+          throw new Error(
+            util.inspect(e, { showHidden: true, depth: null, colors: true })
+          )
+        }
+        const { results } = data.body.data[endpoint]
+
+        yield results
+
+        // Due to performance best practice we do not rely on total count.
+        // As a consequence, in case last page results length is the same as
+        // the limit we will do 1 obsolete request with 0 results.
+        if (!results.length || results.length < variables.limit) break
+
+        lastId = _.last(results).id
+      }
+    },
+
+    async queryGraphQl(query, variables) {
+      const reqOptions = this.buildRequestOptions(
+        `/${clientConfig.projectKey}/graphql`,
+        'POST',
+        { query, variables }
+      )
+
+      return ctpClient.execute(reqOptions)
     },
 
     buildRequestOptions(uri, method = 'GET', body = undefined) {

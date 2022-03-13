@@ -9,7 +9,8 @@
     "before": "readonly",
     "beforeEach": "readonly",
     "after": "readonly",
-    "afterEach": "readonly"
+    "afterEach": "readonly",
+    "xit": "readonly"
   },
   "env": {
     "node": true
@@ -119,6 +120,8 @@
     ],
     "no-return-assign": [2, "except-parens"],
     "implicit-arrow-linebreak": "off",
-    "function-paren-newline": "off"
+    "function-paren-newline": "off",
+    "object-curly-newline": "off",
+    "generator-star-spacing": "off"
   }
 }

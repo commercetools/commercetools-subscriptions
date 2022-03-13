@@ -1,26 +1,30 @@
 {
-  "key": "ReminderSent",
+  "key": "commercetools-subscriptions-reminderSent",
   "type": "OrderState",
   "roles": [],
   "name": {
-    "en": "ReminderSent"
+    "en": "Reminder Sent"
   },
   "transitions": [
     {
       "typeId": "state",
-      "key": "Active"
+      "key": "commercetools-subscriptions-active"
     },
     {
       "typeId": "state",
-      "key": "Cancelled"
+      "key": "commercetools-subscriptions-sendReminder"
     },
     {
       "typeId": "state",
-      "key": "Paused"
+      "key": "commercetools-subscriptions-cancelled"
     },
     {
       "typeId": "state",
-      "key": "Error"
+      "key": "commercetools-subscriptions-paused"
+    },
+    {
+      "typeId": "state",
+      "key": "commercetools-subscriptions-error"
     }
   ],
   "initial": false
