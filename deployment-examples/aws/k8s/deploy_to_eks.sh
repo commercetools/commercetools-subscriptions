@@ -38,8 +38,22 @@ cd k8s-charts/charts/cronjob
 
 printf "Helms:\n%s\n\n" "$(ls)"
 printf "Helms:\n%s\n\n" "$(pwd)"
+cd ./
+printf "Current path after changing \n%s\n\n" "$(pwd)"
+printf "Helms:\n%s\n\n" "$(ls)"
+
+cd ./../
+printf "Current path after changing \n%s\n\n" "$(pwd)"
+printf "Helms:\n%s\n\n" "$(ls)"
+
+cd ./../../
+printf "Current path after changing \n%s\n\n" "$(pwd)"
+printf "Helms:\n%s\n\n" "$(ls)"
+
 cd ./../../../
-printf "Current path after changing" "$(pwd)"
+printf "Current path after changing \n%s\n\n" "$(pwd)"
+printf "Helms:\n%s\n\n" "$(ls)"
+
 #helm upgrade --install commercetools-subscriptions -f ./../../../values.yaml \ .
 #
 #printf "Helms:\n%s\n\n" "$(helm list)"
