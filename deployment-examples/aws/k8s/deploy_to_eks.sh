@@ -20,17 +20,17 @@ export HELM_CHARTS_LOCAL_FOLDER="charts-templates"
 
 printf "\n- Build and push docker images to AWS ECR\n"
 ECR_PATH=$AWS_ECR_PATH
-IMAGE_FULL_NAME="${ECR_PATH}/${IMAGE_BASE_NAME}"
+IMAGE_FULL_NAME=${ECR_PATH}/${IMAGE_BASE_NAME}
 
-#aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin "$ECR_PATH"
-#docker build -t "$IMAGE_BASE_NAME" .
-#docker tag "$IMAGE_BASE_NAME" "$IMAGE_FULL_NAME:$TAG"
-#docker push "$IMAGE_FULL_NAME:$TAG"
+aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin $ECR_PATH
+docker build -t $IMAGE_BASE_NAME .
+docker tag $IMAGE_BASE_NAME $IMAGE_FULL_NAME:$TAG
+docker push $IMAGE_FULL_NAME:$TAG
 
-aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 185277772334.dkr.ecr.us-west-2.amazonaws.com
-docker build -t ct-subscriptions-repository .
-docker tag ct-subscriptions-repository:latest 185277772334.dkr.ecr.us-west-2.amazonaws.com/ct-subscriptions-repository:latest
-docker push 185277772334.dkr.ecr.us-west-2.amazonaws.com/ct-subscriptions-repository:latest
+#aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 185277772334.dkr.ecr.us-west-2.amazonaws.com
+#docker build -t ct-subscriptions-repository .
+#docker tag ct-subscriptions-repository:latest 185277772334.dkr.ecr.us-west-2.amazonaws.com/ct-subscriptions-repository:latest
+#docker push 185277772334.dkr.ecr.us-west-2.amazonaws.com/ct-subscriptions-repository:latest
 
 printf "\n- Cloning commercetools/k8s-charts repo \n"
 rm -rf ./k8s-charts
@@ -41,6 +41,6 @@ aws eks update-kubeconfig --region "$REGION_CODE" --name "$CLUSTER_NAME"
 
 cd k8s-charts/charts/cronjob
 
-helm upgrade --install commercetools-subscriptions -f deployment-examples/aws/k8s/values.yaml \ .
+helm upgrade --install commercetools-subscriptions -f ./values.yaml \ .
 
 printf "Helms:\n%s\n\n" "$(helm list)"
