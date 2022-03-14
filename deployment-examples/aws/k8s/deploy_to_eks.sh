@@ -23,7 +23,7 @@ ECR_PATH=$AWS_ECR_PATH
 IMAGE_FULL_NAME=${ECR_PATH}/${IMAGE_BASE_NAME}
 
 aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin $ECR_PATH
-docker build -t $IMAGE_BASE_NAME .
+docker build -t $IMAGE_BASE_NAME:$TAG .
 docker tag $IMAGE_BASE_NAME:$TAG $IMAGE_FULL_NAME:$TAG
 docker push $IMAGE_FULL_NAME:$TAG
 
