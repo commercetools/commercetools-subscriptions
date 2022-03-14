@@ -3,10 +3,11 @@
 
 name: CD
 
-on:
-  push:
-    tags:
-      - 'v*.*.*'
+on: [push]
+#on:
+#  push:
+#    tags:
+#      - 'v*.*.*'
 
 jobs:
   build:
