@@ -36,6 +36,10 @@ aws eks update-kubeconfig --region "$REGION_CODE" --name "$CLUSTER_NAME"
 
 cd k8s-charts/charts/cronjob
 
-helm upgrade --install commercetools-subscriptions -f ./../../../values.yaml \ .
-
-printf "Helms:\n%s\n\n" "$(helm list)"
+printf "Helms:\n%s\n\n" "$(ls)"
+printf "Helms:\n%s\n\n" "$(pwd)"
+cd ./../../../
+printf "Current path after changing" "$(pwd)"
+#helm upgrade --install commercetools-subscriptions -f ./../../../values.yaml \ .
+#
+#printf "Helms:\n%s\n\n" "$(helm list)"
