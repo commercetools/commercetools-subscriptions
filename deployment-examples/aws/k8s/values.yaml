@@ -1,5 +1,5 @@
 image:
-  repository: $AWS_ECR_PATH/$AWS_ECR_REPOSITORY
+  repository: '185277772334.dkr.ecr.us-west-2.amazonaws.com/ct-subscriptions-repository'
   tag: '0.0.1'
   pullPolicy: 'Always'
 
