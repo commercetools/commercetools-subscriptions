@@ -25,7 +25,7 @@ IMAGE_FULL_NAME="${ECR_PATH}/${IMAGE_BASE_NAME}"
 aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin "$ECR_PATH"
 docker build -t "$IMAGE_BASE_NAME" .
 docker tag "$IMAGE_BASE_NAME" "$IMAGE_FULL_NAME:$TAG"
-docker push -- "$IMAGE_FULL_NAME:$TAG"
+docker push "$IMAGE_FULL_NAME:$TAG"
 
 printf "\n- Cloning commercetools/k8s-charts repo \n"
 rm -rf ./k8s-charts
