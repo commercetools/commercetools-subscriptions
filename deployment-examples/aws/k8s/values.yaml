@@ -1,18 +1,18 @@
 image:
-  repository: repository_url_to_replace
+  repository: $AWS_ECR_REPO
   tag: '0.0.1'
   pullPolicy: 'Always'
 
 ## edit those environment variables
 ## ----------------------
 nonSensitiveEnvs:
-  CTP_PROJECT_KEY: client_project_to_replace
+  CTP_PROJECT_KEY: $CTP_PROJECT_KEY
   CTP_API_URL: 'https://api.europe-west1.gcp.commercetools.com'
   CTP_AUTH_URL: 'https://auth.europe-west1.gcp.commercetools.com'
 
 sensitiveEnvs:
-  CTP_CLIENT_ID: client_id_to_replace
-  CTP_CLIENT_SECRET: client_secret_to_replace
+  CTP_CLIENT_ID: $CTP_CLIENT_ID
+  CTP_CLIENT_SECRET: $CTP_CLIENT_SECRET
 ## ----------------------
 
 # When the pod is scheduled, the container is guaranteed the amount of

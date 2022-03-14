@@ -36,13 +36,6 @@ aws eks update-kubeconfig --region "$REGION_CODE" --name "$CLUSTER_NAME"
 
 cd k8s-charts/charts/cronjob
 
-sed -i -e "s/repository_url_to_replace/$IMAGE_FULL_NAME/g" ./../../../deployment-examples/aws/k8s/values.yaml
-sed -i -e "s/client_project_to_replace/$CTP_PROJECT_KEY/g" ./../../../deployment-examples/aws/k8s/values.yaml
-sed -i -e "s/client_id_to_replace/$CTP_CLIENT_ID/g" ./../../../deployment-examples/aws/k8s/values.yaml
-sed -i -e "s/client_secret_to_replace/$CTP_CLIENT_SECRET/g" ./../../../deployment-examples/aws/k8s/values.yaml
-
-printf "\n%s \n" "$(cat ./../../../deployment-examples/aws/k8s/values.yaml)"
-
-helm upgrade --install commercetools-subscriptions -f ./../../../deployment-examples/aws/k8s/values.yaml \ .
+helm upgrade --set AWS_ECR_REPO=$IMAGE_FULL_NAME --set CTP_PROJECT_KEY=$CTP_PROJECT_KEY --set CTP_CLIENT_ID=$CTP_CLIENT_ID --set CTP_CLIENT_SECRET=$CTP_CLIENT_SECRET --install commercetools-subscriptions -f ./../../../deployment-examples/aws/k8s/values.yaml \ .
 
 printf "Helms:\n%s\n\n" "$(helm list)"
