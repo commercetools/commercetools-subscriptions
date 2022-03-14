@@ -18,9 +18,10 @@ export HELM_CHARTS_VERSION="1.14.0"
 export HELM_CHART_TEMPLATE_NAME="cronjob"
 export HELM_CHARTS_LOCAL_FOLDER="charts-templates"
 
+
 printf "\n- Build and push docker images to AWS ECR\n"
 ECR_PATH=$AWS_ECR_PATH
-export IMAGE_FULL_NAME=${ECR_PATH}/${IMAGE_BASE_NAME}
+IMAGE_FULL_NAME=${ECR_PATH}/${IMAGE_BASE_NAME}
 
 aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin $ECR_PATH
 docker build -t $IMAGE_BASE_NAME:$TAG .
@@ -36,6 +37,11 @@ aws eks update-kubeconfig --region "$REGION_CODE" --name "$CLUSTER_NAME"
 
 cd k8s-charts/charts/cronjob
 
-helm upgrade --set AWS_ECR_REPO=$IMAGE_FULL_NAME --set CTP_PROJECT_KEY=$CTP_PROJECT_KEY --set CTP_CLIENT_ID=$CTP_CLIENT_ID --set CTP_CLIENT_SECRET=$CTP_CLIENT_SECRET --install commercetools-subscriptions -f ./../../../deployment-examples/aws/k8s/values.yaml \ .
+helm upgrade --set image.repository=$IMAGE_FULL_NAME \
+--set nonSensitiveEnvs.CTP_PROJECT_KEY=$CTP_PROJECT_KEY \
+--set sensitiveEnvs.CTP_CLIENT_ID=$CTP_CLIENT_ID \
+--set sensitiveEnvs.CTP_CLIENT_SECRET=$CTP_CLIENT_SECRET \
+--set image.tag=$TAG \
+--install commercetools-subscriptions -f ./../../../deployment-examples/aws/k8s/values.yaml \ .
 
 printf "Helms:\n%s\n\n" "$(helm list)"

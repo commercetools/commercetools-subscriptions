@@ -1,6 +1,6 @@
 image:
-  repository: $AWS_ECR_REPO
-  tag: '0.0.1'
+  repository: $AWS_EKR_REPO
+  tag: $TAG
   pullPolicy: 'Always'
 
 ## edit those environment variables
@@ -26,4 +26,4 @@ resources:
 concurrency: Forbid
 
 # Avoid scheduling with this hack: as there is no day like 31 Feb :)
-schedule: '*/5 * * * *'
+schedule: $schedule
