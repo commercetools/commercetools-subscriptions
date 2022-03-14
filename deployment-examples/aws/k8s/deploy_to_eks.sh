@@ -42,15 +42,15 @@ cd ./
 printf "Current path after changing \n%s\n\n" "$(pwd)"
 printf "Helms:\n%s\n\n" "$(ls)"
 
-cd ./../
+cd ../
 printf "Current path after changing \n%s\n\n" "$(pwd)"
 printf "Helms:\n%s\n\n" "$(ls)"
 
-cd ./../../
+cd ../
 printf "Current path after changing \n%s\n\n" "$(pwd)"
 printf "Helms:\n%s\n\n" "$(ls)"
 
-cd ./../../../
+cd ../
 printf "Current path after changing \n%s\n\n" "$(pwd)"
 printf "Helms:\n%s\n\n" "$(ls)"
 
