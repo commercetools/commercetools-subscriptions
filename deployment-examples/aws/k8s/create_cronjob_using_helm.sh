@@ -12,8 +12,8 @@ printf "\n- Cloning commercetools/k8s-charts repo \n"
 rm -rf ./k8s-charts
 git clone --branch=$HELM_CHARTS_VERSION --depth=1 $HELM_CHARTS_REPO/
 
-printf "\n- Connecting to the AWS cluster with name: [%s] in [%s]..\n" $CLUSTER_NAME $REGION_CODE
-aws eks update-kubeconfig --region $REGION_CODE --name $CLUSTER_NAME
+printf "\n- Connecting to the AWS cluster with name: [%s] in [%s]..\n" $CLUSTER_NAME $AWS_REGION_CODE
+aws eks update-kubeconfig --region $AWS_REGION_CODE --name $CLUSTER_NAME
 
 cd k8s-charts/charts/cronjob
 
