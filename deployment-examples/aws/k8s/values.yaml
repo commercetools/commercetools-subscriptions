@@ -26,4 +26,4 @@ resources:
 concurrency: Forbid
 
 # Avoid scheduling with this hack: as there is no day like 31 Feb :)
-schedule: $schedule
+schedule: '*/5 * * * *'
