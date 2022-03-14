@@ -1,7 +1,5 @@
-export TAG="0.0.1"
-
 image:
-  repository: $AWS_ECR_PATH/$AWS_ECR_REPOSITORY:$TAG
+  repository: $AWS_ECR_PATH/$AWS_ECR_REPOSITORY
   tag: '0.0.1'
   pullPolicy: 'Always'
 
