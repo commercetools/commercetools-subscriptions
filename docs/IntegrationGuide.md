@@ -1,10 +1,12 @@
 # Integration guide
 
 ## Terminology
-
-- **checkout-order**: an order which customers create during the checkout. It may contain one or more subscriptions.
+- **user**: the one who is running `commercetools-subscriptions`
+- **customer**: the one who buy goods from the user   
+- **checkout-order**: an order which customers create during the checkout. It may contain one or more subscriptions. `commercetools-subscriptions` will generate a **template-order** for every subscription. 
 - **template-order**: an order which manages a single subscription and is used as a template to create a
   subscription-order.
+- **subscription-order**:
 
 ## Before you begin
 
@@ -115,3 +117,66 @@ Example: Let's assume we trigger a subscription-order every 1st of February and 
 
 - If the checkout-order was placed until 15 of January then the next subscription-order creation is planned for the 1st of February.
 - If the checkout-order was placed between 16 - 31 of January then the next subscription-order creation is planned for the 1st of May.
+
+# Step 2: Send reminder (Optional)
+If the checkout order was created with an option `reminderDays`, `commercetools-subscriptions`  sets `nextReminderDate` when generating the template order. When `nextReminderDate` is the current date, `commercetools-subscriptions` will change [custom state](https://docs.commercetools.com/api/projects/states) of the template order from `Active` to `SendReminder`.
+
+<details>
+<summary>Changing the state will generate a message similar to the example below.</summary>
+```
+{
+      "id": "136b15c1-6c26-4a9f-85fe-b5f68a42eaf9",
+      "version": 1,
+      "sequenceNumber": 4,
+      "resource": {
+        "typeId": "order",
+        "id": "1cfb3b98-3f82-4fea-aaa0-004614cc008d"
+      },
+      "resourceVersion": 4,
+      "resourceUserProvidedIdentifiers": {
+        "orderNumber": "YOUR_ORDER_NUMBER"
+      },
+      "type": "OrderStateTransition",
+      "state": {
+        "typeId": "state",
+        "id": "361fabd1-fed1-43be-9610-b7c63937342c"
+      },
+      "oldState": {
+        "typeId": "state",
+        "id": "09015358-70e9-4025-b4b6-3febcaaf06de"
+      },
+      "force": false
+}
+```
+</details>
+
+It is up to the user to consume this message and send a reminder email to the customer. Be aware that `commercetools-subscriptions` do not send any reminders, it only set custom state of the order. 
+
+After email has been sent, user has to [make a transition](https://docs.commercetools.com/api/projects/orders#transition-state) to the new order custom state `key="commercetools-subscriptions-reminderSent"`
+
+# Step 3: Generate a subscription order
+`commercetools-subscriptions` sets `nextDeliveryDate` when generating the template order. When `nextDeliveryDate` is the current date, `commercetools-subscriptions` will make a **POST** request to the URL sets using env var `SUBSCRIPTION_ORDER_CREATION_URL` with the following body:
+```json
+{"templateOrderId": "id-of-the-template-order"}
+```
+
+The receiver of the payload uses `templateOrderId` to fetch the template order and create a subscription order. The subscription order should have generated unique orderNumber, correct payments and setting all the information required by the merchant for the further processing. For subscription order creation we recommend using [Order import API](https://docs.commercetools.com/api/projects/orders-import#orderimportdraft). On order creation make sure you have a successful payment and required fields `subscriptionTemplateOrderRef` and `deliveryDate` (value copied from the nextDeliveryDate) from the template-order are set.
+
+After finishing the subscription order creation process, the receiver of the payload must return one of the following HTTP code depending on the result of the subscription order creation process:
+
+| Result of the subscription order creation process | HTTP status code | Follow-up action in `commercetools-subscriptions` |
+| --- | --- | --- |
+| Subscription order was created successfully | 200 | Template order gets new `nextDeliveryDate`, new `nextReminderDate` and order custom state is set to `Active`
+| Unexpected error during processing the subscription order | 5xx | Template order is skipped and processing will be repeated with the next run of `commercetools-subscriptions`
+| Problem with authentication and authorization to `SUBSCRIPTION_ORDER_CREATION_URL` | 401, 403 |  Template order is skipped and processing will be repeated with the next run of `commercetools-subscriptions`
+| Any other errors during processing | 4xx except 401, 403 | Template order custom state is set to `ERROR`. This order is not processed anymore and must be manually handled to set its state back to `ACTIVE`
+
+In case of any network issues `commercetools-subscriptions` will skip the template order and processing will be repeated with the next run.
+
+### Subscription order custom fields
+| Name                    | Type    | Description | Required |
+| --- | --- | --- | --- |
+| subscriptionTemplateOrderRef | Reference | | YES |
+| deliveryDate | Date | | YES |
+
+## Error messages
