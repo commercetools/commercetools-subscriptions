@@ -1,4 +1,5 @@
 # Deployment
+
 Bash scripts have been created to build and deploy docker image to AWS EKS as a cronjob.
 
 > In the deployment script, the [cron-job](https://github.com/commercetools/k8s-charts/tree/master/charts/cronjob) helm chart is used.
@@ -24,15 +25,15 @@ Example: ClusterName, ECR repository and its url etc.
 
 also, the below project details,
 
-| Name                  | Description                             |
-| --------------------- | --------------------------------------- |
-| `CTP_PROJECT_KEY`     | Commercetools project key               |
-| `CTP_CLIENT_ID`       | Client Id                               |
-| `CTP_CLIENT_SECRET`   | Client secret                           |
+| Name                | Description               |
+| ------------------- | ------------------------- |
+| `CTP_PROJECT_KEY`   | Commercetools project key |
+| `CTP_CLIENT_ID`     | Client Id                 |
+| `CTP_CLIENT_SECRET` | Client secret             |
 
 ### Helm values
 
 Configure the credentials and other configs in [values.yaml](./../aws/k8s/values.yaml).
 
-Note: The deployment will push the image to Amazon ECR and then helm will create a cronjob. 
-By default, cronjob runs every 5 minutes(you can change this in values.yaml), go to workflows tab on Amazon EKS service and verify it. 
+Note: The deployment will push the image to Amazon ECR and then helm will create a cronjob.
+By default, cronjob runs every 5 minutes(you can change this in values.yaml), go to workflows tab on Amazon EKS service and verify it.
