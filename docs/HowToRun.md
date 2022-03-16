@@ -49,3 +49,34 @@ npm run "setup-subscription-states"
 | CTP_PROJECT_KEY   | commercetools project key                                  | YES      |
 | CTP_CLIENT_ID     | OAuth 2.0 client_id and can be used to obtain a token.     | YES      |
 | CTP_CLIENT_SECRET | OAuth 2.0 client_secret and can be used to obtain a token. | YES      |
+
+## Running commercetools-subscriptions
+
+### Environment variables
+
+| Name                            | Content                                                                                                                                  | Required | Default                                         |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------- |
+| CTP_PROJECT_KEY                 | commercetools project key                                                                                                                | YES      |
+| CTP_CLIENT_ID                   | OAuth 2.0 client_id and can be used to obtain a token.                                                                                   | YES      |
+| CTP_CLIENT_SECRET               | OAuth 2.0 client_secret and can be used to obtain a token.                                                                               | YES      |
+| SUBSCRIPTION_ORDER_CREATION_URL | URL that will be called to created a subscription order. For more info see [IntegrationGuide](./IntegrationGuide.md)                     | YES      |
+| CTP_API_URL                     | The commercetools HTTP API is hosted at that URL.                                                                                        | NO       | https://api.europe-west1.gcp.commercetools.com  |
+| CTP_AUTH_URL                    | The commercetools OAuth 2.0 service is hosted at that URL.                                                                               | NO       | https://auth.europe-west1.gcp.commercetools.com |
+| CUSTOM_HEADERS                  | Custom header that will be passed when calling `SUBSCRIPTION_ORDER_CREATION_URL`. Must be as stringified JSON.                           | NO       |
+| BASIC_AUTH_USERNAME             | If both `BASIC_AUTH_USERNAME` and `BASIC_AUTH_PASSWORD` are present, the values will be base64 encoded and passed as Basic Authorization | NO       |
+| BASIC_AUTH_PASSWORD             | If both `BASIC_AUTH_USERNAME` and `BASIC_AUTH_PASSWORD` are present, the values will be base64 encoded and passed as Basic Authorization | NO       |
+
+### Run as node application
+
+To run `commercetools-subscriptions` as node application, use the following command:
+
+```
+export CTP_PROJECT_KEY=xxx
+export CTP_CLIENT_ID=xxx
+export CTP_CLIENT_SECRET=xxx
+export SUBSCRIPTION_ORDER_CREATION_URL=https://your-url-to-create-subscription-order.com
+export CUSTOM_HEADERS={"Loyalty-Partner-Forward": 123}
+export BASIC_AUTH_USERNAME=username
+export BASIC_AUTH_PASSWORD=password
+node ./src/index.js
+```

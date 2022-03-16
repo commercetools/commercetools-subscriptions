@@ -200,9 +200,14 @@ If the checkout order was created with an option `reminderDays`, `commercetools-
 ```
 </details>
 
-It is up to the user to consume this message and send a reminder email to the customer. Be aware that `commercetools-subscriptions` do not send any reminders, it only set custom state of the order.
+It is up to the user to consume this message and send a reminder email to the customer. To consume messages, user has 2 options:
 
-After email has been sent, user has to [make a transition](https://docs.commercetools.com/api/projects/orders#transition-state) to the new order custom state `key="commercetools-subscriptions-reminderSent"`
+- [Create a Subscription](https://docs.commercetools.com/api/projects/subscriptions#create-a-subscription) for messages of type [`OrderStateTransition`](https://docs.commercetools.com/api/message-types#orderstatetransitionmessage)
+- Query for the messages of type `OrderStateTransition` using [Messages endpoint](https://docs.commercetools.com/api/projects/messages)
+
+Be aware that `commercetools-subscriptions` do not send any reminders, it only set custom state of the order.
+
+After user processes the message, user has to [make a transition](https://docs.commercetools.com/api/projects/orders#transition-state) to the new order custom state `key="commercetools-subscriptions-reminderSent"`
 
 ## Step 3: Generate a subscription order
 
