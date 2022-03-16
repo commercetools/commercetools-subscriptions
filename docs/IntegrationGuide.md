@@ -167,7 +167,7 @@ Example: Let's assume we trigger a subscription-order every 1st of February and 
 - If the checkout-order was placed until 15 of January then the next subscription-order creation is planned for the 1st of February.
 - If the checkout-order was placed between 16 - 31 of January then the next subscription-order creation is planned for the 1st of May.
 
-# Step 2: Send reminder (Optional)
+## Step 2: Send reminder (Optional)
 
 If the checkout order was created with an option `reminderDays`, `commercetools-subscriptions` sets `nextReminderDate` when generating the template order. When `nextReminderDate` is the current date, `commercetools-subscriptions` will change [custom state](https://docs.commercetools.com/api/projects/states) of the template order from `Active` to `SendReminder`.
 
@@ -204,7 +204,7 @@ It is up to the user to consume this message and send a reminder email to the cu
 
 After email has been sent, user has to [make a transition](https://docs.commercetools.com/api/projects/orders#transition-state) to the new order custom state `key="commercetools-subscriptions-reminderSent"`
 
-# Step 3: Generate a subscription order
+## Step 3: Generate a subscription order
 
 `commercetools-subscriptions` sets `nextDeliveryDate` when generating the template order. When `nextDeliveryDate` is the current date, `commercetools-subscriptions` will make a **POST** request to the URL sets using env var `SUBSCRIPTION_ORDER_CREATION_URL` with the following body:
 
