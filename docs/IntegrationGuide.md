@@ -14,7 +14,7 @@
 - [Step 2: Send reminder (Optional)](#step-2-send-reminder-optional)
 - [Step 3: Generate a subscription order](#step-3-generate-a-subscription-order)
   - [Subscription order custom fields](#subscription-order-custom-fields)
-  - [Non-recoverable error](#non-recoverable-error)
+- [Non-recoverable error](#non-recoverable-error)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
