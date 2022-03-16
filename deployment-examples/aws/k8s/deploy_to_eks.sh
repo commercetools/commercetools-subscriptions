@@ -7,7 +7,7 @@ set -e
 export IMAGE_BASE_NAME=$AWS_ECR_REPOSITORY
 export TAG="0.0.1"
 export REGION_CODE=$AWS_REGION_CODE
-export CLUSTER_NAME="ct-subs2-cluster"
+export CLUSTER_NAME=$AWS_CLUSTER_NAME
 ## ----------------------
 
 export HELM_HOME="$HOME/helm"
