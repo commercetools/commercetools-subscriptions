@@ -239,7 +239,7 @@ In case of any network issues `commercetools-subscriptions` will skip the templa
 
 ## Non-recoverable error
 
-Following error message indicates an error for a situation when recovery cannot be done by retrying.
+Following error message indicates a situation when recovery cannot be done by retrying.
 
 > Template order ${orderNumber}: Unrecoverable error received when calling ${subscriptionOrderCreationUrl}. Please check the order and set its state back to "Active". Response status code ${response.status}
 
