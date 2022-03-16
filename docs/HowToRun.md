@@ -8,6 +8,9 @@
 - [Commercetools project requirements](#commercetools-project-requirements)
   - [Types](#types)
   - [States](#states)
+- [Running commercetools-subscriptions](#running-commercetools-subscriptions)
+  - [Environment variables](#environment-variables)
+  - [Run as node application](#run-as-node-application)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
