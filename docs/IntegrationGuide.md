@@ -1,9 +1,10 @@
 # Integration guide
 
 ## Terminology
+
 - **user**: the one who is running `commercetools-subscriptions`
-- **customer**: the one who buy goods from the user   
-- **checkout-order**: an order which customers create during the checkout. It may contain one or more subscriptions. `commercetools-subscriptions` will generate a **template-order** for every subscription. 
+- **customer**: the one who buy goods from the user
+- **checkout-order**: an order which customers create during the checkout. It may contain one or more subscriptions. `commercetools-subscriptions` will generate a **template-order** for every subscription.
 - **template-order**: an order which manages a single subscription and is used as a template to create a
   subscription-order.
 - **subscription-order**:
@@ -119,7 +120,8 @@ Example: Let's assume we trigger a subscription-order every 1st of February and 
 - If the checkout-order was placed between 16 - 31 of January then the next subscription-order creation is planned for the 1st of May.
 
 # Step 2: Send reminder (Optional)
-If the checkout order was created with an option `reminderDays`, `commercetools-subscriptions`  sets `nextReminderDate` when generating the template order. When `nextReminderDate` is the current date, `commercetools-subscriptions` will change [custom state](https://docs.commercetools.com/api/projects/states) of the template order from `Active` to `SendReminder`.
+
+If the checkout order was created with an option `reminderDays`, `commercetools-subscriptions` sets `nextReminderDate` when generating the template order. When `nextReminderDate` is the current date, `commercetools-subscriptions` will change [custom state](https://docs.commercetools.com/api/projects/states) of the template order from `Active` to `SendReminder`.
 
 <details>
 <summary>Changing the state will generate a message similar to the example below.</summary>
@@ -150,33 +152,49 @@ If the checkout order was created with an option `reminderDays`, `commercetools-
 ```
 </details>
 
-It is up to the user to consume this message and send a reminder email to the customer. Be aware that `commercetools-subscriptions` do not send any reminders, it only set custom state of the order. 
+It is up to the user to consume this message and send a reminder email to the customer. Be aware that `commercetools-subscriptions` do not send any reminders, it only set custom state of the order.
 
 After email has been sent, user has to [make a transition](https://docs.commercetools.com/api/projects/orders#transition-state) to the new order custom state `key="commercetools-subscriptions-reminderSent"`
 
 # Step 3: Generate a subscription order
+
 `commercetools-subscriptions` sets `nextDeliveryDate` when generating the template order. When `nextDeliveryDate` is the current date, `commercetools-subscriptions` will make a **POST** request to the URL sets using env var `SUBSCRIPTION_ORDER_CREATION_URL` with the following body:
+
 ```json
-{"templateOrderId": "id-of-the-template-order"}
+{ "templateOrderId": "id-of-the-template-order" }
 ```
 
 The receiver of the payload uses `templateOrderId` to fetch the template order and create a subscription order. The subscription order should have generated unique orderNumber, correct payments and setting all the information required by the merchant for the further processing. For subscription order creation we recommend using [Order import API](https://docs.commercetools.com/api/projects/orders-import#orderimportdraft). On order creation make sure you have a successful payment and required fields `subscriptionTemplateOrderRef` and `deliveryDate` (value copied from the nextDeliveryDate) from the template-order are set.
 
 After finishing the subscription order creation process, the receiver of the payload must return one of the following HTTP code depending on the result of the subscription order creation process:
 
-| Result of the subscription order creation process | HTTP status code | Follow-up action in `commercetools-subscriptions` |
-| --- | --- | --- |
-| Subscription order was created successfully | 200 | Template order gets new `nextDeliveryDate`, new `nextReminderDate` and order custom state is set to `Active`
-| Unexpected error during processing the subscription order | 5xx | Template order is skipped and processing will be repeated with the next run of `commercetools-subscriptions`
-| Problem with authentication and authorization to `SUBSCRIPTION_ORDER_CREATION_URL` | 401, 403 |  Template order is skipped and processing will be repeated with the next run of `commercetools-subscriptions`
-| Any other errors during processing | 4xx except 401, 403 | Template order custom state is set to `ERROR`. This order is not processed anymore and must be manually handled to set its state back to `ACTIVE`
+| Result of the subscription order creation process                                  | HTTP status code    | Follow-up action in `commercetools-subscriptions`                                                                                                                                                                |
+| ---------------------------------------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Subscription order was created successfully                                        | 200                 | Template order gets new `nextDeliveryDate`, new `nextReminderDate` and order custom state is `Active`                                                                                                            |
+| Unexpected error during processing the subscription order                          | 5xx                 | Template order is skipped and processing will be repeated with the next run of `commercetools-subscriptions`                                                                                                     |
+| Problem with authentication and authorization to `SUBSCRIPTION_ORDER_CREATION_URL` | 401, 403            | Template order is skipped and processing will be repeated with the next run of `commercetools-subscriptions`                                                                                                     |
+| Any other errors during processing                                                 | 4xx except 401, 403 | Template order custom state is set to `ERROR`. This order is not processed anymore and user must [make a state transition](https://docs.commercetools.com/api/projects/orders#transition-state) back to `ACTIVE` |
 
 In case of any network issues `commercetools-subscriptions` will skip the template order and processing will be repeated with the next run.
 
 ### Subscription order custom fields
-| Name                    | Type    | Description | Required |
-| --- | --- | --- | --- |
-| subscriptionTemplateOrderRef | Reference | | YES |
-| deliveryDate | Date | | YES |
 
-## Error messages
+| Name                         | Type      | Description                                                                                                                                       | Required |
+| ---------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| subscriptionTemplateOrderRef | Reference | Reference to the template order                                                                                                                   | YES      |
+| deliveryDate                 | Date      | Copy of the nextDeliveryDate from the template order. It is required to avoid (in some error cases) the creation of duplicate subscription orders | YES      |
+
+## Non-recoverable error
+
+Following error message indicates an error for a situation when recovery cannot be done by retrying.
+
+> Template order ${orderNumber}: Unrecoverable error received when calling ${subscriptionOrderCreationUrl}. Please check the order and set its state back to "Active". Response status code ${response.status}
+
+This error can happen when calling the URL sets using the env var `SUBSCRIPTION_ORDER_CREATION_URL`. According to the returned HTTP Status code following issues could happen:
+
+| HTTP Status code | Possible error                                             | Possible solution                                                                                                                                                                    |
+| ---------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 5xx              | Error inside the application generating subscription order | Check for errors in your application that is serving response for `SUBSCRIPTION_ORDER_CREATION_URL`                                                                                  |
+| 401, 403         | Authentication error                                       | Check if the env variables `BASIC_AUTH_USERNAME`, `BASIC_AUTH_PASSWORD` and `CUSTOM_HEADERS` contain correct credentials. If not, fix them and restart `commercetools-subscriptions` |
+
+In case of error `commercetools-subscriptions` will set the custom state of the template order to `ERROR`. The user has to manually check and fix the problem and afterwards [make a custom order state transition](https://docs.commercetools.com/api/projects/orders#transition-state) to `ACTIVE`, so that the order could be retried again.
