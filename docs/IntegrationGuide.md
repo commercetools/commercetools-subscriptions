@@ -1,17 +1,65 @@
 # Integration guide
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+# Table of Contents
+
+- [Terminology](#terminology)
+- [Before you begin](#before-you-begin)
+- [Sequence diagram](#sequence-diagram)
+- [Step 1: Create a checkout order with subscriptions](#step-1-create-a-checkout-order-with-subscriptions)
+  - [Checkout order custom fields:](#checkout-order-custom-fields)
+  - [Checkout line item custom fields](#checkout-line-item-custom-fields)
+- [Step 2: Send reminder (Optional)](#step-2-send-reminder-optional)
+- [Step 3: Generate a subscription order](#step-3-generate-a-subscription-order)
+  - [Subscription order custom fields](#subscription-order-custom-fields)
+  - [Non-recoverable error](#non-recoverable-error)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Terminology
 
-- **user**: the one who is running `commercetools-subscriptions`
-- **customer**: the one who buy goods from the user
+- **user**: the one who is responsible for running `commercetools-subscriptions` and `frontend`.
+- **customer**: the one who buy goods from the user.
 - **checkout-order**: an order which customers create during the checkout. It may contain one or more subscriptions. `commercetools-subscriptions` will generate a **template-order** for every subscription.
+- **frontend**: application (usually an e-shop) of a user that is responsible for generating checkout orders.
 - **template-order**: an order which manages a single subscription and is used as a template to create a
   subscription-order.
-- **subscription-order**:
+- **subscription-order**: a new order (actual delivery) triggered by the template order according to the defined schedule.
 
 ## Before you begin
 
 Create all the required custom types and states located in [resources folder](./resources). Check [project requirements](./docs/HowToRun.md#commercetools-project-requirements) for more details.
+
+## Sequence diagram
+
+This diagram contains all the interactions between participants frontend, commercetools subscriptions and commercetools platform. For frontend integration only the interactions noted with Step 1, Step 2 and Step 3 are required.
+
+```mermaid
+sequenceDiagram
+    participant frontend
+    participant commercetools platform
+    participant commercetools subscriptions
+    rect rgb(191, 223, 255)
+    frontend->>+commercetools platform: Create checkout orders (Step 1)
+    commercetools subscriptions->>+commercetools platform: Get checkout orders
+    commercetools platform->>-commercetools subscriptions: Checkout orders
+    commercetools subscriptions->>commercetools platform: Create template orders
+    end
+    rect rgb(204, 255, 255)
+    commercetools subscriptions-->>+commercetools platform: Set template order state to `SendReminder`
+    frontend-->>+commercetools platform: Get template orders with state `SendReminder` (Step 2)
+    commercetools platform-->>-frontend: Template orders to send reminder (Step 2)
+    frontend-->>commercetools platform: Set template orders state to `Active` (Step 2)
+    end
+    rect rgb(204, 255, 204)
+    commercetools subscriptions-->>+commercetools platform: Get template orders to create subscription orders
+    commercetools platform-->>-commercetools subscriptions: Template order to create subscription orders
+    commercetools subscriptions-->>+frontend: Make POST to SUBSCRIPTION_ORDER_CREATION_URL (Step 3)
+    frontend-->>-commercetools subscriptions: HTTP Status after creation of subscription orders (Step 3)
+    end
+```
 
 ## Step 1: Create a checkout order with subscriptions
 

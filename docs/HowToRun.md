@@ -1,5 +1,16 @@
 # How to run
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+# Table of Contents
+
+- [Commercetools project requirements](#commercetools-project-requirements)
+  - [Types](#types)
+  - [States](#states)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Commercetools project requirements
 
 Resources below are required for the commercetools-subscriptions to operate correctly.
