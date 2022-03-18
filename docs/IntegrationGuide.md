@@ -232,9 +232,9 @@ In case of any network issues `commercetools-subscriptions` will skip the templa
 
 ### Subscription order custom fields
 
-| Name                         | Type      | Description                                                                                                                                       | Required |
-| ---------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| subscriptionTemplateOrderRef | Reference | Reference to the template order                                                                                                                   | YES      |
+| Name                         | Type      | Description                                                                                                                                                      | Required |
+| ---------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| subscriptionTemplateOrderRef | Reference | Reference to the template order                                                                                                                                  | YES      |
 | deliveryDate                 | Date      | Copy of the nextDeliveryDate from the template order. The purpose of this field is to avoid (in some error cases) the creation of duplicate subscription orders. | YES      |
 
 ## Non-recoverable error
