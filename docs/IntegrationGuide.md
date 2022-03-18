@@ -211,13 +211,13 @@ After user processes the message, user has to [make a transition](https://docs.c
 
 ## Step 3: Generate a subscription order
 
-`commercetools-subscriptions` sets `nextDeliveryDate` when generating the template order. When `nextDeliveryDate` is the current date, `commercetools-subscriptions` will make a **POST** request to the URL sets using env var `SUBSCRIPTION_ORDER_CREATION_URL` with the following body:
+`commercetools-subscriptions` sets `nextDeliveryDate` when generating the template order. When `nextDeliveryDate` is the current date, `commercetools-subscriptions` will make a **POST** request to the URL sets using env var `SUBSCRIPTION_ORDER_CREATION_URL` with the following body payload:
 
 ```json
 { "templateOrderId": "id-of-the-template-order" }
 ```
 
-The receiver of the payload uses `templateOrderId` to fetch the template order and create a subscription order. The subscription order should have generated unique orderNumber, correct payments and setting all the information required by the merchant for the further processing. For subscription order creation we recommend using [Order import API](https://docs.commercetools.com/api/projects/orders-import#orderimportdraft). On order creation make sure you have a successful payment and required fields `subscriptionTemplateOrderRef` and `deliveryDate` (value copied from the nextDeliveryDate) from the template-order are set.
+The receiver of the body payload uses `templateOrderId` to fetch the template order and create a subscription order. The subscription order must have generated unique `orderNumber`, correct payments and setting all the information required by the merchant for the further processing. For subscription order creation we recommend using [Order import API](https://docs.commercetools.com/api/projects/orders-import#orderimportdraft). On order creation make sure you have a successful payment and required fields `subscriptionTemplateOrderRef` and `deliveryDate` (value copied from the nextDeliveryDate) from the template order are set.
 
 After finishing the subscription order creation process, the receiver of the payload must return one of the following HTTP code depending on the result of the subscription order creation process:
 
@@ -235,7 +235,7 @@ In case of any network issues `commercetools-subscriptions` will skip the templa
 | Name                         | Type      | Description                                                                                                                                       | Required |
 | ---------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | subscriptionTemplateOrderRef | Reference | Reference to the template order                                                                                                                   | YES      |
-| deliveryDate                 | Date      | Copy of the nextDeliveryDate from the template order. It is required to avoid (in some error cases) the creation of duplicate subscription orders | YES      |
+| deliveryDate                 | Date      | Copy of the nextDeliveryDate from the template order. The purpose of this field is to avoid (in some error cases) the creation of duplicate subscription orders. | YES      |
 
 ## Non-recoverable error
 
