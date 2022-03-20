@@ -6,3 +6,4 @@ package-lock.json
 .prettierignore
 .eslintrc
 .nyc_output
+docs/commercetools-subscription.postman_collection.json
