@@ -247,7 +247,7 @@ This error can happen when calling the URL sets using the env var `SUBSCRIPTION_
 
 | HTTP Status code | Possible error                                             | Possible solution                                                                                                                                                                    |
 | ---------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 5xx              | Error inside the application generating subscription order | Check for errors in your application that is serving response for `SUBSCRIPTION_ORDER_CREATION_URL`                                                                                  |
+| 5xx              | Error inside the application generating subscription order | Check for errors in your application that is serving a response for `SUBSCRIPTION_ORDER_CREATION_URL`                                                                                |
 | 401, 403         | Authentication error                                       | Check if the env variables `BASIC_AUTH_USERNAME`, `BASIC_AUTH_PASSWORD` and `CUSTOM_HEADERS` contain correct credentials. If not, fix them and restart `commercetools-subscriptions` |
 
 In case of error `commercetools-subscriptions` will set the custom state of the template order to `ERROR`. The user has to manually check and fix the problem and afterwards [make a custom order state transition](https://docs.commercetools.com/api/projects/orders#transition-state) to `ACTIVE`, so that the order could be retried again.
