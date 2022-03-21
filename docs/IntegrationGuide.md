@@ -219,7 +219,7 @@ After user processes the message, user has to [make a transition](https://docs.c
 
 The receiver of the body payload uses `templateOrderId` to fetch the template order and create a subscription order. The subscription order must have generated unique `orderNumber`, correct payments and set all the information required by the merchant for the further processing. For subscription order creation we recommend using [Order import API](https://docs.commercetools.com/api/projects/orders-import#orderimportdraft). On order creation make sure you have a successful payment and the required fields `subscriptionTemplateOrderRef` and `deliveryDate` (value copied from the nextDeliveryDate) from the template order are set.
 
-After finishing the subscription order creation process, the receiver of the payload must return one of the following HTTP code depending on the result of the subscription order creation process:
+After finishing the subscription order creation process, the receiver of the payload must return one of the following HTTP status codes depending on the result of the subscription order creation process:
 
 | Result of the subscription order creation process                                  | HTTP status code    | Follow-up action in `commercetools-subscriptions`                                                                                                                                                                |
 | ---------------------------------------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
