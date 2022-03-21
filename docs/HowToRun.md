@@ -80,7 +80,7 @@ export CTP_PROJECT_KEY=xxx
 export CTP_CLIENT_ID=xxx
 export CTP_CLIENT_SECRET=xxx
 export SUBSCRIPTION_ORDER_CREATION_URL=https://your-url-to-create-subscription-order.com
-export CUSTOM_HEADERS={"Loyalty-Partner-Forward": 123}
+export CUSTOM_HEADERS='{"Loyalty-Partner-Forward": 123}'
 export BASIC_AUTH_USERNAME=username
 export BASIC_AUTH_PASSWORD=password
 node ./src/index.js
