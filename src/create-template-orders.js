@@ -156,7 +156,7 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
           id: paymentCreateResponse.body.id,
         })
       )
-      orderDraft.paymentInfo.payments = paymentReferences
+      orderDraft.paymentInfo = { payments: paymentReferences }
     }
     await apiRoot.orders().importOrder().post({ body: orderDraft }).execute()
     stats.createdTemplateOrders++
@@ -252,9 +252,6 @@ function _generateTemplateOrderImportDraft(
     nextReminderDateISOString = nextDeliveryCronDate.toISOString()
   }
   const templateOrder = {
-    paymentInfo: {
-      payments: [],
-    },
     orderNumber:
       lineItem.custom.fields.subscriptionKey +
       (quantityIncrement ? `-${quantityIncrement}` : ''),
