@@ -25,5 +25,5 @@ resources:
 # specifies how to treat concurrent executions of a job created by this cron job
 concurrency: Forbid
 
-# Avoid scheduling with this hack: as there is no day like 31 Feb :)
+# cronjob to run every 5 minutes.
 schedule: '*/5 * * * *'
