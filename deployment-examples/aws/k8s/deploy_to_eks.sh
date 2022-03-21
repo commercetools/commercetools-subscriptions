@@ -42,6 +42,8 @@ helm upgrade --set image.repository=$IMAGE_FULL_NAME \
 --set sensitiveEnvs.CTP_CLIENT_ID=$CTP_CLIENT_ID \
 --set sensitiveEnvs.CTP_CLIENT_SECRET=$CTP_CLIENT_SECRET \
 --set image.tag=$TAG \
+--set sensitiveEnvs.SUBSCRIPTION_ORDER_CREATION_URL=$SUBSCRIPTION_ORDER_CREATION_URL \
+--set sensitiveEnvs.CUSTOM_HEADERS=$CUSTOM_HEADERS \
 --install commercetools-subscriptions -f ./../../../deployment-examples/aws/k8s/values.yaml \ .
 
 printf "Helms:\n%s\n\n" "$(helm list)"
