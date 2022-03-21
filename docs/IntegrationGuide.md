@@ -34,7 +34,7 @@ Create all the required custom types and states located in [resources folder](./
 
 ## Sequence diagram
 
-This diagram contains all the interactions between participants frontend, commercetools subscriptions and commercetools platform. For frontend integration only the interactions noted with Step 1, Step 2 and Step 3 are required.
+This diagram contains all the interactions between participants' frontend, commercetools subscriptions and commercetools platform. For frontend integration only the interactions noted with Step 1, Step 2 and Step 3 are required.
 
 ```mermaid
 sequenceDiagram
