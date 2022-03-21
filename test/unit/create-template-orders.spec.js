@@ -173,9 +173,21 @@ describe('create-template-orders', () => {
         .post(`/${PROJECT_KEY}/orders/import`)
         .reply(200, templateOrderResponse)
 
-      const addPaymentToTemplateOrder = nock(CTP_API_URL)
-        .post(`/${PROJECT_KEY}/orders/${TEMPLATE_ORDER_ID}`, (body) =>
-          body.actions.some((action) => action.action === 'addPayment')
+      const setIsSubscriptionProcessed = nock(CTP_API_URL)
+        .post(
+          `/${PROJECT_KEY}/orders/${CHECKOUT_ORDER_ID}`,
+          (body) =>
+            JSON.stringify(body) ===
+            JSON.stringify({
+              actions: [
+                {
+                  action: 'setCustomField',
+                  name: 'isSubscriptionProcessed',
+                  value: true,
+                },
+              ],
+              version: 3,
+            })
         )
         .reply(409, {
           statusCode: 409,
@@ -188,15 +200,6 @@ describe('create-template-orders', () => {
             },
           ],
         })
-        .post(
-          `/${PROJECT_KEY}/orders/${TEMPLATE_ORDER_ID}`,
-          (body) =>
-            body.actions.some((action) => action.action === 'addPayment') &&
-            body.version === 3
-        )
-        .reply(200)
-
-      const setIsSubscriptionProcessed = nock(CTP_API_URL)
         .post(
           `/${PROJECT_KEY}/orders/${CHECKOUT_ORDER_ID}`,
           (body) =>
@@ -236,7 +239,6 @@ describe('create-template-orders', () => {
         duplicatedTemplateOrderCreation: 0,
         skippedTemplateOrders: 0,
       })
-      expect(addPaymentToTemplateOrder.isDone()).to.be.true
       expect(setIsSubscriptionProcessed.isDone()).to.be.true
       expect(updateLastStartTimestamp.isDone()).to.be.true
     })
@@ -253,8 +255,6 @@ describe('create-template-orders', () => {
         })
         .post(`/${PROJECT_KEY}/orders/import`)
         .reply(200, templateOrderResponse)
-        .post(`/${PROJECT_KEY}/orders/${TEMPLATE_ORDER_ID}`)
-        .reply(200)
 
       const setIsSubscriptionProcessed = nock(CTP_API_URL)
         .post(
