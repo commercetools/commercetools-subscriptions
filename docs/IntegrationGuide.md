@@ -153,13 +153,13 @@ Checkout order with subscriptions contains following custom fields:
 
 ### Checkout line item custom fields
 
-| Name            | Type    | Description                                                                                                                                                                                             | Required |
-| --------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| isSubscription  | boolean | True if the line item represents a subscription                                                                                                                                                         | YES      |
-| schedule        | String  | Cron syntax which defines the trigger cycle of the subscription-order                                                                                                                                   | YES      |
-| subscriptionKey | String  | It will be used to generate unique orderNumber(s) for the template orders. It has to be unique across all commercetools order API lineItems.                                                            | YES      |
-| reminderDays    | Number  | Defines the amount of days the reminder should be triggered before the next delivery                                                                                                                    | NO       |
-| cutoffDays      | Number  | If the amount of days since placing of the checkout-order until the next scheduled subscription order is equal or smaller than cutoffDays then the next closest subscription-order creation is skipped. | NO       |
+| Name            | Type    | Description                                                                                                                                                                                          | Required |
+| --------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| isSubscription  | boolean | True if the line item represents a subscription                                                                                                                                                      | YES      |
+| schedule        | String  | Cron syntax which defines the trigger cycle of the subscription-order                                                                                                                                | YES      |
+| subscriptionKey | String  | It will be used to generate unique orderNumber(s) for the template orders. It has to be unique across all commercetools order API lineItems.                                                         | YES      |
+| reminderDays    | Number  | Defines the amount of days the reminder should be triggered before the next delivery                                                                                                                 | NO       |
+| cutoffDays      | Number  | If the number of days since placing the checkout-order until the next scheduled subscription order is equal or smaller than cutoffDays then the next closest subscription-order creation is skipped. | NO       |
 
 cutoffDays: This setting allows omitting scenarios where a customer gets 2 subscription deliveries within a very short period if the checkout-order has been placed shortly before the next scheduled period begins.
 Example: Let's assume we trigger a subscription-order every 1st of February and 1st of May, cutoffDays is set to 15:
