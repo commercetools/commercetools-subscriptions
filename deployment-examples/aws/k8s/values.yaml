@@ -17,7 +17,7 @@ sensitiveEnvs:
 
 # When the pod is scheduled, the container is guaranteed the amount of
 # resources requested 512MB RAM. As we don't know how much memory the jobs will
-# need, we don't set the limit
+# need, we don't set the resource limit here.
 resources:
   requests:
     memory: '1024Mi'
