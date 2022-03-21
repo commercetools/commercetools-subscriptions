@@ -200,7 +200,7 @@ describe('create-subscription-orders', () => {
           .post(`/${PROJECT_KEY}/orders/${TEMPLATE_ORDER_ID}`)
           .reply(200)
 
-        nock(SUBSCRIPTION_ORDER_CREATION_URL).post('/').reply(401)
+        nock(SUBSCRIPTION_ORDER_CREATION_URL).post('/').reply(errorCode)
 
         const stats = await createSubscriptionOrders({
           apiRoot,
