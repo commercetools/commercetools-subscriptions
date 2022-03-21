@@ -61,7 +61,7 @@ async function createSubscriptionOrders({
           logger.error(
             'Failed to process template order. This template order will be skipped. ' +
               'Processing will be restarted on the next run. ' +
-              `Order details: ${JSON.stringify(templateOrder)}` +
+              `Order details: ${JSON.stringify(templateOrder)}. ` +
               `Error: ${JSON.stringify(serializeError(err))}`
           )
         }
@@ -117,7 +117,7 @@ async function _processTemplateOrder(
         logger.error(
           `Template order ${orderNumber}: ` +
             `Unrecoverable error received when calling ${subscriptionOrderCreationUrl}. ` +
-            'Please check the order and set its state back to "Active" ' +
+            'Please check the order and set its state back to "Active". ' +
             `Response status code ${response.status}`
         )
         await updateOrderWithRetry(
