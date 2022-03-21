@@ -3,8 +3,6 @@ import parser from 'cron-parser'
 import _ from 'lodash'
 import VError from 'verror'
 import { serializeError } from 'serialize-error'
-import { updateOrderWithRetry } from './utils/utils.js'
-import { ACTIVE_STATE } from './states-constants.js'
 
 let apiRoot
 let ctpClient
@@ -24,6 +22,7 @@ async function createTemplateOrders({
   ctpClient: _ctpClient,
   logger: _logger,
   startDate,
+  activeStateId,
 }) {
   stats = {
     processedCheckoutOrders: 0,
@@ -40,7 +39,11 @@ async function createTemplateOrders({
     const uri = await _buildFetchCheckoutOrdersUri()
 
     await ctpClient.fetchBatches(uri, async (orders) => {
-      await pMap(orders, _processCheckoutOrder, { concurrency: 3 })
+      await pMap(
+        orders,
+        (order) => _processCheckoutOrder(activeStateId, order),
+        { concurrency: 3 }
+      )
     })
 
     await _updateLastStartTimestamp(startDate)
@@ -69,9 +72,12 @@ async function _buildFetchCheckoutOrdersUri() {
   return uri
 }
 
-async function _processCheckoutOrder(checkoutOrder) {
+async function _processCheckoutOrder(activeStateId, checkoutOrder) {
   try {
-    const templateOrderDrafts = _generateTemplateOrderDrafts(checkoutOrder)
+    const templateOrderDrafts = _generateTemplateOrderDrafts(
+      activeStateId,
+      checkoutOrder
+    )
 
     await pMap(
       templateOrderDrafts,
@@ -136,7 +142,6 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
     const checkoutPayments = checkoutOrder.paymentInfo?.payments?.map(
       (p) => p.obj
     )
-    let updateActions = []
     if (checkoutPayments) {
       const paymentDrafts = checkoutPayments.map(_createPaymentDraft)
       const paymentCreateResponses = await Promise.all(
@@ -144,36 +149,16 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
           apiRoot.payments().post({ body: paymentDraft }).execute()
         )
       )
-      updateActions = paymentCreateResponses.map((paymentCreateResponse) => ({
-        action: 'addPayment',
-        payment: {
-          type: 'payment',
+      const paymentReferences = paymentCreateResponses.map(
+        (paymentCreateResponse) => ({
+          typeId: 'payment',
           id: paymentCreateResponse.body.id,
-        },
-      }))
+        })
+      )
+      orderDraft.paymentInfo.payments = paymentReferences
     }
-    const { body: templateOrder } = await apiRoot
-      .orders()
-      .importOrder()
-      .post({ body: orderDraft })
-      .execute()
+    await apiRoot.orders().importOrder().post({ body: orderDraft }).execute()
     stats.createdTemplateOrders++
-
-    updateActions.push({
-      action: 'transitionState',
-      state: {
-        typeId: 'state',
-        key: ACTIVE_STATE,
-      },
-    })
-
-    await updateOrderWithRetry(
-      apiRoot,
-      templateOrder.id,
-      updateActions,
-      templateOrder.version,
-      templateOrder.orderNumber
-    )
   } catch (err) {
     if (!_isDuplicateOrderError(err)) {
       const errMsg =
@@ -215,7 +200,7 @@ function _isDuplicateOrderError(e) {
   )
 }
 
-function _generateTemplateOrderDrafts(checkoutOrder) {
+function _generateTemplateOrderDrafts(activeStateId, checkoutOrder) {
   const orderDrafts = []
   const subscriptionLineItems = checkoutOrder.lineItems.filter(
     (lineItem) => lineItem.custom?.fields?.isSubscription
@@ -224,6 +209,7 @@ function _generateTemplateOrderDrafts(checkoutOrder) {
     if (lineItem.quantity > 1)
       for (let i = 0; i < lineItem.quantity; i++) {
         const templateOrderDraft = _generateTemplateOrderImportDraft(
+          activeStateId,
           checkoutOrder,
           lineItem,
           i + 1
@@ -232,6 +218,7 @@ function _generateTemplateOrderDrafts(checkoutOrder) {
       }
     else {
       const templateOrderDraft = _generateTemplateOrderImportDraft(
+        activeStateId,
         checkoutOrder,
         lineItem
       )
@@ -242,6 +229,7 @@ function _generateTemplateOrderDrafts(checkoutOrder) {
 }
 
 function _generateTemplateOrderImportDraft(
+  activeStateId,
   checkoutOrder,
   lineItem,
   quantityIncrement
@@ -266,6 +254,9 @@ function _generateTemplateOrderImportDraft(
     nextReminderDateISOString = nextDeliveryCronDate.toISOString()
   }
   const templateOrder = {
+    paymentInfo: {
+      payments: [],
+    },
     orderNumber:
       lineItem.custom.fields.subscriptionKey +
       (quantityIncrement ? `-${quantityIncrement}` : ''),
@@ -299,7 +290,7 @@ function _generateTemplateOrderImportDraft(
     inventoryMode: 'None',
     state: {
       typeId: 'state',
-      key: ACTIVE_STATE,
+      id: activeStateId,
     },
   }
   delete templateOrder.custom.fields.hasSubscription

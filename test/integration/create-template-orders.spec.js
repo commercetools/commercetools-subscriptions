@@ -25,11 +25,18 @@ describe('create-template-orders', () => {
       logger,
       orderNumber
     )
+    const {
+      body: { results: states },
+    } = await apiRoot.states().get().execute()
+    const stateKeyToIdMap = new Map(
+      states.map((state) => [state.key, state.id])
+    )
     await createTemplateOrders({
       apiRoot,
       ctpClient,
       logger,
       startDate: new Date(),
+      activeStateId: stateKeyToIdMap.get(ACTIVE_STATE),
     })
 
     const {
