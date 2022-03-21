@@ -191,7 +191,7 @@ function _isError(response) {
 
 function _isErrorRecoverable(response) {
   return (
-    response.status > 500 ||
+    response.status >= 500 ||
     response.status === 401 ||
     response.status === 403 ||
     response.status === 409
