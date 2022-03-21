@@ -3,6 +3,7 @@ import parser from 'cron-parser'
 import _ from 'lodash'
 import VError from 'verror'
 import { serializeError } from 'serialize-error'
+import { updateOrderWithRetry } from './utils/utils.js'
 
 let apiRoot
 let ctpClient
@@ -178,16 +179,13 @@ async function _setCheckoutOrderProcessed(checkoutOrder) {
       value: true,
     },
   ]
-  await apiRoot
-    .orders()
-    .withId({ ID: checkoutOrder.id })
-    .post({
-      body: {
-        actions: updateActions,
-        version: checkoutOrder.version,
-      },
-    })
-    .execute()
+  await updateOrderWithRetry(
+    apiRoot,
+    checkoutOrder.id,
+    updateActions,
+    checkoutOrder.version,
+    checkoutOrder.orderNumber
+  )
 }
 
 function _isDuplicateOrderError(e) {
