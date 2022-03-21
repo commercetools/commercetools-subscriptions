@@ -50,7 +50,7 @@ sequenceDiagram
     rect rgb(204, 255, 255)
     commercetools subscriptions-->>+commercetools platform: Set template order state to `SendReminder`
     frontend-->>+commercetools platform: Get template orders with state `SendReminder` (Step 2)
-    commercetools platform-->>-frontend: Template orders to send reminder (Step 2)
+    commercetools platform-->>-frontend: Template orders to send reminders (Step 2)
     frontend-->>commercetools platform: Set template orders state to `Active` (Step 2)
     end
     rect rgb(204, 255, 204)
