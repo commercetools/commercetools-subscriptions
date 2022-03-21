@@ -1,0 +1,35 @@
+# This workflow will build docker images and publish to docker hub
+# For more information see: https://github.com/marketplace/actions/build-and-push-docker-images
+
+name: CD
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    concurrency: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_CODE }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build docker and deploy to ECR
+        env:
+          CTP_PROJECT_KEY: ctp-subscriptions-ci-it
+          CTP_CLIENT_ID: ${{ secrets.CTP_CLIENT_ID }}
+          CTP_CLIENT_SECRET: ${{ secrets.CTP_CLIENT_SECRET }}
+          AWS_ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY }}
+          AWS_REGION_CODE: ${{ secrets.AWS_REGION_CODE }}
+          AWS_ECR_PATH: ${{ secrets.AWS_ECR_PATH }}
+          AWS_CLUSTER_NAME: ${{ secrets.AWS_CLUSTER_NAME }}
+        run: deployment-examples/aws/k8s/deploy_to_eks.sh

@@ -1,0 +1,29 @@
+image:
+  repository: $AWS_EKR_REPO
+  tag: $TAG
+  pullPolicy: 'Always'
+
+## edit those environment variables
+## ----------------------
+nonSensitiveEnvs:
+  CTP_PROJECT_KEY: $CTP_PROJECT_KEY
+  CTP_API_URL: 'https://api.europe-west1.gcp.commercetools.com'
+  CTP_AUTH_URL: 'https://auth.europe-west1.gcp.commercetools.com'
+
+sensitiveEnvs:
+  CTP_CLIENT_ID: $CTP_CLIENT_ID
+  CTP_CLIENT_SECRET: $CTP_CLIENT_SECRET
+## ----------------------
+
+# When the pod is scheduled, the container is guaranteed the amount of
+# resources requested 512MB RAM. As we don't know how much memory the jobs will
+# need, we will request for some extra memory as below(1024 mebibytes).
+resources:
+  requests:
+    memory: '1024Mi'
+
+# specifies how to treat concurrent executions of a job created by this cron job
+concurrency: Forbid
+
+# cronjob to run every 5 minutes.
+schedule: '*/5 * * * *'

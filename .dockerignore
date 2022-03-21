@@ -1,0 +1,14 @@
+/node_modules/
+/docs/
+/deployment-examples/
+/test/
+/.idea/
+/.git/
+/.github/
+/tmp/
+/.DS_Store/
+.subscriptionsrc
+.gitignore
+*.log
+*.iml
+renovate.json
