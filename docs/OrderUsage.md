@@ -54,7 +54,7 @@ In case you want to filter based on the customer email, then the query might be 
       {
         "exact": {
           "field": "customerEmail",
-          "value": "test@test.com"
+          "value": "{{customerEmailAddress}}"
         }
       }
     ]
@@ -62,7 +62,7 @@ In case you want to filter based on the customer email, then the query might be 
 }
 ```
 
-Note that the Order Search API does not return the resource data of the matching Orders. Instead, it returns a list of Order IDs, which can then be used to fetch the [Orders by their ID](https://docs.commercetools.com/api/projects/orders#query-orders).
+> Note that the Order Search API does not return the resource data of the matching Orders. Instead, it returns a list of Order IDs, which can then be used to fetch the [Orders by their ID](https://docs.commercetools.com/api/projects/orders#query-orders).
 
 One example order query predicate to fetch this order might be sth like below:
 
@@ -71,7 +71,7 @@ One example order query predicate to fetch this order might be sth like below:
 Query Predicate examples for order API:
 
 - `custom(fields(schedule is defined))`
-- `custom(fields(schedule is defined)) AND customerEmail="test@test.com"`
+- `custom(fields(schedule is defined)) AND customerEmail="{{customerEmailAddress}}"`
 
 ### Logs and events related to template orders
 
@@ -126,7 +126,7 @@ In case you want to filter based on the customer email, then the query might be 
       {
         "exact": {
           "field": "customerEmail",
-          "value": "test@test.com"
+          "value": "{{customerEmailAddress}}"
         }
       }
     ]
@@ -134,7 +134,7 @@ In case you want to filter based on the customer email, then the query might be 
 }
 ```
 
-Note that the Order Search API does not return the resource data of the matching Orders. Instead, it returns a list of Order IDs, which can then be used to fetch the [Orders by their ID](https://docs.commercetools.com/api/projects/orders#query-orders).
+> Note that the Order Search API does not return the resource data of the matching Orders. Instead, it returns a list of Order IDs, which can then be used to fetch the [Orders by their ID](https://docs.commercetools.com/api/projects/orders#query-orders).
 
 One example order query predicate to fetch this order might be sth like below:
 
@@ -143,7 +143,7 @@ One example order query predicate to fetch this order might be sth like below:
 Query Predicate examples for order API (based on the `subscriptionTemplateOrderRef`):
 
 - `custom(fields(subscriptionTemplateOrderRef is defined))`
-- `custom(fields(subscriptionTemplateOrderRef is defined)) AND customerEmail="test@test.com"`
+- `custom(fields(subscriptionTemplateOrderRef is defined)) AND customerEmail="{{customerEmailAddress}}"`
 
 If you already know the id of the template-order, you might filter only that subscription with the query predicate below:
 
@@ -155,6 +155,8 @@ Order API provides lots of update actions to edit an order, you might check [her
 
 One example might be, one customer wants to cancel the subscription order when the template order already exists, so in this case you might use the [TransitionState](https://docs.commercetools.com/api/projects/orders#transition-state) action
 to set the template-order to cancel state (key= `commercetools-subscriptions-cancelled`).
+
+The payload of the update order:
 
 ```json
 {
