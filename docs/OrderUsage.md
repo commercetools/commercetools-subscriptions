@@ -15,7 +15,8 @@ Here is some terminology used in this document:
 
 #### Notes
 
-- We've created a [postman collection](./commercetools-subscription.postman_collection.json) for the queries that you might use as a playground and test with your use cases easily.This document and queries on it are documented to give some ideas, it's always good to follow the official commercetools documentation for the up to date information.
+- We've created a [postman collection](./commercetools-subscription.postman_collection.json) for the queries that you might use as a playground and test with your use cases easily.
+- This document and queries on it are documented to give some ideas, it's always good to follow the official commercetools documentation for the up to date information.
 - We strongly suggest the Order search API usage for your order queries as it will have better performance on a high number of Orders in a Project.
   - Queries kept simple to have a compact documentation, so most of the queries do not include the details related to sorting, pagination etc.
   - On the Order Search API if no sorting is specified, the results are sorted by relevance in descending (desc) order.
@@ -108,7 +109,7 @@ The Order search query example:
 }
 ```
 
-> Note that it does not support filtering custom fields based on the type `ReferenceField` yet, so in this query we have used the `deliveryDate` instead.
+> Note that order search API does not support filtering custom fields based on the type `ReferenceField` yet, so in this query we have used the `deliveryDate` instead.
 
 In case you want to filter based on the customer email, then the query might be as below with adding `and` compound expression together with `customerEmail` filter.
 
