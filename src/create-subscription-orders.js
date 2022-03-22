@@ -191,7 +191,7 @@ function _isError(response) {
 
 function _isErrorRecoverable(response) {
   return (
-    response.status > 500 ||
+    response.status >= 500 ||
     response.status === 401 ||
     response.status === 403 ||
     response.status === 409
@@ -212,7 +212,7 @@ async function _fetchOrderBySubscriptionTemplateOrderRefAndDeliveryDate(
     }
   `
   const response = await ctpClient.queryGraphQl(query, {
-    where: `custom(fields(subscriptionTemplateOrderRef="${id}" AND deliveryDate="${deliveryDate}"))`,
+    where: `custom(fields(subscriptionTemplateOrderRef(id="${id}") AND deliveryDate="${deliveryDate}"))`,
   })
   return response.body?.data?.orders?.results?.[0]
 }

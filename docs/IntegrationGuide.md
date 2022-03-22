@@ -34,7 +34,7 @@ Create all the required custom types and states located in [resources folder](./
 
 ## Sequence diagram
 
-This diagram contains all the interactions between participants frontend, commercetools subscriptions and commercetools platform. For frontend integration only the interactions noted with Step 1, Step 2 and Step 3 are required.
+This diagram contains all the interactions between participants' frontend, commercetools subscriptions and commercetools platform. For frontend integration only the interactions noted with Step 1, Step 2 and Step 3 are required.
 
 ```mermaid
 sequenceDiagram
@@ -50,7 +50,7 @@ sequenceDiagram
     rect rgb(204, 255, 255)
     commercetools subscriptions-->>+commercetools platform: Set template order state to `SendReminder`
     frontend-->>+commercetools platform: Get template orders with state `SendReminder` (Step 2)
-    commercetools platform-->>-frontend: Template orders to send reminder (Step 2)
+    commercetools platform-->>-frontend: Template orders to send reminders (Step 2)
     frontend-->>commercetools platform: Set template orders state to `Active` (Step 2)
     end
     rect rgb(204, 255, 204)
@@ -153,13 +153,13 @@ Checkout order with subscriptions contains following custom fields:
 
 ### Checkout line item custom fields
 
-| Name            | Type    | Description                                                                                                                                                                                             | Required |
-| --------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| isSubscription  | boolean | True if the line item represents a subscription                                                                                                                                                         | YES      |
-| schedule        | String  | Cron syntax which defines the trigger cycle of the subscription-order                                                                                                                                   | YES      |
-| subscriptionKey | String  | It will be used to generate unique orderNumber(s) for the template orders. It has to be unique across all commercetools order API lineItems.                                                            | YES      |
-| reminderDays    | Number  | Defines the amount of days the reminder should be triggered before the next delivery                                                                                                                    | NO       |
-| cutoffDays      | Number  | If the amount of days since placing of the checkout-order until the next scheduled subscription order is equal or smaller than cutoffDays then the next closest subscription-order creation is skipped. | NO       |
+| Name            | Type    | Description                                                                                                                                                                                          | Required |
+| --------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| isSubscription  | boolean | True if the line item represents a subscription                                                                                                                                                      | YES      |
+| schedule        | String  | Cron syntax which defines the trigger cycle of the subscription-order                                                                                                                                | YES      |
+| subscriptionKey | String  | It will be used to generate unique orderNumber(s) for the template orders. It has to be unique across all commercetools order API lineItems.                                                         | YES      |
+| reminderDays    | Number  | Defines the amount of days the reminder should be triggered before the next delivery                                                                                                                 | NO       |
+| cutoffDays      | Number  | If the number of days since placing the checkout-order until the next scheduled subscription order is equal or smaller than cutoffDays then the next closest subscription-order creation is skipped. | NO       |
 
 cutoffDays: This setting allows omitting scenarios where a customer gets 2 subscription deliveries within a very short period if the checkout-order has been placed shortly before the next scheduled period begins.
 Example: Let's assume we trigger a subscription-order every 1st of February and 1st of May, cutoffDays is set to 15:
@@ -211,15 +211,15 @@ After user processes the message, user has to [make a transition](https://docs.c
 
 ## Step 3: Generate a subscription order
 
-`commercetools-subscriptions` sets `nextDeliveryDate` when generating the template order. When `nextDeliveryDate` is the current date, `commercetools-subscriptions` will make a **POST** request to the URL sets using env var `SUBSCRIPTION_ORDER_CREATION_URL` with the following body:
+`commercetools-subscriptions` sets `nextDeliveryDate` when generating the template order. When `nextDeliveryDate` is the current date, `commercetools-subscriptions` will make a **POST** request to the URL sets using env var `SUBSCRIPTION_ORDER_CREATION_URL` with the following body payload:
 
 ```json
 { "templateOrderId": "id-of-the-template-order" }
 ```
 
-The receiver of the payload uses `templateOrderId` to fetch the template order and create a subscription order. The subscription order should have generated unique orderNumber, correct payments and setting all the information required by the merchant for the further processing. For subscription order creation we recommend using [Order import API](https://docs.commercetools.com/api/projects/orders-import#orderimportdraft). On order creation make sure you have a successful payment and required fields `subscriptionTemplateOrderRef` and `deliveryDate` (value copied from the nextDeliveryDate) from the template-order are set.
+The receiver of the body payload uses `templateOrderId` to fetch the template order and create a subscription order. The subscription order must have generated unique `orderNumber`, correct payments and set all the information required by the merchant for the further processing. For subscription order creation we recommend using [Order import API](https://docs.commercetools.com/api/projects/orders-import#orderimportdraft). On order creation make sure you have a successful payment and the required fields `subscriptionTemplateOrderRef` and `deliveryDate` (value copied from the nextDeliveryDate) from the template order are set.
 
-After finishing the subscription order creation process, the receiver of the payload must return one of the following HTTP code depending on the result of the subscription order creation process:
+After finishing the subscription order creation process, the receiver of the payload must return one of the following HTTP status codes depending on the result of the subscription order creation process:
 
 | Result of the subscription order creation process                                  | HTTP status code    | Follow-up action in `commercetools-subscriptions`                                                                                                                                                                |
 | ---------------------------------------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -232,10 +232,10 @@ In case of any network issues `commercetools-subscriptions` will skip the templa
 
 ### Subscription order custom fields
 
-| Name                         | Type      | Description                                                                                                                                       | Required |
-| ---------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| subscriptionTemplateOrderRef | Reference | Reference to the template order                                                                                                                   | YES      |
-| deliveryDate                 | Date      | Copy of the nextDeliveryDate from the template order. It is required to avoid (in some error cases) the creation of duplicate subscription orders | YES      |
+| Name                         | Type      | Description                                                                                                                                                      | Required |
+| ---------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| subscriptionTemplateOrderRef | Reference | Reference to the template order                                                                                                                                  | YES      |
+| deliveryDate                 | Date      | Copy of the nextDeliveryDate from the template order. The purpose of this field is to avoid (in some error cases) the creation of duplicate subscription orders. | YES      |
 
 ## Non-recoverable error
 
@@ -247,7 +247,7 @@ This error can happen when calling the URL sets using the env var `SUBSCRIPTION_
 
 | HTTP Status code | Possible error                                             | Possible solution                                                                                                                                                                    |
 | ---------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 5xx              | Error inside the application generating subscription order | Check for errors in your application that is serving response for `SUBSCRIPTION_ORDER_CREATION_URL`                                                                                  |
+| 5xx              | Error inside the application generating subscription order | Check for errors in your application that is serving a response for `SUBSCRIPTION_ORDER_CREATION_URL`                                                                                |
 | 401, 403         | Authentication error                                       | Check if the env variables `BASIC_AUTH_USERNAME`, `BASIC_AUTH_PASSWORD` and `CUSTOM_HEADERS` contain correct credentials. If not, fix them and restart `commercetools-subscriptions` |
 
 In case of error `commercetools-subscriptions` will set the custom state of the template order to `ERROR`. The user has to manually check and fix the problem and afterwards [make a custom order state transition](https://docs.commercetools.com/api/projects/orders#transition-state) to `ACTIVE`, so that the order could be retried again.

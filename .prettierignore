@@ -7,3 +7,4 @@ package-lock.json
 .eslintrc
 .nyc_output
 docs/commercetools-subscription.postman_collection.json
+/deployment-examples/aws/k8s/k8s-charts/

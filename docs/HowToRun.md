@@ -47,11 +47,13 @@ export CTP_CLIENT_SECRET=xxx
 npm run "setup-subscription-states"
 ```
 
-| Name              | Content                                                    | Required |
-| ----------------- | ---------------------------------------------------------- | -------- |
-| CTP_PROJECT_KEY   | commercetools project key                                  | YES      |
-| CTP_CLIENT_ID     | OAuth 2.0 client_id and can be used to obtain a token.     | YES      |
-| CTP_CLIENT_SECRET | OAuth 2.0 client_secret and can be used to obtain a token. | YES      |
+| Name              | Content                                                    | Required | Default                                         |
+| ----------------- | ---------------------------------------------------------- | -------- | ----------------------------------------------- |
+| CTP_PROJECT_KEY   | commercetools project key                                  | YES      |                                                 |
+| CTP_CLIENT_ID     | OAuth 2.0 client_id and can be used to obtain a token.     | YES      |                                                 |
+| CTP_CLIENT_SECRET | OAuth 2.0 client_secret and can be used to obtain a token. | YES      |                                                 |
+| CTP_API_URL       | The commercetools HTTP API is hosted at that URL.          | NO       | https://api.europe-west1.gcp.commercetools.com  |
+| CTP_AUTH_URL      | The commercetools OAuth 2.0 service is hosted at that URL. | NO       | https://auth.europe-west1.gcp.commercetools.com |
 
 ## Running commercetools-subscriptions
 
@@ -78,7 +80,7 @@ export CTP_PROJECT_KEY=xxx
 export CTP_CLIENT_ID=xxx
 export CTP_CLIENT_SECRET=xxx
 export SUBSCRIPTION_ORDER_CREATION_URL=https://your-url-to-create-subscription-order.com
-export CUSTOM_HEADERS={"Loyalty-Partner-Forward": 123}
+export CUSTOM_HEADERS='{"Loyalty-Partner-Forward": 123}'
 export BASIC_AUTH_USERNAME=username
 export BASIC_AUTH_PASSWORD=password
 node ./src/index.js

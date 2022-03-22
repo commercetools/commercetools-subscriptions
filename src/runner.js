@@ -18,12 +18,14 @@ async function run() {
 
   const apiRoot = getApiRoot()
   const ctpClient = getCtpClient()
+  const stateKeyToIdMap = await _fetchStateKeyToIdMap(apiRoot)
 
   const createTemplateOrderStats = await createTemplateOrders({
     apiRoot,
     ctpClient,
     logger,
     startDate,
+    activeStateId: stateKeyToIdMap.get(ACTIVE_STATE),
   })
   logger.info(
     `Creating template orders process finished: ${JSON.stringify(
@@ -31,7 +33,6 @@ async function run() {
     )}`
   )
 
-  const stateKeyToIdMap = await _fetchStateKeyToIdMap(apiRoot)
   const sendReminderStats = await sendReminders({
     apiRoot,
     ctpClient,
