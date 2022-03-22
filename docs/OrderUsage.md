@@ -160,7 +160,7 @@ The payload of the update order:
 
 ```json
 {
-  "version": {{templateOrderVersion}},
+  "version": "{{templateOrderVersion}}",
   "actions": [
       {
           "action" : "transitionState",
