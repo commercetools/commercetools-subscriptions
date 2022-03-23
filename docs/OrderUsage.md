@@ -2,16 +2,7 @@
 
 In this document, we will describe some use cases for the orders, events, and logs of the `commercetools-subscriptions` cronjob.
 
-Here are terminologies used in this document:
-
-- **checkout-order**: an order which customers create during the checkout. It may contain one or more subscriptions. `commercetools-subscriptions` will generate a **template-order** for every subscription.
-- **template-order**: an order which manages a single subscription and is used as a template to create a subscription-order.
-- **subscription-order**: a new order (actual delivery) triggered by the template order according to the defined schedule.
-- **Logs**: Structured(json) logs of cronjob for unexpected cases, warnings, errors and useful information like statistics.
-- **Order Messages**: These [messages](https://docs.commercetools.com/api/message-types#order-messages) represent a change or an action performed on an Order. Messages can be pulled via a REST API, or they can be pushed into a Message Queue by defining a Subscription.
-- **Order API**: commercetools `/orders` endpoint, to perform some queries on subscription orders.
-- **Order Import API**: commercetools `/orders/import` endpoint, to import an existing order without creating the carts.
-- **Order Search API**: commercetools `/orders/search` endpoint, to perform search requests on a high number of Orders in a Project.
+Please check [terminologies](./Terminology.md) used on this document.
 
 #### Notes
 
@@ -162,13 +153,13 @@ The payload of the order update actions:
 {
   "version": "{{templateOrderVersion}}",
   "actions": [
-      {
-          "action" : "transitionState",
-          "state" : {
-            "typeId" : "state",
-            "id" : "{{cancelledStateId}}"
-          }
-        }
+    {
+      "action": "transitionState",
+      "state": {
+        "typeId": "state",
+        "id": "{{cancelledStateId}}"
+      }
+    }
   ]
 }
 ```
