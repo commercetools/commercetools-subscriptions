@@ -2,7 +2,7 @@
 
 In this document, we will describe some use cases for the orders, events, and logs of the `commercetools-subscriptions` cronjob.
 
-Here is some terminology used in this document:
+Here are terminologies used in this document:
 
 - **checkout-order**: an order which customers create during the checkout. It may contain one or more subscriptions. `commercetools-subscriptions` will generate a **template-order** for every subscription.
 - **template-order**: an order which manages a single subscription and is used as a template to create a subscription-order.
@@ -16,9 +16,9 @@ Here is some terminology used in this document:
 #### Notes
 
 - We've created a [postman collection](./commercetools-subscription.postman_collection.json) for the queries that you might use as a playground and test with your use cases easily.
-- This document and queries on it are documented to give some ideas, it's always good to follow the official commercetools documentation for the up to date information.
+- This document and queries on it are documented to give some ideas. It's always good to follow the official commercetools documentation for the up to date information.
 - We strongly suggest the Order search API usage for your order queries as it will have better performance on a high number of Orders in a Project.
-  - Queries kept simple to have a compact documentation, so most of the queries do not include the details related to sorting, pagination etc.
+  - Queries are kept simple to have a compact documentation, so most of the queries do not include the details related to sorting, pagination etc.
   - On the Order Search API if no sorting is specified, the results are sorted by relevance in descending (desc) order.
   - The Order Search API does not return the resource data of the matching Orders. Instead, it returns a list of Order IDs, which can then be used to fetch the Orders by their ID.
 
@@ -75,8 +75,8 @@ Query Predicate examples for order API:
 
 ### Logs and events related to template orders
 
-1. For order creation, we use [Order import API](https://docs.commercetools.com/api/projects/orders-import#orderimportdraft). According to this an [OrderImportedMessage](https://docs.commercetools.com/api/message-types#orderimportedmessage) will be created by the commercetools platform when a template-order is imported.
-2. In case, template-order **can not be created** from the checkout-order due to non-recoverable errors we log an error. It will contain the error details, together with the draft, and response details from the commercetools API.
+1. For order creation we use [Order import API](https://docs.commercetools.com/api/projects/orders-import#orderimportdraft). According to this an [OrderImportedMessage](https://docs.commercetools.com/api/message-types#orderimportedmessage) will be created by the commercetools platform when a template-order is imported.
+2. In case template-order **can not be created** from the checkout-order due to non-recoverable errors, we log an error. It will contain the error details, together with the draft, and response details from the commercetools API.
    Log Message: `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}.`
    Example log entry:
 
@@ -149,14 +149,14 @@ If you already know the id of the template-order, you might filter only that sub
 
 - `custom(fields(subscriptionTemplateOrderRef(id="{{templateOrderId}}")))`
 
-## Updating orders:
+## Updating orders
 
 Order API provides lots of update actions to edit an order, you might check [here](https://docs.commercetools.com/api/projects/orders#update-actions) all update actions from the official commercetools docs.
 
-One example might be, one customer wants to cancel the subscription order when the template order already exists, so in this case you might use the [TransitionState](https://docs.commercetools.com/api/projects/orders#transition-state) action
-to set the template-order to cancel state (key= `commercetools-subscriptions-cancelled`).
+One example might be one customer wants to cancel the subscription order when the template order already exists. In this case you might use the [TransitionState](https://docs.commercetools.com/api/projects/orders#transition-state) action
+to set the template-order to Cancel state (`key="commercetools-subscriptions-cancelled"`).
 
-The payload of the update order:
+The payload of the order update actions:
 
 ```json
 {
