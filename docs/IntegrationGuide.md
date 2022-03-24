@@ -5,7 +5,6 @@
 
 # Table of Contents
 
-- [Terminology](#terminology)
 - [Before you begin](#before-you-begin)
 - [Sequence diagram](#sequence-diagram)
 - [Step 1: Create a checkout order with subscriptions](#step-1-create-a-checkout-order-with-subscriptions)
@@ -18,19 +17,10 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Terminology
-
-- **user**: the one who is responsible for running `commercetools-subscriptions` and `frontend`.
-- **customer**: the one who buy goods from the user.
-- **checkout-order**: an order which customers create during the checkout. It may contain one or more subscriptions. `commercetools-subscriptions` will generate a **template-order** for every subscription.
-- **frontend**: application (usually an e-shop) of a user that is responsible for generating checkout orders.
-- **template-order**: an order which manages a single subscription and is used as a template to create a
-  subscription-order.
-- **subscription-order**: a new order (actual delivery) triggered by the template order according to the defined schedule.
-
 ## Before you begin
 
-Create all the required custom types and states located in [resources folder](./resources). Check [project requirements](./docs/HowToRun.md#commercetools-project-requirements) for more details.
+- Please check [terminologies](./Terminalogy.md) used on this document.
+- Create all the required custom types and states located in [resources folder](./resources). Check [project requirements](./docs/HowToRun.md#commercetools-project-requirements) for more details.
 
 ## Sequence diagram
 
