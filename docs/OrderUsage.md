@@ -125,7 +125,7 @@ In case you want to filter based on the customer email, then the query might be 
 
 > Note that the Order Search API does not return the resource data of the matching Orders. Instead, it returns a list of Order IDs, which can then be used to fetch the [Orders by their ID](https://docs.commercetools.com/api/projects/orders#query-orders).
 
-> Note that order search API does not support filtering for the `subscriptionTemplateOrderRef` custom field yet, because it's a `ReferenceField`, so in this query we have used the `deliveryDate` instead. If you don't set the `deliveryDate` you might use the Order API with the query described below.
+> Note that order search API does not support filtering for the `subscriptionTemplateOrderRef` custom field yet, because it's a `ReferenceField`, so in this query we have used the `deliveryDate` instead.
 
 One example order query predicate to fetch this order might be sth like below:
 
