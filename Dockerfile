@@ -5,5 +5,8 @@ WORKDIR /app
 
 COPY . /app
 
+RUN apk add --no-cache --virtual .gyp python3 make g++
+RUN npm install --quiet node-gyp -g
+
 RUN npm ci --only=prod
 CMD [ "node", "src/index.js" ]
