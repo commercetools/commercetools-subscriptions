@@ -91,17 +91,8 @@ describe('create-template-orders', () => {
       )
       expect(templateOrder.customerGroup).to.equal(checkoutOrder.customerGroup)
       expect(templateOrder.country).to.equal(checkoutOrder.country)
-      expect(templateOrder.shippingInfo.price).to.deep.equal(
-        checkoutOrder.shippingInfo.price
-      )
-      expect(templateOrder.shippingInfo.shippingMethod).to.deep.equal(
-        checkoutOrder.shippingInfo.shippingMethod
-      )
-      expect(templateOrder.shippingInfo.shippingRate).to.deep.equal(
-        checkoutOrder.shippingInfo.shippingRate
-      )
-      expect(templateOrder.shippingInfo.shippingMethodName).to.deep.equal(
-        checkoutOrder.shippingInfo.shippingMethodName
+      expect(templateOrder.shippingInfo).to.deep.equal(
+        checkoutOrder.shippingInfo
       )
       expect(templateOrder.taxMode).to.equal(checkoutOrder.taxMode)
       expect(templateOrder.inventoryMode).to.equal('None')
