@@ -29,17 +29,21 @@ const templateOrderDraft = await readAndParseJsonFile(
   'test/resources/template-order-draft.json'
 )
 
+let shippingMethodId
+let taxCategoryId
+
 async function ensureResources(apiRoot, logger) {
   await ensureCustomTypes(apiRoot, logger)
   await ensureStates(apiRoot, logger)
   const zone = await ensureZones(apiRoot)
   const taxCategory = await ensureTaxCategories(apiRoot)
+  taxCategoryId = taxCategory.id
   const shippingMethodsResponse = await ensureShippingMethod(
     apiRoot,
     zone.id,
     taxCategory.id
   )
-  const shippingMethodId = shippingMethodsResponse.id
+  shippingMethodId = shippingMethodsResponse.id
   await ensureProductType(apiRoot)
   const productsResponse = await ensureProducts(apiRoot)
   return {
@@ -110,7 +114,7 @@ async function ensureTaxCategories(apiRoot) {
   return taxCategory
 }
 
-async function ensureShippingMethod(apiRoot, zoneId, taxCategoryId) {
+async function ensureShippingMethod(apiRoot, zoneId) {
   let {
     body: {
       results: [shippingMethod],
@@ -231,6 +235,8 @@ async function createOrder(
     logger.debug(
       `About to create order in test project with orderNumber ${orderDraft.orderNumber}`
     )
+    orderDraft.shippingInfo.taxCategory.id = taxCategoryId
+    orderDraft.shippingInfo.shippingMethod.id = shippingMethodId
     const { body } = await apiRoot
       .orders()
       .importOrder()
