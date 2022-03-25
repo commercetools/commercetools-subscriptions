@@ -32,7 +32,7 @@ Once all the prerequisites have been installed and created, update the repositor
 
 ### Helm values
 
-For any changes for cronjob, configure the properties in [values.yaml](../deployment-examples/aws/k8s/values.yaml).
+For any changes for cronjob, configure the properties in [values.yaml](./values.yaml).
 
 ## Create release.
 

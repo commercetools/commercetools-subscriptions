@@ -3,14 +3,15 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-# Table of Contents
-
 - [Commercetools project requirements](#commercetools-project-requirements)
   - [Types](#types)
   - [States](#states)
 - [Running commercetools-subscriptions](#running-commercetools-subscriptions)
   - [Environment variables](#environment-variables)
   - [Run as node application](#run-as-node-application)
+- [Deployment](#deployment)
+  - [Docker](#docker)
+  - [Deployment Examples](#deployment-examples)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -85,3 +86,16 @@ export BASIC_AUTH_USERNAME=username
 export BASIC_AUTH_PASSWORD=password
 node ./src/index.js
 ```
+
+## Deployment
+
+### Docker
+
+You might build an image from the defined [DockerFile](../Dockerfile) and run it on your container system.
+
+### Deployment Examples
+
+We documented 2 deployment examples for the subscription project to give a starting point for your deployment journey.
+
+- [Follow](../deployment-examples/aws/k8s/README.md) the documentation for AWS ECS based K8S deployment.
+- [Follow](../deployment-examples/gcp/k8s/README.md) the documentation for GCP Kubernetes Engine deployment.
