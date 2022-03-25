@@ -288,12 +288,13 @@ function _generateTemplateOrderImportDraft(
       id: activeStateId,
     },
   }
-  if (checkoutOrder.shippingInfo)
+  const shippingInfo = checkoutOrder.shippingInfo
+  if (shippingInfo)
     templateOrder.shippingInfo = {
-      shippingMethodName: checkoutOrder.shippingInfo?.shippingMethodName,
-      shippingMethod: checkoutOrder.shippingInfo?.shippingMethod,
-      price: checkoutOrder.shippingInfo?.price,
-      shippingRate: checkoutOrder.shippingInfo?.shippingRate,
+      shippingMethodName: shippingInfo.shippingMethodName,
+      shippingMethod: shippingInfo.shippingMethod,
+      price: shippingInfo.price,
+      shippingRate: shippingInfo.shippingRate,
     }
   delete templateOrder.custom.fields.hasSubscription
   return templateOrder
