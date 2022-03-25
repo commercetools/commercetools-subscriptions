@@ -286,7 +286,7 @@ function _generateTemplateOrderImportDraft(
     state: {
       typeId: 'state',
       id: activeStateId,
-    }
+    },
   }
   if (checkoutOrder.shippingInfo)
     templateOrder.shippingInfo = {
