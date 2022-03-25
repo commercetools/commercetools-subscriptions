@@ -6,3 +6,4 @@ node_modules
 secrets.yaml
 .subscriptionsrc
 /deployment-examples/aws/k8s/k8s-charts/
+/deployment-examples/aws/gcp/k8s-charts/
