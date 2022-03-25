@@ -95,5 +95,61 @@
     "fields": {
       "hasSubscription": true
     }
+  },
+  "shippingInfo": {
+    "shippingMethodName": "de",
+    "price": {
+      "type": "centPrecision",
+      "currencyCode": "EUR",
+      "centAmount": 0,
+      "fractionDigits": 2
+    },
+    "shippingRate": {
+      "price": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 790,
+        "fractionDigits": 2
+      },
+      "freeAbove": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 9900,
+        "fractionDigits": 2
+      },
+      "tiers": []
+    },
+    "taxRate": {
+      "name": "de",
+      "amount": 0.19,
+      "includedInPrice": true,
+      "country": "DE",
+      "id": "r1yayG-u",
+      "subRates": []
+    },
+    "taxCategory": {
+      "typeId": "tax-category",
+      "id": "7961b321-aeca-4f5b-9542-67d17667271d"
+    },
+    "deliveries": [],
+    "shippingMethod": {
+      "typeId": "shipping-method",
+      "id": "e81c0e3c-5456-4f84-abb9-3f138a80db29"
+    },
+    "taxedPrice": {
+      "totalNet": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 0,
+        "fractionDigits": 2
+      },
+      "totalGross": {
+        "type": "centPrecision",
+        "currencyCode": "EUR",
+        "centAmount": 0,
+        "fractionDigits": 2
+      }
+    },
+    "shippingMethodState": "MatchesCart"
   }
 }
