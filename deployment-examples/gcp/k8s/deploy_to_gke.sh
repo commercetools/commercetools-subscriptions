@@ -4,10 +4,10 @@ set -e
 
 ## edit those environment variables
 ## ----------------------
-export GCLOUD_PROJECT_ID="professionalserviceslabs"
+export GCLOUD_PROJECT_ID="YOUR_PROJECT_ID"
 export GCLOUD_ZONE="europe-west3-c"
-export GCLOUD_CLUSTER_NAME="commercetools-subscription"
-export IMAGE_BASE_NAME="commercetools-subscription"
+export GCLOUD_CLUSTER_NAME="commercetools-subscriptions"
+export IMAGE_BASE_NAME="commercetools-subscriptions"
 export TAG="v0.0.1"
 export GCR_PATH="eu.gcr.io"
 ## ----------------------

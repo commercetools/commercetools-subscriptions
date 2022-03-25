@@ -4,7 +4,7 @@ set -e
 
 ## edit those environment variables
 ## ----------------------
-export GCLOUD_PROJECT_ID="professionalserviceslabs"
+export GCLOUD_PROJECT_ID="YOUR_PROJECT_ID"
 export GCLOUD_ZONE="europe-west3-c"
 export GCLOUD_CLUSTER_NAME="commercetools-subscriptions"
 ## ----------------------
