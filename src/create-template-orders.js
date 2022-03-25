@@ -286,14 +286,15 @@ function _generateTemplateOrderImportDraft(
     state: {
       typeId: 'state',
       id: activeStateId,
-    },
-    shippingInfo: {
+    }
+  }
+  if (checkoutOrder.shippingInfo)
+    templateOrder.shippingInfo = {
       shippingMethodName: checkoutOrder.shippingInfo?.shippingMethodName,
       shippingMethod: checkoutOrder.shippingInfo?.shippingMethod,
       price: checkoutOrder.shippingInfo?.price,
       shippingRate: checkoutOrder.shippingInfo?.shippingRate,
-    },
-  }
+    }
   delete templateOrder.custom.fields.hasSubscription
   return templateOrder
 }
