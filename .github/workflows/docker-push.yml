@@ -3,7 +3,10 @@
 
 name: push-docker-image
 
-on: [push]
+on:
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   docker:
@@ -13,7 +16,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Set output
         id: vars
-        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -30,5 +33,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          #tags: commercetools-subscriptions:${{ steps.vars.outputs.tag }}
-          tags: commercetools/commercetools-subscriptions:${{ steps.vars.outputs.sha_short }}
+          tags: commercetools-subscriptions:${{ steps.vars.outputs.tag }}
