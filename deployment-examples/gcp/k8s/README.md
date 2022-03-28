@@ -23,11 +23,11 @@ You can utilize the available bash scripts which is capable of creating a Google
 
 ### Helm values
 
-Configure the credentials and other configs in [values.yaml](values.yaml).
+Configure the credentials and other configs in [values.yaml](./values.yaml).
 
 ## Creating a GKE cluster (optional)
 
-Configure all the required environment variables in the bash script. After that, execute the [`create_gke_cluster`](create_gke_cluster.sh) script file.
+Configure all the required environment variables in the bash script. After that, execute the [`create_gke_cluster`](./create_gke_cluster.sh) script file.
 
 ```bash
 ./create_gke_cluster.sh
@@ -35,7 +35,7 @@ Configure all the required environment variables in the bash script. After that,
 
 ## Deploy to GKE cluster
 
-Configure all the required environment variables in the bash script and in the helm [values](values.yaml) file. After that, execute the [`deploy_to_gke.sh`](deploy_to_gke.sh) script file.
+Configure all the required environment variables in the bash script and in the helm [values](./values.yaml) file. After that, execute the [`deploy_to_gke.sh`](./deploy_to_gke.sh) script file.
 
 ```bash
 ./deploy_to_gke.sh
