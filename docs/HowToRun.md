@@ -11,6 +11,7 @@
   - [Run as node application](#run-as-node-application)
 - [Deployment](#deployment)
   - [Docker](#docker)
+    - [Running the Docker image](#running-the-docker-image)
   - [Deployment Examples](#deployment-examples)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -91,7 +92,20 @@ node ./src/index.js
 
 ### Docker
 
-You might build an image from the defined [DockerFile](../Dockerfile) and run it on your container system.
+Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-subscriptions/tags) page to see the latest releases and tags.
+
+#### Running the Docker image
+
+```bash
+    docker run \
+    -e CTP_PROJECT_KEY=xxx \
+    -e CTP_CLIENT_ID=xxx \
+    -e CTP_CLIENT_SECRET=xxx \
+    ...
+    commercetools/commercetools-subscriptions:vX.X.X
+```
+
+> Note that you might build an image from the defined [DockerFile](../Dockerfile) and run it on your container system.
 
 ### Deployment Examples
 

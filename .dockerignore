@@ -12,4 +12,6 @@
 *.log
 *.iml
 renovate.json
-
+.eslintrc
+.prettierignore
+.prettierrc.json
