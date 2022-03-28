@@ -1,0 +1,30 @@
+image:
+  repository: 'eu.gcr.io/YOUR_GCLOUD_PROJECT_ID/commercetools-subscriptions'
+  tag: 'IMAGE_TAG'
+  pullPolicy: 'Always'
+
+nonSensitiveEnvs:
+  CTP_PROJECT_KEY: 'YOUR_PROJECT_KEY'
+  CTP_API_URL: 'https://api.europe-west1.gcp.commercetools.com'
+  CTP_AUTH_URL: 'https://auth.europe-west1.gcp.commercetools.com'
+
+sensitiveEnvs:
+  CTP_CLIENT_ID: 'YOUR_CLIENT_ID'
+  CTP_CLIENT_SECRET: 'YOUR_CLIENT_SECRET'
+  SUBSCRIPTION_ORDER_CREATION_URL: 'SUBSCRIPTION_ORDER_CREATION_URL'
+  CUSTOM_HEADERS: 'CUSTOM_HEADERS'
+  BASIC_AUTH_USERNAME: 'BASIC_AUTH_USERNAME'
+  BASIC_AUTH_PASSWORD: 'BASIC_AUTH_PASSWORD'
+
+# When the pod is scheduled, the container is guaranteed the amount of
+# resources requested 512MB RAM. As we don't know how much memory the jobs will
+# need, we will request for some extra memory as below(1024 mebibytes).
+resources:
+  requests:
+    memory: '1024Mi'
+
+# specifies how to treat concurrent executions of a job created by this cron job
+concurrency: Forbid
+
+# cronjob to run every 5 minutes.
+schedule: '*/5 * * * *'

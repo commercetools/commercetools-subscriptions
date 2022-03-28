@@ -11,6 +11,10 @@
 - [Running commercetools-subscriptions](#running-commercetools-subscriptions)
   - [Environment variables](#environment-variables)
   - [Run as node application](#run-as-node-application)
+- [Deployment](#deployment)
+  - [Docker](#docker)
+    - [Running the Docker image](#running-the-docker-image)
+  - [Deployment Examples](#deployment-examples)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -85,3 +89,29 @@ export BASIC_AUTH_USERNAME=username
 export BASIC_AUTH_PASSWORD=password
 node ./src/index.js
 ```
+
+## Deployment
+
+### Docker
+
+Refer to our [docker hub](https://hub.docker.com/r/commercetools/commercetools-subscriptions/tags) page to see the latest releases and tags.
+
+#### Running the Docker image
+
+```bash
+    docker run \
+    -e CTP_PROJECT_KEY=xxx \
+    -e CTP_CLIENT_ID=xxx \
+    -e CTP_CLIENT_SECRET=xxx \
+    ...
+    commercetools/commercetools-subscriptions:vX.X.X
+```
+
+> Note that you might build an image from the defined [DockerFile](../Dockerfile) and run it on your container system.
+
+### Deployment Examples
+
+We documented 2 deployment examples for the subscription project to give a starting point for your deployment journey.
+
+- [Follow](../deployment-examples/aws/k8s/README.md) the documentation for AWS ECS based K8S deployment.
+- [Follow](../deployment-examples/gcp/k8s/README.md) the documentation for GCP Kubernetes Engine deployment.

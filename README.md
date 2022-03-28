@@ -1,5 +1,7 @@
 # commercetools-subscriptions
 
+[![Docker Pulls](https://img.shields.io/docker/pulls/commercetools/commercetools-subscriptions)](https://hub.docker.com/r/commercetools/commercetools-subscriptions)
+
 Cron job based service which manages subscriptions, reminders and triggers subscription orders based on the schedule
 
 - Follow [Integration Guide](./docs/IntegrationGuide.md) for information how to integrate your shop with commercetools subscriptions.
