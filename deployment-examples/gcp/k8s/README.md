@@ -27,7 +27,7 @@ Configure the credentials and other configs in [values.yaml](./values.yaml).
 
 ## Creating a GKE cluster (optional)
 
-Configure all the required environment variables in the bash script. After that, execute the [`create_gke_cluster`](./create_gke_cluster.sh) script file.
+Configure all the required environment variables in the bash script [`create_gke_cluster`](./create_gke_cluster.sh). After that, execute the script file.
 
 ```bash
 ./create_gke_cluster.sh
@@ -35,7 +35,7 @@ Configure all the required environment variables in the bash script. After that,
 
 ## Deploy to GKE cluster
 
-Configure all the required environment variables in the bash script and in the helm [values](./values.yaml) file. After that, execute the [`deploy_to_gke.sh`](./deploy_to_gke.sh) script file.
+Configure all the required environment variables in the bash script [`deploy_to_gke.sh`](./deploy_to_gke.sh) and in the helm [values](./values.yaml) file. After that, execute the script file.
 
 ```bash
 ./deploy_to_gke.sh
