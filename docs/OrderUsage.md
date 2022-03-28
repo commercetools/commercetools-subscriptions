@@ -1,9 +1,10 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
 # Table of Contents
 
 - [Use cases](#use-cases)
-    - [Notes](#notes)
+  - [Notes](#notes)
 - [How to fetch template-orders ?](#how-to-fetch-template-orders-)
   - [Logs and events related to template orders](#logs-and-events-related-to-template-orders)
 - [How to fetch subscription-orders ?](#how-to-fetch-subscription-orders-)
