@@ -1,6 +1,6 @@
 image:
   repository: 'eu.gcr.io/YOUR_GCLOUD_PROJECT_ID/commercetools-subscriptions'
-  tag: 'v0.0.1'
+  tag: 'IMAGE_TAG'
   pullPolicy: 'Always'
 
 nonSensitiveEnvs:

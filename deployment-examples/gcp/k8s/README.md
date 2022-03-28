@@ -15,11 +15,11 @@ You can utilize the available bash scripts which is capable of creating a Google
 
 ### Environment variables
 
-| Name                  | Description                                                                                                                    | Default                          |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------- |
-| `GCLOUD_PROJECT_ID`   | Google Cloud project ID                                                                                                        | `professionalserviceslabs`       |
-| `GCLOUD_ZONE`         | Google Cloud [Zones](https://cloud.google.com/compute/docs/regions-zones#available) which cluster instances should be spawned. | `europe-west3-c`                 |
-| `GCLOUD_CLUSTER_NAME` | Existing Google Kubernetes Engine cluster name                                                                                 | `commercetools-api-load-testing` |
+| Name                  | Description                                                                                                                    |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `GCLOUD_PROJECT_ID`   | Google Cloud project ID                                                                                                        |
+| `GCLOUD_ZONE`         | Google Cloud [Zones](https://cloud.google.com/compute/docs/regions-zones#available) which cluster instances should be spawned. |
+| `GCLOUD_CLUSTER_NAME` | Existing Google Kubernetes Engine cluster name                                                                                 |
 
 ### Helm values
 
