@@ -2,7 +2,7 @@
 
 set -e
 
-## edit those environment variables
+## edit these environment variables
 ## ----------------------
 export GCLOUD_PROJECT_ID="YOUR_PROJECT_ID"
 export GCLOUD_ZONE="europe-west3-c"
