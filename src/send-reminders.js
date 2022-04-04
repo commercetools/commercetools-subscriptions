@@ -1,7 +1,7 @@
 import pMap from 'p-map'
 import VError from 'verror'
 import { ACTIVE_STATE, SEND_REMINDER_STATE } from './states-constants.js'
-import { filterAndSerializeError } from './utils/error-utils'
+import { filterAndSerializeError } from './utils/error-utils.js'
 
 let apiRoot
 let ctpClient

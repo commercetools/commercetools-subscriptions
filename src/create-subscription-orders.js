@@ -3,7 +3,7 @@ import pMap from 'p-map'
 import parser from 'cron-parser'
 import { getSubscriptionConfig } from './config.js'
 import { updateOrderWithRetry } from './utils/utils.js'
-import { filterAndSerializeError } from './utils/error-utils'
+import { filterAndSerializeError } from './utils/error-utils.js'
 import {
   ACTIVE_STATE,
   ERROR_STATE,
