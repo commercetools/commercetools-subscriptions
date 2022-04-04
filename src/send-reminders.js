@@ -1,7 +1,7 @@
 import pMap from 'p-map'
 import VError from 'verror'
-import { serializeError } from 'serialize-error'
 import { ACTIVE_STATE, SEND_REMINDER_STATE } from './states-constants.js'
+import { filterAndSerializeError } from './utils/error-utils'
 
 let apiRoot
 let ctpClient
@@ -37,7 +37,7 @@ async function sendReminders({
   } catch (err) {
     logger.error(
       'Failed on send reminders, processing should be restarted on the next run.' +
-        `Error: ${JSON.stringify(serializeError(err))}`
+        `Error: ${filterAndSerializeError(err)}`
     )
   }
 

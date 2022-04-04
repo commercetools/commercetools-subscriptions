@@ -2,8 +2,8 @@ import pMap from 'p-map'
 import parser from 'cron-parser'
 import _ from 'lodash'
 import VError from 'verror'
-import { serializeError } from 'serialize-error'
 import { updateOrderWithRetry } from './utils/utils.js'
+import { filterAndSerializeError } from './utils/error-utils.js'
 
 let apiRoot
 let ctpClient
@@ -54,7 +54,7 @@ async function createTemplateOrders({
     logger.error(
       'Failed to process checkout orders. lastStartTimestamp was not updated. ' +
         'Processing should be restarted on the next run.' +
-        `Error: ${JSON.stringify(serializeError(err))}`
+        `Error: ${filterAndSerializeError(err)}`
     )
     return stats
   }
@@ -98,7 +98,7 @@ async function _processCheckoutOrder(activeStateId, checkoutOrder) {
       logger.error(
         `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
           'Skipping this checkout order' +
-          ` Error: ${JSON.stringify(serializeError(err))}`
+          ` Error: ${filterAndSerializeError(err)}`
       )
     }
   } finally {
