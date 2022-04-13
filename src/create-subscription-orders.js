@@ -3,7 +3,6 @@ import pMap from 'p-map'
 import parser from 'cron-parser'
 import { getSubscriptionConfig } from './config.js'
 import { updateOrderWithRetry } from './utils/utils.js'
-import { filterAndSerializeError } from './utils/error-utils.js'
 import {
   ACTIVE_STATE,
   ERROR_STATE,
@@ -59,10 +58,10 @@ async function createSubscriptionOrders({
         } catch (err) {
           stats.skippedTemplateOrders++
           logger.error(
+            err,
             'Failed to process template order. This template order will be skipped. ' +
               'Processing will be restarted on the next run. ' +
-              `Order details: ${JSON.stringify(templateOrder)}. ` +
-              `Error: ${filterAndSerializeError(err)}`
+              `Order details: ${JSON.stringify(templateOrder)}.`
           )
         }
       },
