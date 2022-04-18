@@ -165,7 +165,6 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
         {
           cause: err,
           info: {
-            orderNumber: checkoutOrder.orderNumber,
             lineItems: orderDraft.lineItems,
           },
         },
