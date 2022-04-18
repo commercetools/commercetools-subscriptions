@@ -32,7 +32,6 @@ describe('create-template-orders', () => {
   let ctpClientSecret
   let logger
   let apiRoot
-  let ctpClient
   const CTP_API_URL = 'https://api.europe-west1.gcp.commercetools.com'
   const CTP_AUTH_URL = 'https://auth.europe-west1.gcp.commercetools.com'
   const PROJECT_KEY = 'project-key'
@@ -41,12 +40,9 @@ describe('create-template-orders', () => {
 
   before(async () => {
     _mockCtpEnvVars()
-    const { getApiRoot, getCtpClient } = await reloadModule(
-      '../../src/utils/client.js'
-    )
+    const { getApiRoot } = await reloadModule('../../src/utils/client.js')
     logger = getLogger()
     apiRoot = getApiRoot()
-    ctpClient = getCtpClient()
   })
 
   after(() => {
@@ -99,7 +95,6 @@ describe('create-template-orders', () => {
         .reply(200)
 
       const stats = await createTemplateOrders({
-        ctpClient,
         apiRoot,
         logger,
         startDate: new Date(),
@@ -150,7 +145,6 @@ describe('create-template-orders', () => {
         .reply(200)
 
       const stats = await createTemplateOrders({
-        ctpClient,
         apiRoot,
         logger,
         startDate: new Date(),
@@ -227,7 +221,6 @@ describe('create-template-orders', () => {
         .reply(200)
 
       const stats = await createTemplateOrders({
-        ctpClient,
         apiRoot,
         logger,
         startDate: new Date(),
@@ -284,7 +277,6 @@ describe('create-template-orders', () => {
         .reply(200)
 
       const stats = await createTemplateOrders({
-        ctpClient,
         apiRoot,
         logger,
         startDate: new Date(),
@@ -347,7 +339,6 @@ describe('create-template-orders', () => {
             })
 
           await createTemplateOrders({
-            ctpClient,
             apiRoot,
             logger,
             startDate: new Date(),
@@ -393,7 +384,6 @@ describe('create-template-orders', () => {
             })
 
           await createTemplateOrders({
-            ctpClient,
             apiRoot,
             logger,
             startDate: new Date(),

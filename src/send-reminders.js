@@ -3,13 +3,11 @@ import VError from 'verror'
 import { ACTIVE_STATE, SEND_REMINDER_STATE } from './states-constants.js'
 
 let apiRoot
-let ctpClient
 let logger
 let stats
 
 async function sendReminders({
   apiRoot: _apiRoot,
-  ctpClient: _ctpClient,
   logger: _logger,
   activeStateId,
 }) {
@@ -21,13 +19,12 @@ async function sendReminders({
 
   try {
     apiRoot = _apiRoot
-    ctpClient = _ctpClient
     logger = _logger
 
     const orderQuery =
       _buildQueryOfTemplateOrdersThatIsReadyToSendReminder(activeStateId)
 
-    for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
+    for await (const templateOrders of apiRoot.fetchPagesGraphQl(orderQuery))
       await pMap(
         templateOrders,
         (order) => _processTemplateOrder(activeStateId, order),

@@ -5,7 +5,6 @@ import VError from 'verror'
 import { updateOrderWithRetry } from './utils/utils.js'
 
 let apiRoot
-let ctpClient
 let logger
 let stats
 
@@ -19,7 +18,6 @@ const INCONSISTENCY_MS = 3 * 60 * 1000
 
 async function createTemplateOrders({
   apiRoot: _apiRoot,
-  ctpClient: _ctpClient,
   logger: _logger,
   startDate,
   activeStateId,
@@ -33,12 +31,11 @@ async function createTemplateOrders({
 
   try {
     apiRoot = _apiRoot
-    ctpClient = _ctpClient
     logger = _logger
 
-    const uri = await _buildFetchCheckoutOrdersUri()
+    const request = await _buildFetchCheckoutOrdersRequest()
 
-    await ctpClient.fetchBatches(uri, async (orders) => {
+    await apiRoot.fetchBatches(request, async (orders) => {
       await pMap(
         orders,
         (order) => _processCheckoutOrder(activeStateId, order),
@@ -59,17 +56,20 @@ async function createTemplateOrders({
   }
 }
 
-async function _buildFetchCheckoutOrdersUri() {
+async function _buildFetchCheckoutOrdersRequest() {
   let where =
     'custom(fields(hasSubscription=true)) AND custom(fields(isSubscriptionProcessed is not defined))'
   const lastStartTimestampCustomObject = await _fetchLastStartTimestamp()
   if (lastStartTimestampCustomObject)
     where = `createdAt > "${lastStartTimestampCustomObject.value}" AND ${where}`
 
-  const uri = ctpClient.builder.orders
-    .where(where)
-    .expand('paymentInfo.payments[*]')
-  return uri
+  const { request } = apiRoot.orders().get({
+    queryArgs: {
+      where,
+      expand: ['paymentInfo.payments[*]'],
+    },
+  })
+  return request
 }
 
 async function _processCheckoutOrder(activeStateId, checkoutOrder) {

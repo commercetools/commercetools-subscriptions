@@ -12,7 +12,6 @@ describe('send-reminders', () => {
   let ctpClientSecret
   let logger
   let apiRoot
-  let ctpClient
   const activeStateId = 'activeStateId'
   const CTP_API_URL = 'https://api.europe-west1.gcp.commercetools.com'
   const CTP_AUTH_URL = 'https://auth.europe-west1.gcp.commercetools.com'
@@ -20,12 +19,9 @@ describe('send-reminders', () => {
 
   before(async () => {
     _mockCtpEnvVars()
-    const { getApiRoot, getCtpClient } = await reloadModule(
-      '../../src/utils/client.js'
-    )
+    const { getApiRoot } = await reloadModule('../../src/utils/client.js')
     logger = getLogger()
     apiRoot = getApiRoot()
-    ctpClient = getCtpClient()
   })
 
   after(() => {
@@ -68,7 +64,6 @@ describe('send-reminders', () => {
 
       const stats = await sendReminders({
         apiRoot,
-        ctpClient,
         logger,
         activeStateId,
       })
@@ -97,7 +92,6 @@ describe('send-reminders', () => {
       })
     const stats = await sendReminders({
       apiRoot,
-      ctpClient,
       logger,
       activeStateId,
     })
@@ -158,7 +152,6 @@ describe('send-reminders', () => {
         timekeeper.freeze(new Date('2022-04-25T22:00:00.000Z'))
         const stats = await sendReminders({
           apiRoot,
-          ctpClient,
           logger,
           activeStateId,
         })
@@ -210,7 +203,6 @@ describe('send-reminders', () => {
         timekeeper.freeze(new Date('2022-04-25T21:45:00.000Z'))
         const stats = await sendReminders({
           apiRoot,
-          ctpClient,
           logger,
           activeStateId,
         })
@@ -248,7 +240,6 @@ describe('send-reminders', () => {
 
       const stats = await sendReminders({
         apiRoot,
-        ctpClient,
         logger,
         activeStateId,
       })

@@ -11,13 +11,11 @@ import {
 } from './states-constants.js'
 
 let apiRoot
-let ctpClient
 let logger
 let stats
 
 async function createSubscriptionOrders({
   apiRoot: _apiRoot,
-  ctpClient: _ctpClient,
   logger: _logger,
   stateKeyToIdMap,
 }) {
@@ -30,7 +28,6 @@ async function createSubscriptionOrders({
     skippedTemplateOrders: 0,
   }
   apiRoot = _apiRoot
-  ctpClient = _ctpClient
   logger = _logger
   const stateIds = [
     stateKeyToIdMap.get(ACTIVE_STATE),
@@ -44,7 +41,7 @@ async function createSubscriptionOrders({
     await _buildQueryForTemplateOrdersToCreateSubscriptionOrders(stateIds)
 
   // eslint-disable-next-line no-loop-func
-  for await (const templateOrders of ctpClient.fetchPagesGraphQl(orderQuery))
+  for await (const templateOrders of apiRoot.fetchPagesGraphQl(orderQuery))
     await pMap(
       templateOrders,
       // eslint-disable-next-line no-loop-func
@@ -209,9 +206,18 @@ async function _fetchOrderBySubscriptionTemplateOrderRefAndDeliveryDate(
       }
     }
   `
-  const response = await ctpClient.queryGraphQl(query, {
-    where: `custom(fields(subscriptionTemplateOrderRef(id="${id}") AND deliveryDate="${deliveryDate}"))`,
-  })
+  const response = await apiRoot
+    .graphql()
+    .post({
+      body: {
+        query,
+        variables: {
+          where: `custom(fields(subscriptionTemplateOrderRef(id="${id}") AND deliveryDate="${deliveryDate}"))`,
+        },
+      },
+    })
+    .execute()
+
   return response.body?.data?.orders?.results?.[0]
 }
 

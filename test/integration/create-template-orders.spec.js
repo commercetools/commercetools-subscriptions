@@ -4,13 +4,12 @@ import _ from 'lodash'
 import { ensureResources, createOrderByOrderNumber } from './test-utils.js'
 
 import getLogger from '../../src/utils/logger.js'
-import { getApiRoot, getCtpClient } from '../../src/utils/client.js'
+import { getApiRoot } from '../../src/utils/client.js'
 import { ACTIVE_STATE } from '../../src/states-constants.js'
 import { createTemplateOrders } from '../../src/create-template-orders.js'
 
 describe('create-template-orders', () => {
   const apiRoot = getApiRoot()
-  const ctpClient = getCtpClient()
   const logger = getLogger()
   const DAY_IN_MS = 24 * 60 * 60 * 1000
 
@@ -33,7 +32,6 @@ describe('create-template-orders', () => {
     )
     await createTemplateOrders({
       apiRoot,
-      ctpClient,
       logger,
       startDate: new Date(),
       activeStateId: stateKeyToIdMap.get(ACTIVE_STATE),

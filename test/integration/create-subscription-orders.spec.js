@@ -1,13 +1,12 @@
 import { expect } from 'chai'
 import { createSubscriptionOrders } from '../../src/create-subscription-orders.js'
-import { getApiRoot, getCtpClient } from '../../src/utils/client.js'
+import { getApiRoot } from '../../src/utils/client.js'
 import getLogger from '../../src/utils/logger.js'
 import { ensureResources, createTemplateOrder } from './test-utils.js'
 import { ACTIVE_STATE } from '../../src/states-constants.js'
 
 describe('create-subscription-orders', () => {
   const apiRoot = getApiRoot()
-  const ctpClient = getCtpClient()
   const logger = getLogger()
   let productIds
   let shippingMethodId
@@ -33,7 +32,6 @@ describe('create-subscription-orders', () => {
     )
     await createSubscriptionOrders({
       apiRoot,
-      ctpClient,
       logger,
       stateKeyToIdMap,
     })

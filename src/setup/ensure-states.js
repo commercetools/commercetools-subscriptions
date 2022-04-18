@@ -16,7 +16,7 @@ const sendReminderState = await readAndParseJsonFile(
   './resources/send-reminder-state.json'
 )
 
-async function ensureStates(ctpClient, logger) {
+async function ensureStates(apiRoot, logger) {
   await Promise.all(
     [
       activeState,
@@ -26,40 +26,40 @@ async function ensureStates(ctpClient, logger) {
       reminderSentState,
       sendReminderState,
     ].map(async (state) => {
-      await syncState(ctpClient, logger, state)
+      await syncState(apiRoot, logger, state)
     })
   )
 }
 
-async function syncState(ctpClient, logger, stateDraft) {
+async function syncState(apiRoot, logger, stateDraft) {
   try {
-    let existingState = await fetchStateByKey(ctpClient, stateDraft.key)
+    let existingState = await fetchStateByKey(apiRoot, stateDraft.key)
     if (existingState === null) {
       const stateInit = _.cloneDeep(stateDraft)
       delete stateInit.transitions
-      const response = await ctpClient
+      const response = await apiRoot
         .states()
         .post({ body: stateInit })
         .execute()
       existingState = response.body
-      await checkAndDoUpdates(ctpClient, logger, stateDraft, existingState)
+      await checkAndDoUpdates(apiRoot, logger, stateDraft, existingState)
       logger.info(`Successfully created the state (key=${stateDraft.key})`)
     } else {
       removeTransitions(existingState, stateDraft)
-      await checkAndDoUpdates(ctpClient, logger, stateDraft, existingState)
+      await checkAndDoUpdates(apiRoot, logger, stateDraft, existingState)
     }
   } catch (err) {
     throw new VError(err, `Failed to sync state (key=${stateDraft.key}).`)
   }
 }
 
-async function checkAndDoUpdates(ctpClient, logger, stateDraft, existingState) {
+async function checkAndDoUpdates(apiRoot, logger, stateDraft, existingState) {
   const syncStates = createSyncStates()
   const updateActions = syncStates
     .buildActions(stateDraft, existingState)
     .filter((i) => i.action !== 'changeFieldDefinitionOrder')
   if (updateActions.length > 0) {
-    await ctpClient
+    await apiRoot
       .states()
       .withId({ ID: existingState.id })
       .post({
@@ -70,7 +70,7 @@ async function checkAndDoUpdates(ctpClient, logger, stateDraft, existingState) {
       })
       .execute()
     logger.info(`Successfully updated the state (key=${stateDraft.key})`)
-  } else logger.info(`State (key=${stateDraft.key}) is already up to date.`)
+  }
 }
 
 /**
@@ -83,9 +83,9 @@ function removeTransitions(existingState, stateDraft) {
   delete existingState.transitions
 }
 
-async function fetchStateByKey(ctpClient, key) {
+async function fetchStateByKey(apiRoot, key) {
   try {
-    const { body } = await ctpClient
+    const { body } = await apiRoot
       .states()
       .withKey({ key })
       .get({

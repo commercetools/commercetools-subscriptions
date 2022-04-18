@@ -1,7 +1,7 @@
 import { createTemplateOrders } from './create-template-orders.js'
 import getLogger from './utils/logger.js'
 import { getPackageJson } from './config.js'
-import { getApiRoot, getCtpClient } from './utils/client.js'
+import { getApiRoot } from './utils/client.js'
 import { sendReminders } from './send-reminders.js'
 import { createSubscriptionOrders } from './create-subscription-orders.js'
 import {
@@ -17,12 +17,10 @@ async function run() {
   logger.info(`${packageJson.name} started`)
 
   const apiRoot = getApiRoot()
-  const ctpClient = getCtpClient()
   const stateKeyToIdMap = await _fetchStateKeyToIdMap(apiRoot)
 
   const createTemplateOrderStats = await createTemplateOrders({
     apiRoot,
-    ctpClient,
     logger,
     startDate,
     activeStateId: stateKeyToIdMap.get(ACTIVE_STATE),
@@ -35,7 +33,6 @@ async function run() {
 
   const sendReminderStats = await sendReminders({
     apiRoot,
-    ctpClient,
     logger,
     activeStateId: stateKeyToIdMap.get(ACTIVE_STATE),
   })
@@ -43,7 +40,6 @@ async function run() {
 
   const createSubscriptionOrdersStats = await createSubscriptionOrders({
     apiRoot,
-    ctpClient,
     logger,
     stateKeyToIdMap,
   })
