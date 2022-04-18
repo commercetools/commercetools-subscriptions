@@ -35,11 +35,12 @@ function getClientConfig() {
 }
 
 function getSubscriptionConfig() {
+  const config = loadConfigFromFile()
   return {
-    subscriptionOrderCreationUrl: process.env.SUBSCRIPTION_ORDER_CREATION_URL,
-    customHeaders: process.env.CUSTOM_HEADERS,
-    basicAuthUsername: process.env.BASIC_AUTH_USERNAME,
-    basicAuthPassword: process.env.BASIC_AUTH_PASSWORD,
+    subscriptionOrderCreationUrl: process.env.SUBSCRIPTION_ORDER_CREATION_URL || config.subscriptionOrderCreationUrl,
+    customHeaders: process.env.CUSTOM_HEADERS || config.customHeaders,
+    basicAuthUsername: process.env.BASIC_AUTH_USERNAME || config.basicAuthUsername,
+    basicAuthPassword: process.env.BASIC_AUTH_PASSWORD || config.basicAuthPassword,
   }
 }
 
