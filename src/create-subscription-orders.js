@@ -58,10 +58,9 @@ async function createSubscriptionOrders({
         } catch (err) {
           stats.skippedTemplateOrders++
           logger.error(
-            err,
+            { err, templateOrder },
             'Failed to process template order. This template order will be skipped. ' +
-              'Processing will be restarted on the next run. ' +
-              `Order details: ${JSON.stringify(templateOrder)}.`
+              'Processing will be restarted on the next run. '
           )
         }
       },
