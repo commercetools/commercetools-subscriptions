@@ -1,5 +1,5 @@
+import VError from 'verror'
 import { createSyncTypes } from '@commercetools/sync-actions'
-import { serializeError } from 'serialize-error'
 import { readAndParseJsonFile } from '../utils/utils.js'
 import { getSubscriptionSetupConfig } from '../config.js'
 
@@ -50,10 +50,7 @@ async function syncCustomType(ctpClient, logger, typeDraft) {
       }
     }
   } catch (err) {
-    throw Error(
-      `Failed to sync type (key=${typeDraft.key}). ` +
-        `Error: ${JSON.stringify(serializeError(err))}`
-    )
+    throw new VError(err, `Failed to sync type (key=${typeDraft.key})`)
   }
 }
 

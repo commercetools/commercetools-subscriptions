@@ -52,7 +52,6 @@
     "p-map": "^5.3.0",
     "pino": "^7.10.0",
     "rc": "^1.2.8",
-    "serialize-error": "^9.1.0",
     "verror": "1.10.1"
   },
   "devDependencies": {

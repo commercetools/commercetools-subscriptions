@@ -37,10 +37,14 @@ function getClientConfig() {
 function getSubscriptionConfig() {
   const config = loadConfigFromFile()
   return {
-    subscriptionOrderCreationUrl: process.env.SUBSCRIPTION_ORDER_CREATION_URL || config.subscriptionOrderCreationUrl,
+    subscriptionOrderCreationUrl:
+      process.env.SUBSCRIPTION_ORDER_CREATION_URL ||
+      config.subscriptionOrderCreationUrl,
     customHeaders: process.env.CUSTOM_HEADERS || config.customHeaders,
-    basicAuthUsername: process.env.BASIC_AUTH_USERNAME || config.basicAuthUsername,
-    basicAuthPassword: process.env.BASIC_AUTH_PASSWORD || config.basicAuthPassword,
+    basicAuthUsername:
+      process.env.BASIC_AUTH_USERNAME || config.basicAuthUsername,
+    basicAuthPassword:
+      process.env.BASIC_AUTH_PASSWORD || config.basicAuthPassword,
   }
 }
 

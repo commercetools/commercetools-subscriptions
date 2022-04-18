@@ -21,6 +21,7 @@ async function updateOrderWithRetry(
 ) {
   let retryCount = 0
   const maxRetry = 20
+  // eslint-disable-next-line no-constant-condition
   while (true)
     try {
       await apiRoot

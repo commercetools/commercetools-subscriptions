@@ -1,5 +1,5 @@
+import VError from 'verror'
 import { createSyncStates } from '@commercetools/sync-actions'
-import { serializeError } from 'serialize-error'
 import _ from 'lodash'
 import { readAndParseJsonFile } from '../utils/utils.js'
 
@@ -49,10 +49,7 @@ async function syncState(ctpClient, logger, stateDraft) {
       await checkAndDoUpdates(ctpClient, logger, stateDraft, existingState)
     }
   } catch (err) {
-    throw Error(
-      `Failed to sync state (key=${stateDraft.key}). ` +
-        `Error: ${JSON.stringify(serializeError(err))}`
-    )
+    throw new VError(err, `Failed to sync state (key=${stateDraft.key}).`)
   }
 }
 
@@ -73,7 +70,7 @@ async function checkAndDoUpdates(ctpClient, logger, stateDraft, existingState) {
       })
       .execute()
     logger.info(`Successfully updated the state (key=${stateDraft.key})`)
-  }
+  } else logger.info(`State (key=${stateDraft.key}) is already up to date.`)
 }
 
 /**
