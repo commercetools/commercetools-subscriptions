@@ -37,7 +37,7 @@ function redactSensitiveInformationFromLogs() {
     'orderState',
     'shipmentState',
     'paymentState',
-    'lineItem[*].shippingDetails',
+    'lineItems[*].shippingDetails',
     'customLineItems[*].shippingDetails',
   ]
   const paths = fieldsToRedact.reduce((values, field) => {
