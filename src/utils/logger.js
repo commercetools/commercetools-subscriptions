@@ -20,23 +20,16 @@ function redactSensitiveInformationFromLogs() {
     // payment specific fields
     'customer',
     'transactions',
-    'interfaceId',
     'interfaceInteractions',
     'paymentStatus',
     // order specific fields
-    'customerId',
     'customerEmail',
-    'customerGroup',
-    'anonymousId',
     'shippingAddress',
     'billingAddress',
     'country',
     'paymentInfo',
     'shippingInfo',
     'itemShippingAddresses',
-    'orderState',
-    'shipmentState',
-    'paymentState',
     'lineItems[*].shippingDetails',
     'customLineItems[*].shippingDetails',
   ]
