@@ -26,7 +26,6 @@ describe('create-subscription-orders', () => {
   let basicAuthPassword
   let logger
   let apiRoot
-  let ctpClient
   const CTP_API_URL = 'https://api.europe-west1.gcp.commercetools.com'
   const CTP_AUTH_URL = 'https://auth.europe-west1.gcp.commercetools.com'
   const SUBSCRIPTION_ORDER_CREATION_URL = 'https://subscription-url.com'
@@ -40,12 +39,9 @@ describe('create-subscription-orders', () => {
 
   before(async () => {
     _mockCtpEnvVars()
-    const { getApiRoot, getCtpClient } = await reloadModule(
-      '../../src/utils/client.js'
-    )
+    const { getApiRoot } = await reloadModule('../../src/utils/client.js')
     logger = getLogger()
     apiRoot = getApiRoot()
-    ctpClient = getCtpClient()
   })
 
   after(() => {
@@ -75,7 +71,6 @@ describe('create-subscription-orders', () => {
 
     const stats = await createSubscriptionOrders({
       apiRoot,
-      ctpClient,
       logger,
       stateKeyToIdMap,
     })
@@ -118,7 +113,6 @@ describe('create-subscription-orders', () => {
 
     const stats = await createSubscriptionOrders({
       apiRoot,
-      ctpClient,
       logger,
       stateKeyToIdMap,
     })
@@ -160,7 +154,6 @@ describe('create-subscription-orders', () => {
 
     const stats = await createSubscriptionOrders({
       apiRoot,
-      ctpClient,
       logger,
       stateKeyToIdMap,
     })
@@ -204,7 +197,6 @@ describe('create-subscription-orders', () => {
 
         const stats = await createSubscriptionOrders({
           apiRoot,
-          ctpClient,
           logger,
           stateKeyToIdMap,
         })
@@ -247,7 +239,6 @@ describe('create-subscription-orders', () => {
 
     const stats = await createSubscriptionOrders({
       apiRoot,
-      ctpClient,
       logger,
       stateKeyToIdMap,
     })

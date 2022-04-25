@@ -16,19 +16,19 @@ const subscriptionOrderType = await readAndParseJsonFile(
   './resources/subscription-order-type.json'
 )
 
-async function ensureCustomTypes(ctpClient, logger) {
-  await mergeExistingTypesWithSubscriptionTypeDrafts(ctpClient)
-  await syncCustomType(ctpClient, logger, subscriptionTemplateOrderType)
-  await syncCustomType(ctpClient, logger, checkoutOrderType)
-  await syncCustomType(ctpClient, logger, checkoutOrderLineItemType)
-  await syncCustomType(ctpClient, logger, subscriptionOrderType)
+async function ensureCustomTypes(apiRoot, logger) {
+  await mergeExistingTypesWithSubscriptionTypeDrafts(apiRoot)
+  await syncCustomType(apiRoot, logger, subscriptionTemplateOrderType)
+  await syncCustomType(apiRoot, logger, checkoutOrderType)
+  await syncCustomType(apiRoot, logger, checkoutOrderLineItemType)
+  await syncCustomType(apiRoot, logger, subscriptionOrderType)
 }
 
-async function syncCustomType(ctpClient, logger, typeDraft) {
+async function syncCustomType(apiRoot, logger, typeDraft) {
   try {
-    const existingType = await fetchTypeByKey(ctpClient, typeDraft.key)
+    const existingType = await fetchTypeByKey(apiRoot, typeDraft.key)
     if (existingType === null) {
-      await ctpClient.types().post({ body: typeDraft }).execute()
+      await apiRoot.types().post({ body: typeDraft }).execute()
       logger.info(`Successfully created the type (key=${typeDraft.key})`)
     } else {
       const syncTypes = createSyncTypes()
@@ -36,7 +36,7 @@ async function syncCustomType(ctpClient, logger, typeDraft) {
         .buildActions(typeDraft, existingType)
         .filter((i) => i.action !== 'changeFieldDefinitionOrder')
       if (updateActions.length > 0) {
-        await ctpClient
+        await apiRoot
           .types()
           .withId({ ID: existingType.id })
           .post({
@@ -54,9 +54,9 @@ async function syncCustomType(ctpClient, logger, typeDraft) {
   }
 }
 
-async function fetchTypeByKey(ctpClient, key) {
+async function fetchTypeByKey(apiRoot, key) {
   try {
-    const { body } = await ctpClient.types().withKey({ key }).get().execute()
+    const { body } = await apiRoot.types().withKey({ key }).get().execute()
     return body
   } catch (err) {
     if (err.statusCode === 404) return null
@@ -64,12 +64,12 @@ async function fetchTypeByKey(ctpClient, key) {
   }
 }
 
-async function mergeExistingTypesWithSubscriptionTypeDrafts(ctpClient) {
+async function mergeExistingTypesWithSubscriptionTypeDrafts(apiRoot) {
   const config = getSubscriptionSetupConfig()
   const existingOrderTypeKey = config.existingOrderTypeKey
   if (existingOrderTypeKey)
     await fetchAndExtendSubscriptionType(
-      ctpClient,
+      apiRoot,
       existingOrderTypeKey,
       checkoutOrderType
     )
@@ -77,7 +77,7 @@ async function mergeExistingTypesWithSubscriptionTypeDrafts(ctpClient) {
   const existingOrderLineItemTypeKey = config.existingOrderLineItemKey
   if (existingOrderLineItemTypeKey)
     await fetchAndExtendSubscriptionType(
-      ctpClient,
+      apiRoot,
       existingOrderLineItemTypeKey,
       checkoutOrderLineItemType
     )
@@ -86,18 +86,18 @@ async function mergeExistingTypesWithSubscriptionTypeDrafts(ctpClient) {
     config.existingSubscriptionOrderTypeKey
   if (existingSubscriptionOrderTypeKey)
     await fetchAndExtendSubscriptionType(
-      ctpClient,
+      apiRoot,
       existingSubscriptionOrderTypeKey,
       subscriptionOrderType
     )
 }
 
 async function fetchAndExtendSubscriptionType(
-  ctpClient,
+  apiRoot,
   existingTypeKey,
   subscriptionTypeToExtend
 ) {
-  const existingType = await fetchTypeByKey(ctpClient, existingTypeKey)
+  const existingType = await fetchTypeByKey(apiRoot, existingTypeKey)
   if (existingType) {
     const fieldDefinitionNames = subscriptionTypeToExtend.fieldDefinitions.map(
       (fd) => fd.name
