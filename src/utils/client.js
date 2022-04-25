@@ -126,7 +126,7 @@ async function* _fetchPagesGraphQl({ queryBody, variables, endpoint }) {
 
     yield results
 
-    // Due to performance best practce we do not rely on total count.
+    // Due to performance best practice we do not rely on total count.
     // As a consequence, in case last page results length is the same as
     // the limit we will do 1 obsolete request with 0 results.
     if (!results.length || results.length < variables.limit) break
