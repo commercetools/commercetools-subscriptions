@@ -1,6 +1,6 @@
 {
   "name": "commercetools-subscriptions",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Cron job based service which manages subscriptions, reminders and triggers subscription orders based on the schedule",
   "exports": "./index.js",
   "type": "module",
@@ -54,7 +54,7 @@
     "@babel/preset-env": "7.16.11",
     "babel-cli": "6.26.0",
     "babel-eslint": "10.1.0",
-    "babel-loader": "8.2.4",
+    "babel-loader": "8.2.5",
     "chai": "4.3.6",
     "chai-as-promised": "7.1.1",
     "cross-env": "7.0.3",

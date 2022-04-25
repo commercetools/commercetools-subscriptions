@@ -70,7 +70,7 @@ async function checkAndDoUpdates(apiRoot, logger, stateDraft, existingState) {
       })
       .execute()
     logger.info(`Successfully updated the state (key=${stateDraft.key})`)
-  }
+  } else logger.info(`State (key=${stateDraft.key}) is already up to date.`)
 }
 
 /**
