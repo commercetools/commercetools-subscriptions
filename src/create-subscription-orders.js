@@ -1,7 +1,6 @@
 import fetch from 'isomorphic-fetch'
 import pMap from 'p-map'
 import parser from 'cron-parser'
-import { serializeError } from 'serialize-error'
 import { getSubscriptionConfig } from './config.js'
 import { updateOrderWithRetry } from './utils/utils.js'
 import {
@@ -59,10 +58,9 @@ async function createSubscriptionOrders({
         } catch (err) {
           stats.skippedTemplateOrders++
           logger.error(
+            { err, templateOrder },
             'Failed to process template order. This template order will be skipped. ' +
-              'Processing will be restarted on the next run. ' +
-              `Order details: ${JSON.stringify(templateOrder)}. ` +
-              `Error: ${JSON.stringify(serializeError(err))}`
+              'Processing will be restarted on the next run. '
           )
         }
       },

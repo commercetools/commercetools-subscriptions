@@ -2,7 +2,6 @@ import pMap from 'p-map'
 import parser from 'cron-parser'
 import _ from 'lodash'
 import VError from 'verror'
-import { serializeError } from 'serialize-error'
 import { updateOrderWithRetry } from './utils/utils.js'
 
 let apiRoot
@@ -52,9 +51,9 @@ async function createTemplateOrders({
     return stats
   } catch (err) {
     logger.error(
+      err,
       'Failed to process checkout orders. lastStartTimestamp was not updated. ' +
-        'Processing should be restarted on the next run.' +
-        `Error: ${JSON.stringify(serializeError(err))}`
+        'Processing should be restarted on the next run.'
     )
     return stats
   }
@@ -96,9 +95,9 @@ async function _processCheckoutOrder(activeStateId, checkoutOrder) {
     else {
       stats.skippedTemplateOrders++
       logger.error(
+        err,
         `Failed to create template order from the checkout order with number ${checkoutOrder.orderNumber}. ` +
-          'Skipping this checkout order' +
-          ` Error: ${JSON.stringify(serializeError(err))}`
+          'Skipping this checkout order'
       )
     }
   } finally {
@@ -161,12 +160,17 @@ async function _createTemplateOrderAndPayments(checkoutOrder, orderDraft) {
     await apiRoot.orders().importOrder().post({ body: orderDraft }).execute()
     stats.createdTemplateOrders++
   } catch (err) {
-    if (!_isDuplicateOrderError(err)) {
-      const errMsg =
-        `Unexpected error on creating template order from checkout order with number: ${checkoutOrder.orderNumber}.` +
-        ` Line item: ${JSON.stringify(orderDraft.lineItems)}`
-      throw new VError(err, errMsg)
-    }
+    if (!_isDuplicateOrderError(err))
+      throw new VError(
+        {
+          cause: err,
+          info: {
+            lineItems: orderDraft.lineItems,
+          },
+        },
+        `Unexpected error on creating template order from checkout order with number: ${checkoutOrder.orderNumber}`
+      )
+
     stats.duplicatedTemplateOrderCreation++
   }
 }

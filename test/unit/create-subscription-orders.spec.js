@@ -111,7 +111,7 @@ describe('create-subscription-orders', () => {
 
     nock(SUBSCRIPTION_ORDER_CREATION_URL)
       .post('/')
-      .reply(function (uri, requestBody, callback) {
+      .reply(function reply(uri, requestBody, callback) {
         headers = this.req.headers
         callback(null, [200])
       })

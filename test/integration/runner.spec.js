@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import { serializeError } from 'serialize-error'
 
 import { ensureResources } from './test-utils.js'
 import { run } from '../../src/runner.js'
@@ -18,11 +17,7 @@ describe('runner', () => {
     try {
       await run()
     } catch (err) {
-      expect.fail(
-        `The main run function fails. Error: ${JSON.stringify(
-          serializeError(err)
-        )}`
-      )
+      expect.fail('The main run function fails.')
     }
   })
 })
