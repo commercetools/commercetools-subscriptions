@@ -14,8 +14,6 @@ async function run() {
   const startDate = new Date()
   const packageJson = await getPackageJson()
   const logger = getLogger()
-  logger.info(`${packageJson.name} started`)
-
   const apiRoot = getApiRoot()
   const stateKeyToIdMap = await _fetchStateKeyToIdMap(apiRoot)
 
