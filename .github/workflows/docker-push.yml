@@ -33,4 +33,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: commercetools-subscriptions:${{ steps.vars.outputs.tag }}
+          tags: commercetools/commercetools-subscriptions:${{ steps.vars.outputs.tag }}
