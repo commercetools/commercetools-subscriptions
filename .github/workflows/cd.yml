@@ -21,7 +21,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION_CODE }}
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build docker and deploy to ECR
         env:
