@@ -8,5 +8,12 @@
     "enabled": false
   },
   "prConcurrentLimit": 10,
-  "packageRules": []
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "eslint"
+      ],
+      "enabled": false
+    }
+  ]
 }
