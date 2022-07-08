@@ -236,12 +236,12 @@ function _generateTemplateOrderImportDraft(
   lineItem,
   quantityIncrement
 ) {
-  const schedule = lineItem.custom.fields.schedule
+  const { schedule } = lineItem.custom.fields
   const cronExpression = parser.parseExpression(schedule)
   let nextDeliveryCronDate = cronExpression.next()
   const nextDeliveryDate = nextDeliveryCronDate.toDate()
   let nextDeliveryDateISOString = nextDeliveryDate.toISOString()
-  const cutoffDays = lineItem.custom.fields.cutoffDays
+  const { cutoffDays } = lineItem.custom.fields
   if (cutoffDays) {
     nextDeliveryDate.setDate(nextDeliveryDate.getDate() - cutoffDays)
     if (nextDeliveryDate.toISOString() < checkoutOrder.createdAt) {
@@ -249,7 +249,7 @@ function _generateTemplateOrderImportDraft(
       nextDeliveryDateISOString = nextDeliveryCronDate.toISOString()
     }
   }
-  const reminderDays = lineItem.custom.fields.reminderDays
+  const { reminderDays } = lineItem.custom.fields
   let nextReminderDateISOString
   if (reminderDays) {
     nextDeliveryCronDate.setDate(nextDeliveryCronDate.getDate() - reminderDays)
@@ -292,7 +292,7 @@ function _generateTemplateOrderImportDraft(
       id: activeStateId,
     },
   }
-  const shippingInfo = checkoutOrder.shippingInfo
+  const { shippingInfo } = checkoutOrder
   if (shippingInfo)
     templateOrder.shippingInfo = {
       shippingMethodName: shippingInfo.shippingMethodName,

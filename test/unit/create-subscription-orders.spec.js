@@ -126,9 +126,7 @@ describe('create-subscription-orders', () => {
     })
 
     expect(headers['loyalty-partner-forward'][0]).to.equal('123')
-    expect(headers['authorization'][0]).to.equal(
-      'Basic dXNlcm5hbWU6cGFzc3dvcmQ='
-    )
+    expect(headers.authorization[0]).to.equal('Basic dXNlcm5hbWU6cGFzc3dvcmQ=')
   })
 
   it('when subscription order already exists, it should skip calling URL and only updates template order', async () => {
