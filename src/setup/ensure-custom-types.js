@@ -66,7 +66,7 @@ async function fetchTypeByKey(apiRoot, key) {
 
 async function mergeExistingTypesWithSubscriptionTypeDrafts(apiRoot) {
   const config = getSubscriptionSetupConfig()
-  const existingOrderTypeKey = config.existingOrderTypeKey
+  const { existingOrderTypeKey } = config
   if (existingOrderTypeKey)
     await fetchAndExtendSubscriptionType(
       apiRoot,
@@ -82,8 +82,7 @@ async function mergeExistingTypesWithSubscriptionTypeDrafts(apiRoot) {
       checkoutOrderLineItemType
     )
 
-  const existingSubscriptionOrderTypeKey =
-    config.existingSubscriptionOrderTypeKey
+  const { existingSubscriptionOrderTypeKey } = config
   if (existingSubscriptionOrderTypeKey)
     await fetchAndExtendSubscriptionType(
       apiRoot,

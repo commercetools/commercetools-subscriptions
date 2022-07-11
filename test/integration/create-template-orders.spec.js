@@ -165,7 +165,7 @@ describe('create-template-orders', () => {
         const nextReminderDate = new Date(
           templateOrder.custom.fields.nextReminderDate
         )
-        const reminderDays = templateOrder.custom.fields.reminderDays
+        const { reminderDays } = templateOrder.custom.fields
         expect(nextDeliveryDate.getTime() - reminderDays * DAY_IN_MS).to.equal(
           nextReminderDate.getTime()
         )

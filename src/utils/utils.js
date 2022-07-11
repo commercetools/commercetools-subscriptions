@@ -38,7 +38,7 @@ async function updateOrderWithRetry(
     } catch (err) {
       if (err.statusCode === 409) {
         retryCount += 1
-        const currentVersion = err.body.errors[0].currentVersion
+        const { currentVersion } = err.body.errors[0]
         if (retryCount > maxRetry) {
           const retryMessage =
             'Got a concurrent modification error' +

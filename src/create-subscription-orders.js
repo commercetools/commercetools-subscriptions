@@ -36,7 +36,7 @@ async function createSubscriptionOrders({
   ]
   const config = getSubscriptionConfig()
   const headers = _buildHeaders(config)
-  const subscriptionOrderCreationUrl = config.subscriptionOrderCreationUrl
+  const { subscriptionOrderCreationUrl } = config
   const orderQuery =
     await _buildQueryForTemplateOrdersToCreateSubscriptionOrders(stateIds)
 
@@ -263,7 +263,7 @@ function _buildHeaders(config) {
   if (headers) headers = JSON.parse(headers)
   else headers = {}
   if (username && password)
-    headers['Authorization'] = `Basic ${Buffer.from(
+    headers.Authorization = `Basic ${Buffer.from(
       `${username}:${password}`
     ).toString('base64')}`
 
