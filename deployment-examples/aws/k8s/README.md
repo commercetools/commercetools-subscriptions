@@ -41,7 +41,7 @@ Configure all the required environment variables in the bash script [`create_aws
 
 ## Deploy to AWS cluster
 
-Configure all the required environment variables in the bash script [`deploy_to_eks.sh`](deploy_to_eks.sh) and in the helm [values](values.yaml) file. After that, execute the script file.
+Configure all the required environment variables in the bash script [`deploy_to_eks.sh`](deploy_to_eks.sh). After that, execute the script file.
 
 ```bash
 ./deploy_to_eks.sh
