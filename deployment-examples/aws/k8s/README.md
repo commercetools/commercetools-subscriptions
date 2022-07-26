@@ -31,7 +31,7 @@ Once all the prerequisites have been installed and created, update the repositor
 
 For any changes for cronjob, configure the properties in [values.yaml](./values.yaml).
 
-## Creating AWS cluster (optional)
+## Creating AWS cluster (only for the first time)
 
 Configure all the required environment variables in the bash script [`create_aws_cluster`](create_aws_cluster.sh). After that, execute the script file.
 
