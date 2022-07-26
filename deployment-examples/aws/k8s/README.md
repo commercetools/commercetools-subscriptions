@@ -15,17 +15,17 @@ The main goal of this deploy process is to build and publish the new docker imag
 
 ### Environment variables
 
-Once all the prerequisites have been installed and created, update the repository secrets for the following fields in the repository.
-
-| Name                 | Description                                                                 |
-| -------------------- | --------------------------------------------------------------------------- |
-| `AWS_ECR_REPOSITORY` | Amazon Elastic Container Registry(ECR) name(It is also used as Image name). |
-| `AWS_REGION_CODE`    | Same region code where cluster is created.                                  |
-| `AWS_ECR_PATH`       | AWS ECR repository url(without repository name).                            |
-| `AWS_CLUSTER_NAME`   | AWS Cluster name.                                                           |
-| `CTP_PROJECT_KEY`    | Commercetools project key.                                                  |
-| `CTP_CLIENT_ID`      | Client Id.                                                                  |
-| `CTP_CLIENT_SECRET`  | Client secret.                                                              |
+| Name                              | Description                                                                 |
+| --------------------------------- | --------------------------------------------------------------------------- |
+| `AWS_ECR_REPOSITORY`              | Amazon Elastic Container Registry(ECR) name(It is also used as Image name). |
+| `AWS_REGION_CODE`                 | Same region code where cluster is created.                                  |
+| `AWS_ECR_PATH`                    | AWS ECR repository url(without repository name).                            |
+| `AWS_CLUSTER_NAME`                | AWS Cluster name.                                                           |
+| `CTP_PROJECT_KEY`                 | Commercetools project key.                                                  |
+| `CTP_CLIENT_ID`                   | Client Id.                                                                  |
+| `CTP_CLIENT_SECRET`               | Client secret.                                                              |
+| `SUBSCRIPTION_ORDER_CREATION_URL` | Subscription order creation url.                                            |
+| `CUSTOM_HEADERS`                  | Custom headers passed for subscription order creation.                      |
 
 ### Helm values
 
