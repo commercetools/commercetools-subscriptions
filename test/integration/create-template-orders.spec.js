@@ -113,6 +113,7 @@ describe('create-template-orders', () => {
     delete checkoutOrderPayment.id
     delete checkoutOrderPayment.createdAt
     delete checkoutOrderPayment.lastModifiedAt
+    delete checkoutOrderPayment.versionModifiedAt
 
     templateOrders.forEach((templateOrder) => {
       const templateOrderPayment = _.cloneDeep(
@@ -121,6 +122,7 @@ describe('create-template-orders', () => {
       delete templateOrderPayment.id
       delete templateOrderPayment.createdAt
       delete templateOrderPayment.lastModifiedAt
+      delete templateOrderPayment.versionModifiedAt
       expect(checkoutOrderPayment).to.deep.equal(templateOrderPayment)
     })
   }

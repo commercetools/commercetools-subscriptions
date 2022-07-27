@@ -4,10 +4,16 @@ set -e
 
 ## edit those environment variables
 ## ----------------------
-export IMAGE_BASE_NAME=$AWS_ECR_REPOSITORY
+export AWS_ECR_PATH="AWS_ECR_REPOSITORY_PATH"
+export IMAGE_BASE_NAME="AWS_ECR_REPO_IMAGE_NAME"
 export TAG="0.0.1"
-export REGION_CODE=$AWS_REGION_CODE
-export CLUSTER_NAME=$AWS_CLUSTER_NAME
+export REGION_CODE="us-west-2"
+export CLUSTER_NAME="commercetools-subscriptions-cluster"
+export CTP_PROJECT_KEY="CTP_PROJECT_KEY"
+export CTP_CLIENT_ID="CTP_CLIENT_ID"
+export CTP_CLIENT_SECRET="CTP_CLIENT_SECRET"
+export SUBSCRIPTION_ORDER_CREATION_URL="SUBSCRIPTION_ORDER_CREATION_URL"
+export CUSTOM_HEADERS="CUSTOM_HEADERS"
 ## ----------------------
 
 export HELM_HOME="$HOME/helm"
@@ -23,7 +29,7 @@ printf "\n- Build and push docker images to AWS ECR\n"
 ECR_PATH=$AWS_ECR_PATH
 IMAGE_FULL_NAME=${ECR_PATH}/${IMAGE_BASE_NAME}
 
-aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin $ECR_PATH
+aws ecr get-login-password --region ${REGION_CODE} | docker login --username AWS --password-stdin $ECR_PATH
 docker build -t $IMAGE_BASE_NAME:$TAG .
 docker tag $IMAGE_BASE_NAME:$TAG $IMAGE_FULL_NAME:$TAG
 docker push $IMAGE_FULL_NAME:$TAG
