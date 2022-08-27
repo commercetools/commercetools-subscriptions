@@ -1,0 +1,12 @@
+{
+  "deployAs":[
+    {
+      "applicationType": "job",
+      "dockerFilePath": ".",
+      "name": "Subscriptions",
+      "properties": {
+        "schedule": "*/5 * * * *"
+      }
+    }
+  ]
+}
