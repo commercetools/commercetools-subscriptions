@@ -1,5 +1,5 @@
 {
-  "deployAs":[
+  "deployAs": [
     {
       "applicationType": "job",
       "dockerFilePath": ".",
@@ -10,4 +10,3 @@
     }
   ]
 }
-
