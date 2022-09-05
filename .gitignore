@@ -2,8 +2,8 @@
 *.iml
 *.log
 node_modules
-/.nyc_output/
 secrets.yaml
 .subscriptionsrc
 /deployment-examples/aws/k8s/k8s-charts/
 /deployment-examples/gcp/k8s/k8s-charts/
+/coverage/
