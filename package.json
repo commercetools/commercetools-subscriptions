@@ -8,13 +8,12 @@
     "test": "test"
   },
   "scripts": {
-    "check-coverage": "nyc check-coverage --lines 89",
-    "test": "npm run cover:unit && npm run cover:integration && npm run check-coverage",
+    "check-coverage": "c8 check-coverage --lines 89",
+    "test": "c8 npm run test-run && npm run check-coverage",
+    "test-run": "npm run unit && npm run integration",
     "check": "npm run lint && prettier --check .",
-    "unit": "nyc mocha \"test/unit/**/*.spec.js\"",
-    "integration": "nyc mocha \"test/integration/**/*.spec.js\"",
-    "cover:unit": "nyc --silent npm run unit",
-    "cover:integration": "nyc --silent npm run integration",
+    "unit": "mocha \"test/unit/**/*.spec.js\"",
+    "integration": "mocha \"test/integration/**/*.spec.js\"",
     "lint": "eslint --fix ./src ./test",
     "format": "prettier --write .",
     "setup-subscription-states": "node ./src/setup/setup-states.js",
@@ -50,6 +49,7 @@
     "verror": "1.10.1"
   },
   "devDependencies": {
+    "c8": "^7.12.0",
     "chai": "4.3.6",
     "chai-as-promised": "7.1.1",
     "cross-env": "7.0.3",
@@ -61,7 +61,6 @@
     "lockfile-lint": "4.9.5",
     "mocha": "10.0.0",
     "nock": "13.2.9",
-    "nyc": "15.1.0",
     "prettier": "2.7.1",
     "timekeeper": "2.2.0"
   },

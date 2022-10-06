@@ -15,4 +15,4 @@ renovate.json
 .eslintrc
 .prettierignore
 .prettierrc.json
-.nyc_output
+/coverage/
