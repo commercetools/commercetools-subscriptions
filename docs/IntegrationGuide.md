@@ -19,7 +19,7 @@
 
 ## Before you begin
 
-- Please check [terminologies](./Terminalogy.md) used on this document.
+- Please check [terminologies](./Terminology.md) used on this document.
 - Create all the required custom types and states located in [resources folder](./resources). Check [project requirements](./docs/HowToRun.md#commercetools-project-requirements) for more details.
 
 ## Sequence diagram
