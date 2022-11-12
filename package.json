@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "c8": "7.12.0",
-    "chai": "4.3.6",
+    "chai": "4.3.7",
     "chai-as-promised": "7.1.1",
     "cross-env": "7.0.3",
     "doctoc": "2.2.1",
