@@ -58,7 +58,7 @@
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
-    "lockfile-lint": "4.9.6",
+    "lockfile-lint": "4.10.0",
     "mocha": "10.2.0",
     "nock": "13.2.9",
     "prettier": "2.8.1",
