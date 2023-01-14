@@ -57,11 +57,11 @@
     "eslint": "8.19.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-config-prettier": "8.6.0",
-    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-import": "2.27.4",
     "lockfile-lint": "4.10.0",
     "mocha": "10.2.0",
-    "nock": "13.2.9",
-    "prettier": "2.8.2",
+    "nock": "13.3.0",
+    "prettier": "2.8.3",
     "timekeeper": "2.2.0"
   },
   "mocha": {
