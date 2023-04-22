@@ -43,7 +43,7 @@
     "cron-parser": "^4.2.1",
     "isomorphic-fetch": "^3.0.0",
     "lodash": "^4.17.21",
-    "p-map": "^5.3.0",
+    "p-map": "^6.0.0",
     "pino": "^8.0.0",
     "rc": "^1.2.8",
     "verror": "1.10.1"
