@@ -61,7 +61,7 @@
     "lockfile-lint": "4.10.1",
     "mocha": "10.2.0",
     "nock": "13.3.0",
-    "prettier": "2.8.7",
+    "prettier": "2.8.8",
     "timekeeper": "2.2.0"
   },
   "mocha": {
